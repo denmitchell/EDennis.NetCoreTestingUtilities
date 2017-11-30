@@ -7,6 +7,9 @@
     <Company>edennis.com</Company>
     <Description>Provides methods for executing test cases defined in JSON files, and also provides helpful Object extensions (e.g., toJsonString, fromJsonString, fromJsonPath, isEqual, isSame ... etc.)</Description>
     <PackageTags>Json Testing</PackageTags>
+    <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
+    <PackageIconUrl>https://github.com/denmitchell/NetCoreTestingUtilities/blob/master/EDennis.NetCoreTestingUtilities/EDennis.NetCoreTestingUtilities/edennis128.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
