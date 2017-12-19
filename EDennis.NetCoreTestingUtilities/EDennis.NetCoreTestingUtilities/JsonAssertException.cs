@@ -1,4 +1,5 @@
-﻿using JsonDiffPatch;
+﻿using EDennis.NetCoreTestingUtilities.Extensions;
+using JsonDiffPatch;
 using Newtonsoft.Json.Linq;
 using System;
 

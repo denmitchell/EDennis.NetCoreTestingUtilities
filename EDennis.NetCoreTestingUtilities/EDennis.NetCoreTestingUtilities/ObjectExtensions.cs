@@ -3,9 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using EDennis.NetCoreTestingUtilities.Json;
 
-
-namespace EDennis.NetCoreTestingUtilities {
+namespace EDennis.NetCoreTestingUtilities.Extensions {
 
     /// <summary>
     /// This class provides extensions to the Object class.  The 
@@ -74,12 +75,9 @@ namespace EDennis.NetCoreTestingUtilities {
 
             var jtokens = new JToken[] { JToken.FromObject(obj1), JToken.FromObject(obj2) };
 
-            //replace all pathsToIgnore values with null
-            foreach (JToken jtoken in jtokens)
-                foreach (string path in pathsToIgnore)
-                    jtoken[path.Replace(@"\",".")] = null;
+            return jtokens[0].Filter(pathsToIgnore).ToString() 
+                == jtokens[1].Filter(pathsToIgnore).ToString();
 
-            return jtokens[0].ToString() == jtokens[1].ToString();
         }
 
 
@@ -100,30 +98,9 @@ namespace EDennis.NetCoreTestingUtilities {
         /// <param name="obj">The object to deserialize</param>
         /// <param name="json">The JSON representation of the object</param>
         /// <returns>A new object initialized with the JSON properties</returns>
-        public static T FromJsonString<T>(this T obj, string json)
-             where T : new() {
+        public static T FromJsonString<T>(this T obj, string json){
             T objNew = JToken.Parse(json).ToObject<T>();
             obj = objNew;
-            return obj;
-        }
-
-        /// <summary>
-        /// Deserializes an embedded object represented at a particular JSON Path and held
-        /// in a JSON.NET JToken object.
-        /// </summary>
-        /// <typeparam name="T">The type of the object to deserialize</typeparam>
-        /// <param name="obj">The current object</param>
-        /// <param name="jtoken">The JToken object holding the JSON data</param>
-        /// <param name="jsonPath">The path to an embedded object</param>
-        /// <returns>A new object initialized with the JSON properties</returns>
-        /// <seealso cref="FromJsonPath{T}(T, string, string)"/>
-        /// <seealso cref="FromJsonPath{T}(T, string)"/>
-        public static T FromJsonPath<T>(this T obj, JToken jtoken, string jsonPath) {
-            jtoken = jtoken.SelectToken(jsonPath);
-
-            T objNew = jtoken.ToObject<T>();
-            obj = objNew;
-
             return obj;
         }
 
@@ -138,12 +115,15 @@ namespace EDennis.NetCoreTestingUtilities {
         /// <returns>A new object initialized with the JSON properties</returns>
         /// <seealso cref="FromJsonPath{T}(T, string)"/>
         /// <seealso cref="FromJsonPath{T}(T, JToken, string)"/>
-        public static T FromJsonPath<T>(this T obj, string filePath, string objectPath)
-             where T : new() {
+        public static T FromJsonPath<T>(this T obj, string filePath, string objectPath) {
 
-             string json = System.IO.File.ReadAllText(filePath);
+            string json = System.IO.File.ReadAllText(filePath);
             JToken jtoken = JToken.Parse(json);
-            jtoken = jtoken.SelectToken(objectPath);
+            jtoken = jtoken.SelectToken(objectPath.Replace(@"\", ".").Replace(@"/", "."));
+
+            if (jtoken == null) {
+                throw new FormatException($"{filePath} does not contain the target json path: \"{objectPath}\".");
+            }
 
             T objNew = jtoken.ToObject<T>();
             obj = objNew;
@@ -162,29 +142,101 @@ namespace EDennis.NetCoreTestingUtilities {
         /// <returns>A new object initialized with the JSON properties</returns>
         /// <seealso cref="FromJsonPath{T}(T, string, string)"/>
         /// <seealso cref="FromJsonPath{T}(T, JToken, string)"/>
-        public static T FromJsonPath<T>(this T obj, string jsonFileObjectPath)
-            where T : new() {
+        public static T FromJsonPath<T>(this T obj, string jsonFileObjectPath) {
 
             //use regular expression to split jsonFileObjectPath into a 
             //separate file path and object path
-            MatchCollection mc = Regex.Matches(jsonFileObjectPath, @".*\.json\\");
+            MatchCollection mc = Regex.Matches(jsonFileObjectPath, @".*\.json(\\|/|\.)");
             if (mc.Count == 0)
                 throw new FormatException($"jsonFileObjectPath value ({jsonFileObjectPath}) must be a .json file name followed by \\ and then path to the object");
 
-            string[] paths = Regex.Split(jsonFileObjectPath, @"\.json\\");
+            string[] paths = Regex.Split(jsonFileObjectPath, @"\.json(\\|/|\.)");
 
             string filePath = paths[0] + ".json";
-            string jsonPath = paths[1].Replace(@"\",".");
+            string objectPath = paths[2].Replace(@"\", ".").Replace(@"/", ".");
 
             string json = System.IO.File.ReadAllText(filePath);
             JToken jtoken = JToken.Parse(json);
-            jtoken = jtoken.SelectToken(jsonPath);
+            jtoken = jtoken.SelectToken(objectPath);
+
+            if (jtoken == null) {
+                throw new FormatException($"{filePath} does not contain the target json path: \"{objectPath}\".");
+            }
 
             T objNew = jtoken.ToObject<T>();
             obj = objNew;
 
             return obj;
 
+        }
+
+
+        /// <summary>
+        /// Deserializes an embedded object represented at a particular JSON Path and held
+        /// in a JSON.NET JToken object.
+        /// </summary>
+        /// <typeparam name="T">The type of the object to deserialize</typeparam>
+        /// <param name="obj">The current object</param>
+        /// <param name="jtoken">The JToken object holding the JSON data</param>
+        /// <param name="jsonPath">The path to an embedded object</param>
+        /// <returns>A new object initialized with the JSON properties</returns>
+        /// <seealso cref="FromJsonPath{T}(T, string, string)"/>
+        /// <seealso cref="FromJsonPath{T}(T, string)"/>
+        public static T FromJsonPath<T>(this T obj, JToken jtoken, string objectPath) {
+            jtoken = jtoken.SelectToken(objectPath.Replace(@"\", ".").Replace(@"/", "."));
+
+            T objNew = jtoken.ToObject<T>();
+            obj = objNew;
+
+            return obj;
+        }
+
+
+        /// <summary>
+        /// Constructs a new object from the results of a SQL Server FOR JSON query.
+        /// </summary>
+        /// <typeparam name="T">The type of the current object</typeparam>
+        /// <param name="obj">The current object</param>
+        /// <param name="sqlForJsonFile">A SQL Server .sql file having a FOR JSON clause</param>
+        /// <param name="context">The Entity Framework DB Context.</param>
+        /// <returns></returns>
+        public static T FromSql<T>(this T obj, string sqlForJsonFile,
+            DbContext context) {
+            string connectionString = context.Database.GetDbConnection().ConnectionString;
+            return FromSql(obj, sqlForJsonFile, connectionString);
+        }
+
+
+        /// <summary>
+        /// Constructs a new object from the results of a SQL Server FOR JSON query.
+        /// </summary>
+        /// <typeparam name="T">The type of the current object</typeparam>
+        /// <param name="obj">The current object</param>
+        /// <param name="sqlForJsonFile">A SQL Server .sql file having a FOR JSON clause</param>
+        /// <param name="connectionString">A valid connection string</param>
+        /// <returns></returns>
+        public static T FromSql<T>(this T obj, string sqlForJsonFile,
+            string connectionString){
+
+            string sql = System.IO.File.ReadAllText(sqlForJsonFile);
+            string json = null;
+
+            //use Entity Framework class to hold results 
+            using (var context = new JsonResultContext(connectionString)) {
+                json = context.JsonResults
+                        .FromSql(sql)
+                        .FirstOrDefault()
+                        .Json;
+            }
+
+            //parse the returned JSON
+            JToken jtoken = JToken.Parse(json);
+
+            //convert the JSON to an object
+            T objNew = jtoken.ToObject<T>();
+            obj = objNew;
+
+            return obj;
         }
 
 
@@ -200,5 +252,16 @@ namespace EDennis.NetCoreTestingUtilities {
         }
 
 
+
+        /// <summary>
+        /// Removes all specified Json Paths from the provided JToken
+        /// </summary>
+        /// <param name="jtoken">A valid Json.NET JToken object</param>
+        /// <param name="pathsToRemove">An array of valid Json Paths
+        /// or an array of property names</param>
+        /// <returns></returns>
+        public static JToken Filter(this JToken jtoken, string[] pathsToRemove) {
+            return JsonFilterer.ApplyFilter(jtoken, pathsToRemove);
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using EDennis.NetCoreTestingUtilities.Extensions;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -79,15 +80,25 @@ namespace EDennis.NetCoreTestingUtilities {
                 List<object> args = new List<object>();
                 for (int i = 0; i < parameters.Length; i++) {
                     ParameterInfo info = parameters[i];
-                    object arg = test.JToken[info.Name].ToObject(info.ParameterType);
-                    args.Add(arg);
+                    object arg = null;
+                    try {
+                        arg = test.JToken[info.Name].ToObject(info.ParameterType);
+                        args.Add(arg);
+                    } catch (Exception) {
+                        throw new FormatException($"Method argument \"{info.Name}\" is missing in the JSON test file.  \"{info.Name}\" must be a top-level object property in that file.");
+                    }
                 }
                 //invoke method with params
                 actualOutput = methodInfo.Invoke(obj, args.ToArray());
             }
 
             //get expectedOutput from JSON file
-            object expectedOutput = test.JToken["returns"].ToObject(methodInfo.ReturnType);
+            object expectedOutput = null;
+            try {
+                expectedOutput = test.JToken["returns"].ToObject(methodInfo.ReturnType);
+            } catch (Exception) {
+                throw new FormatException($"\"returns\" is missing in the JSON test file.  \"returns\" must be a top-level object property in that file.");
+            }
 
             //test expected versus actual output
             TestOutput(expectedOutput, actualOutput);

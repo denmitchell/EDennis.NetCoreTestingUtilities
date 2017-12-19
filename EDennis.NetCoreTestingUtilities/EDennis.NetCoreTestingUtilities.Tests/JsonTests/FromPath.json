@@ -1,0 +1,8 @@
+﻿{
+  "FirstName": "Bob",
+  "LastName": "Barker",
+  "Address": {
+    "City": "Hartford",
+    "State": "CT"
+  }
+}
