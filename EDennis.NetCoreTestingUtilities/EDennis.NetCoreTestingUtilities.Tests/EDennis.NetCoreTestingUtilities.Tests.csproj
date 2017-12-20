@@ -19,10 +19,25 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="JsonTests\FilterTests\colors.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="JsonTests\FilterTests\colors2.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="JsonTests\FilterTests\colors3.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="JsonTests\FilterTests\noBob.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="JsonTests\FilterTests\persons.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="JsonTests\FilterTests\isbnAndBicycleFilter.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="JsonTests\FilterTests\priceOver10Filter.json">
+    <None Update="JsonTests\FilterTests\bookPriceOver10Filter.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="JsonTests\FilterTests\categoryFilter.json">

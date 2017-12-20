@@ -1,0 +1,34 @@
+﻿[
+  {
+    "ID": 1,
+    "FirstName": "Bob",
+    "LastName": "Jones",
+    "DateOfBirth": "1980-01-23T00:00:00",
+    "Skills": [
+      {
+        "Category": "Application Development",
+        "Score": 3
+      },
+      {
+        "Category": "Project Management",
+        "Score": 3
+      }
+    ]
+  },
+  {
+    "ID": 2,
+    "FirstName": "Jill",
+    "LastName": "Jones",
+    "DateOfBirth": "1981-01-24T00:00:00",
+    "Skills": [
+      {
+        "Category": "Application Development",
+        "Score": 2
+      },
+      {
+        "Category": "Project Management",
+        "Score": 1
+      }
+    ]
+  }
+]

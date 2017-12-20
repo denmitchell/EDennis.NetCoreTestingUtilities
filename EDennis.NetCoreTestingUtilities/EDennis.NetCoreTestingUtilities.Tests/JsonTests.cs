@@ -1,4 +1,6 @@
+using Newtonsoft.Json.Linq;
 using System.IO;
+using System.Xml;
 using Xunit;
 
 namespace EDennis.NetCoreTestingUtilities.Json {
@@ -9,10 +11,10 @@ namespace EDennis.NetCoreTestingUtilities.Json {
     }
 
 
-    public class JsonTests{
+    public class JsonTests {
 
         [Fact]
-        public void FromObject() {
+        public void Json_FromObject() {
             var p = new Person {
                 FirstName = "Bob",
                 LastName = "Barker"
@@ -28,7 +30,7 @@ namespace EDennis.NetCoreTestingUtilities.Json {
 
 
         [Fact]
-        public void FromString() {
+        public void Json_FromString() {
 
             var json = File.ReadAllText("JsonTests/FromString.json");
 
@@ -41,11 +43,11 @@ namespace EDennis.NetCoreTestingUtilities.Json {
         }
 
         [Fact]
-        public void FromPath1() {
+        public void Json_FromPath1() {
 
             var json = File.ReadAllText("JsonTests/FromString.json");
 
-            var firstName = new Json().FromPath("JsonTests/FromPath.json","FirstName").ToString();
+            var firstName = new Json().FromPath("JsonTests/FromPath.json", "FirstName").ToString();
             var city = new Json().FromPath("JsonTests/FromPath.json", "Address/City").ToString();
 
             Assert.Equal("Bob", firstName);
@@ -53,7 +55,7 @@ namespace EDennis.NetCoreTestingUtilities.Json {
         }
 
         [Fact]
-        public void FromPath2() {
+        public void Json_FromPath2() {
 
             var firstName = new Json().FromPath("JsonTests/FromPath.json/FirstName").ToString();
             var city = new Json().FromPath("JsonTests/FromPath.json/Address/City").ToString();
@@ -64,7 +66,7 @@ namespace EDennis.NetCoreTestingUtilities.Json {
 
 
         [Fact]
-        public void FromPath3() {
+        public void Json_FromPath3() {
 
             var p = new Person {
                 FirstName = "Bob",
@@ -73,7 +75,7 @@ namespace EDennis.NetCoreTestingUtilities.Json {
 
             var jtoken = new Json().FromObject(p).JToken;
 
-            var firstName = new Json().FromPath(jtoken,"FirstName").ToString();
+            var firstName = new Json().FromPath(jtoken, "FirstName").ToString();
             var lastName = new Json().FromPath(jtoken, "LastName").ToString();
 
             Assert.Equal("Bob", firstName);
@@ -81,7 +83,7 @@ namespace EDennis.NetCoreTestingUtilities.Json {
         }
 
         [Fact]
-        public void FromSql1() {
+        public void Json_FromSql1() {
             using (var context = new JsonResultContext()) {
                 var expectedJson = new Json()
                         .FromPath(@"PersonRepo\GetPersons\01.json\persons");
@@ -93,7 +95,7 @@ namespace EDennis.NetCoreTestingUtilities.Json {
         }
 
         [Fact]
-        public void FromSql2() {
+        public void Json_FromSql2() {
             using (var context = new JsonResultContext()) {
                 var expectedJson = new Json()
                         .FromPath(@"PersonRepo\GetPersons\01.json\persons");
@@ -105,21 +107,52 @@ namespace EDennis.NetCoreTestingUtilities.Json {
 
         }
 
+        [Theory]
+        [InlineData("persons")]
+        [InlineData("bookstore")]
+        [InlineData("colors")]
+        [InlineData("colors2")]
+        [InlineData("colors3")]
+        public void JsonToJxml(string file){
 
-        [Fact]
-        public void Filter1() {
+            var j = new JsonToJxml();
+            var json = File.ReadAllText($"JsonTests\\FilterTests\\{file}.json");
+            var jtoken = JToken.Parse(json);
+            json = jtoken.ToString();
+            XmlDocument doc = j.ConvertToJxml(jtoken);
+
+            var x = new JxmlToJson();
+            var jtoken2 = x.ConvertToJson(doc);
+            var json2 = jtoken2.ToString();
+
+            Assert.Equal(json, json2);
+
+        }
+
+
+
+        [Theory]
+        [InlineData("categoryFilter", "bookstore", "category")]
+        [InlineData("bookPriceOver10Filter", "bookstore", "$.store.book[?(@.price > 10)]")]
+        [InlineData("noBob", "persons", "$..[?(@.FirstName==\"Bob\")]")]
+        [InlineData("isbnAndBicycleFilter", "bookstore", "isbn", "bicycle")]
+        public void Filter(string expectedFile, string inputFile, params string[] filters) {
             using (var context = new JsonResultContext()) {
                 var expectedJson = new Json()
-                        .FromPath(@"JsonTests\FilterTests\categoryFilter.json");
+                        .FromPath($"JsonTests\\FilterTests\\{expectedFile}.json");
                 var actualJson = new Json()
-                        .FromPath(@"JsonTests\FilterTests\bookstore.json")
-                        .Filter(@"category");
+                        .FromPath($"JsonTests\\FilterTests\\{inputFile}.json");
+
+                foreach(string filter in filters)
+                    actualJson = actualJson.Filter(filter);
 
                 Assert.Equal(expectedJson.ToString(), actualJson.ToString());
             }
 
         }
 
+
+   
 
     }
 }

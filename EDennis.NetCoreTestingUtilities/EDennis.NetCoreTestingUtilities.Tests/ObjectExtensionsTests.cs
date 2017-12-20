@@ -11,7 +11,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
     public class ObjectExtensionsTests {
 
         [Fact]
-        public void TestCopy() {
+        public void ObjExt_Copy() {
             var persons = new List<Person>().FromJsonPath(@"PersonRepo\GetPersons\01.json\persons");
             var persons2 = persons.Copy();
 
@@ -24,7 +24,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
 
 
         [Fact]
-        public void IsSame() {
+        public void ObjExt_IsSame() {
             var persons = new List<Person>().FromJsonPath(@"PersonRepo\GetPersons\01.json\persons");
             var persons2 = persons.Copy();
             var persons3 = persons;
@@ -38,7 +38,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
 
 
         [Fact]
-        public void IsEqual() {
+        public void ObjExt_IsEqual() {
             var persons = new List<Person>().FromJsonPath(@"PersonRepo\GetPersons\01.json\persons");
             var persons2 = persons.Copy();
             var persons3 = persons;
@@ -56,7 +56,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
 
 
         [Fact]
-        public void IsEqualWithFilter() {
+        public void ObjExt_IsEqualWithFilter() {
             var persons = new List<Person>().FromJsonPath(@"PersonRepo\GetPersons\01.json\persons");
             var persons2 = persons.Copy();
 
@@ -68,7 +68,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
         }
 
         [Fact]
-        public void IsEqualWithFilter2() {
+        public void ObjExt_IsEqualWithFilter2() {
             var person = new Person().FromJsonPath(@"PersonRepo\GetPersons\01.json\persons[0]");
             var person2 = person.Copy();
 
@@ -80,7 +80,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
 
 
         [Fact]
-        public void ToJsonString() {
+        public void ObjExt_ToJsonString() {
             var json = File.ReadAllText(@"PersonRepo\GetPersons\01.json");
             var expectedResult = JToken.FromObject(JToken.Parse(json).SelectToken("persons[0]").ToObject<Person>()).ToString();
             
@@ -111,7 +111,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
 
 
         [Fact]
-        public void FromJsonString() {
+        public void ObjExt_FromJsonString() {
             var json = File.ReadAllText(@"PersonRepo\GetPersons\01.json");
             var actualResult = new Person().FromJsonString(JToken.Parse(json).SelectToken("persons[0]").ToString());
 
@@ -143,7 +143,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
 
 
         [Fact]
-        public void FromJsonPath1() {
+        public void ObjExt_FromJsonPath1() {
 
             var actualResult = new Person().FromJsonPath(@"PersonRepo\GetPersons\01.json","persons[0]");
 
@@ -173,7 +173,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
 
 
         [Fact]
-        public void FromJsonPath2() {
+        public void ObjExt_FromJsonPath2() {
 
             var actualResult = new Person().FromJsonPath(@"PersonRepo\GetPersons\01.json\persons[0]");
 
@@ -203,7 +203,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
 
 
         [Fact]
-        public void FromJsonPath3() {
+        public void ObjExt_FromJsonPath3() {
 
             var json = File.ReadAllText(@"PersonRepo\GetPersons\01.json");
             var jtoken = JToken.Parse(json);
@@ -236,7 +236,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
 
 
         [Fact]
-        public void FromSql1() {
+        public void ObjExt_FromSql1() {
             using (var context = new JsonResultContext()) {
                 var expectedJson = new List<Person>()
                         .FromJsonPath(@"PersonRepo\GetPersons\01.json\persons");
@@ -248,7 +248,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
         }
 
         [Fact]
-        public void FromSql2() {
+        public void ObjExt_FromSql2() {
             using (var context = new JsonResultContext()) {
                 var expectedJson = new List<Person>()
                         .FromJsonPath(@"PersonRepo\GetPersons\01.json\persons");

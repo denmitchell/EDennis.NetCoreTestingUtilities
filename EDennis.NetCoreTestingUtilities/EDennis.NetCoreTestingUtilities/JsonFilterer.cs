@@ -29,8 +29,8 @@ namespace EDennis.NetCoreTestingUtilities.Json
         public static JToken ApplyFilter(JToken jToken, string[] pathsToRemove) {
 
             //convert the JSON to XML
-            Json2Xml jx = new Json2Xml();
-            XmlDocument doc = jx.ConvertToXml(JToken.Parse(jToken.ToString()));
+            JsonToJxml jx = new JsonToJxml();
+            XmlDocument doc = jx.ConvertToJxml(JToken.Parse(jToken.ToString()));
 
             //NOTE: Json.NET deserializer does not preserve data types
             //XmlDocument doc = JsonConvert.DeserializeXmlNode(jToken.ToString(), "Root");
@@ -43,7 +43,7 @@ namespace EDennis.NetCoreTestingUtilities.Json
             doc = ApplyFilter(doc, pathsToRemove);
 
             //convert the XML back to JSON
-            Xml2Json xj = new Xml2Json();
+            JxmlToJson xj = new JxmlToJson();
             JToken result = xj.ConvertToJson(doc);
 
             //NOTE: Json.NET serializer does not restore data types
@@ -82,7 +82,7 @@ namespace EDennis.NetCoreTestingUtilities.Json
 
 
             //handle the root element
-            xpath = xpath.Replace("$.", $"/{Json2Xml.JSONXML_CONVERTER_NAMESPACE_PREFIX + ":" + Json2Xml.ROOT}/");
+            xpath = xpath.Replace("$.", $"/{JsonToJxml.NAMESPACE_PREFIX + ":" + JsonToJxml.ROOT}/");
             //handle union operator with indexes -- only two are supported
             xpath = RegExReplace(xpath, @"\[([0-9]+),([0-9]+)\]", @"[$1 + 1 or $2 + 1]");
             //handle union operator with properties -- only two are supported
@@ -108,6 +108,16 @@ namespace EDennis.NetCoreTestingUtilities.Json
             var guid = Guid.NewGuid().ToString();
             xpath = RegExReplace(xpath, @"\.[0-9]", guid);
 
+            //replace double-equals with equals
+            xpath = xpath.Replace(@"==", @"=");
+            //replace || with or
+            xpath = xpath.Replace(@"||", @" or ");
+            //replace && with or
+            xpath = xpath.Replace(@"&amp;&amp;", @" and ");
+            //replace double-quote with single-quote
+            xpath = xpath.Replace("\"", "'");
+
+
             //replace dot with forward slash for path separator
             xpath = xpath.Replace(@".", @"/");
             //replace @ with . for ::self node
@@ -116,6 +126,14 @@ namespace EDennis.NetCoreTestingUtilities.Json
             //restore decimal points in predicates
             xpath = xpath.Replace(guid, ".");
 
+            //handle arrays of objects, whose XPATH begins with /jx:root/jx:object or /js:root/jx:value
+            xpath = xpath + "|" + xpath.Replace($"/{JsonToJxml.NAMESPACE_PREFIX + ":" + JsonToJxml.ROOT}/",
+                $"/{JsonToJxml.NAMESPACE_PREFIX + ":" + JsonToJxml.ROOT}/{JsonToJxml.NAMESPACE_PREFIX + ":" + JsonToJxml.OBJECT}")
+
+                + "|" + xpath.Replace($"/{JsonToJxml.NAMESPACE_PREFIX + ":" + JsonToJxml.ROOT}/",
+                $"/{JsonToJxml.NAMESPACE_PREFIX + ":" + JsonToJxml.ROOT}/{JsonToJxml.NAMESPACE_PREFIX + ":" + JsonToJxml.VALUE}");
+
+            xpath = xpath.Replace("/[", "[").Replace("/[", "["); //handle invalid path
             return xpath;
         }
 
@@ -140,10 +158,10 @@ namespace EDennis.NetCoreTestingUtilities.Json
         /// <param name="pathsToRemove">An array of XPaths to remove</param>
         /// <returns>A new XML document with all target paths removed</returns>
         private static XmlDocument ApplyFilter(XmlDocument document, string[] pathsToRemove) {
-
+            //document.Save("F:\\" + Guid.NewGuid().ToString() + ".xml");
             //get the XSLT for the transformation
             string xslt = GetFilterXslt(pathsToRemove);
-
+            //File.WriteAllText("F:\\" + Guid.NewGuid().ToString() + ".xslt",xslt);
             //instantiate the document to return
             var doc = new XmlDocument();
 
@@ -158,6 +176,8 @@ namespace EDennis.NetCoreTestingUtilities.Json
                     doc.LoadXml(writer.ToString());
                 }
             }
+
+           // doc.Save("E:\\" + Guid.NewGuid().ToString() + ".xml");
 
             //return the transformed document
             return doc;
@@ -175,8 +195,8 @@ namespace EDennis.NetCoreTestingUtilities.Json
             xslt.Append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             xslt.Append(" <xsl:stylesheet version=\"1.0\"");
             xslt.Append(" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" ");
-            xslt.Append(" xmlns:" + Json2Xml.JSONXML_CONVERTER_NAMESPACE_PREFIX);
-            xslt.Append("=\"" + Json2Xml.JSONXML_CONVERTER_NAMESPACE_URI + "\"");
+            xslt.Append(" xmlns:" + JsonToJxml.NAMESPACE_PREFIX);
+            xslt.Append("=\"" + JsonToJxml.NAMESPACE_URI + "\"");
             xslt.Append(">");
             xslt.Append("<xsl:template match=\"@* | node() | processing-instruction()\">");
             xslt.Append("<xsl:copy>");

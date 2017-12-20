@@ -1,0 +1,18 @@
+﻿[
+  {
+    "ID": 2,
+    "FirstName": "Jill",
+    "LastName": "Jones",
+    "DateOfBirth": "1981-01-24T00:00:00",
+    "Skills": [
+      {
+        "Category": "Application Development",
+        "Score": 2
+      },
+      {
+        "Category": "Project Management",
+        "Score": 1
+      }
+    ]
+  }
+]

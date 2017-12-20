@@ -8,32 +8,59 @@ using System.Xml;
 
 namespace EDennis.NetCoreTestingUtilities.Json {
 
-    public class Xml2Json {
+    /// <summary>
+    /// This class provides a method for converting JXML to
+    /// JSON.  JXML is valid XML with additional markup
+    /// (in the form of processing instructions).  The 
+    /// additional markup allows conversion to/from JSON
+    /// without any structural changes or loss of information
+    /// (e.g., data types).  The markup also makes conversion
+    /// to JSON much easier.  Everything is accomplished in 
+    /// a single pass, with limited temporary variables.  The
+    /// class makes heavy use of Newtonsoft libraries.
+    /// </summary>
+    public class JxmlToJson {
 
+        /// <summary>
+        /// Converts JXML to JSON
+        /// </summary>
+        /// <param name="doc">An XmlDocument with special processing
+        /// instructions</param>
+        /// <returns></returns>
         public JToken ConvertToJson(XmlDocument doc) {
 
+            //instantiate stream-handling objects for strings
             StringBuilder sb = new StringBuilder();
             StringWriter sw = new StringWriter(sb);
 
+            //initialize local variables for holding data from the JsonTextWriter
             string jsonValueType = null;
             HashSet<int> arrays = new HashSet<int>();
 
+            //initialize a JsonTextWriter and an XmlReader
             using (JsonWriter jwriter = new JsonTextWriter(sw)) {
-
                 using (XmlReader xreader = XmlReader.Create(new StringReader(doc.InnerXml))) {
 
+                    //read all XML tokens, one by one
                     while (xreader.Read()) {
+
+                        //handle the token differently, depending upon its type
                         switch (xreader.NodeType) {
+
+                            //ignore the document type
                             case XmlNodeType.Document:
                                 break;
+                            //if the token is an XML element, but it is not a
+                            //special jx:root, jx:object, jx:value element and
+                            //it does not have a jx:ignore attribute, then 
+                            //write a property key
                             case XmlNodeType.Element: {
-                                    if (xreader.Prefix != Json2Xml.JSONXML_CONVERTER_NAMESPACE_PREFIX
-                                            && xreader.Name != Json2Xml.ROOT
-                                            && jwriter.WriteState != Newtonsoft.Json.WriteState.Array)
+                                    if (xreader.Prefix != JsonToJxml.NAMESPACE_PREFIX
+                                        && xreader.GetAttribute(JsonToJxml.IGNORE, JsonToJxml.NAMESPACE_URI) != JsonToJxml.IGNORE)
                                         jwriter.WritePropertyName(xreader.Name);
-
                                     break;
                                 }
+                            //if it is a text element, write the appropriate value
                             case XmlNodeType.Text: {
                                     switch (jsonValueType) {
                                         case JsonValueType.BOOLEAN:
@@ -60,23 +87,42 @@ namespace EDennis.NetCoreTestingUtilities.Json {
                                     }
                                     break;
                                 }
-                            case XmlNodeType.EndElement:
-                                break;
+                            //ignore end elements
+                            case XmlNodeType.EndElement: {
+                                    break;
+                                }
+                            //handle processing instructions
                             case XmlNodeType.ProcessingInstruction: {
+                                    //if <?object-start?>, output "{"
                                     if (xreader.Name == "object-start")
                                         jwriter.WriteStartObject();
+                                    //if <?object-end?>, output "}"
                                     else if (xreader.Name == "object-end")
                                         jwriter.WriteEndObject();
+                                    //if <?array-item _________?> and it is
+                                    //the first instance of this processing
+                                    //instruction for the current array, then
+                                    //output "["
                                     else if (xreader.Name == "array-item") {
                                         int id = Convert.ToInt32(xreader.Value);
                                         if (!arrays.Contains(id))
                                             jwriter.WriteStartArray();
                                         arrays.Add(id);
+                                    //if <?array-end _________?> and this
+                                    //array has at least one <?array-item ______?>
+                                    //processing instruction, output "]".
+                                    //Special Note: during XSLT processes,
+                                    //<?array-end ____?> processing instructions
+                                    //can be orphaned (no corresponding 
+                                    //<?array-start _______?>)
                                     } else if (xreader.Name == "array-end") {
                                         int id = Convert.ToInt32(xreader.Value);
                                         if (arrays.Contains(id))
                                             jwriter.WriteEndArray();
                                         arrays.Remove(id);
+                                    //for any other processing instruction of the form
+                                    //<?string-start?> or <?integer-start?> (etc.),
+                                    //extract the data type from the processing instruction
                                     } else if (xreader.Name.EndsWith("-start"))
                                         jsonValueType = xreader.Name.Remove(xreader.Name.Length - 6);
                                     break;
@@ -88,10 +134,9 @@ namespace EDennis.NetCoreTestingUtilities.Json {
 
                 }
             }
-
+            //return a Json.NET JToken from the string
             return JToken.Parse(sb.ToString());
         }
-
 
     }
 

@@ -4,6 +4,9 @@ using System.Text;
 
 namespace EDennis.NetCoreTestingUtilities.Json
 {
+    /// <summary>
+    /// Holds the type of data parsed by a JsonTextReader
+    /// </summary>
     public class JsonValueType {
         public const string ARRAY = "array";
         public const string OBJECT = "object";
