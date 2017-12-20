@@ -56,8 +56,11 @@ namespace EDennis.NetCoreTestingUtilities.Json {
                             //write a property key
                             case XmlNodeType.Element: {
                                     if (xreader.Prefix != JsonToJxml.NAMESPACE_PREFIX
-                                        && xreader.GetAttribute(JsonToJxml.IGNORE, JsonToJxml.NAMESPACE_URI) != JsonToJxml.IGNORE)
+                                        && xreader.GetAttribute(JsonToJxml.IGNORE, JsonToJxml.NAMESPACE_URI) != JsonToJxml.IGNORE) {
                                         jwriter.WritePropertyName(xreader.Name);
+                                    }
+                                    //get the data type from the jx:type attribute, if present.
+                                    jsonValueType = xreader.GetAttribute(JsonToJxml.TYPE, JsonToJxml.NAMESPACE_URI);
                                     break;
                                 }
                             //if it is a text element, write the appropriate value
@@ -120,11 +123,7 @@ namespace EDennis.NetCoreTestingUtilities.Json {
                                         if (arrays.Contains(id))
                                             jwriter.WriteEndArray();
                                         arrays.Remove(id);
-                                    //for any other processing instruction of the form
-                                    //<?string-start?> or <?integer-start?> (etc.),
-                                    //extract the data type from the processing instruction
-                                    } else if (xreader.Name.EndsWith("-start"))
-                                        jsonValueType = xreader.Name.Remove(xreader.Name.Length - 6);
+                                    }
                                     break;
                                 }
                             default:

@@ -151,8 +151,59 @@ namespace EDennis.NetCoreTestingUtilities.Json {
 
         }
 
+        [Fact]
+        public void ToObject() {
 
-   
+            var expectedObject = new Person {
+                FirstName = "Bob",
+                LastName = "Barker"
+            };
+
+            var json = "{\"FirstName\":\"Bob\",\"LastName\":\"Barker\"}";
+            var j = new Json().FromString(json);
+            var actualObject = j.ToObject<Person>();
+
+            Assert.Equal(expectedObject.FirstName, actualObject.FirstName);
+            Assert.Equal(expectedObject.LastName, actualObject.LastName);
+
+        }
+
+
+        [Fact]
+        public void ToStringTest() {
+
+            var expectedObject = new Person {
+                FirstName = "Bob",
+                LastName = "Barker"
+            };
+
+            var json = "{\"FirstName\":\"Bob\",\"LastName\":\"Barker\"}";
+            var j = new Json().FromString(json);
+            var actualObject = j.ToObject<Person>();
+
+            Assert.Equal(j.ToString(), JToken.Parse(json).ToString());
+
+        }
+
+        [Fact]
+        public void EqualsTest() {
+
+            var person1 = new Person {
+                FirstName = "Bob",
+                LastName = "Barker"
+            };
+
+            var person2 = new Person {
+                FirstName = "Bob",
+                LastName = "Barker"
+            };
+
+            var j1 = new Json().FromObject(person1);
+            var j2 = new Json().FromObject(person2);
+
+            Assert.Equal(j1,j2);
+
+        }
 
     }
 }

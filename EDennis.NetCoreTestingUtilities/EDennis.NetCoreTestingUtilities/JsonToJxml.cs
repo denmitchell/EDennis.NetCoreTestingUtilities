@@ -30,6 +30,7 @@ namespace EDennis.NetCoreTestingUtilities.Json {
         public const string OBJECT = "object";
         public const string VALUE = "value";
         public const string IGNORE = "ignore";
+        public const string TYPE = "type";
         public const string NAMESPACE_URI = "http://edennis.com/2013/jsonxml";
         public const string NAMESPACE_PREFIX = "jx";
 
@@ -283,26 +284,22 @@ namespace EDennis.NetCoreTestingUtilities.Json {
 
             //write a start element for the value
             xwriter.WriteStartElement(tags.Peek().Prefix, tags.Peek().Name, tags.Peek().URI);
+            //write the value type to a jx:type attribute
+            xwriter.WriteAttributeString(NAMESPACE_PREFIX, TYPE, NAMESPACE_URI, jsonValueType);
 
             //if this value is part of an array ... 
             if (lineage.Peek().Type == JsonContextType.ARRAY) {
                 //if this is a subsequent item in the same array, output a jx:ignore="ignore" attribute
                 if (lineage.Peek().ChildCount > 1)
-                    xwriter.WriteAttributeString(NAMESPACE_PREFIX, IGNORE, null);
+                    xwriter.WriteAttributeString(NAMESPACE_PREFIX, IGNORE, NAMESPACE_URI, IGNORE);
                 //output all relevant <?array ___________?> processing instructions
                 WriteArrayItems();
                 //increment the counter for children of this array
                 lineage.Peek().ChildCount++;
             }
 
-            //write a 'start' processing instruction of the form:
-            //<?string-start?> or <?integer-start?> or <?date-start?> ... etc.
-            xwriter.WriteProcessingInstruction($"{jsonValueType}-start", null);
             //write the value
             xwriter.WriteValue(value);
-            //write an 'end' processing instruction of the form:
-            //<?string-end?> or <?integer-end?> or <?date-end?> ... etc.
-            xwriter.WriteProcessingInstruction($"{jsonValueType}-end", null);
             //write an end element
             xwriter.WriteEndElement();
 
