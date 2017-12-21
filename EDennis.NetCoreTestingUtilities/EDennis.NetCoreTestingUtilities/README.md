@@ -1,2 +1,6 @@
 # NetCoreTestingUtilities
-Provides methods for executing test cases defined in JSON files, and also provides helpful Object extensions (e.g., toJsonString, fromJsonString, fromJsonPath, isEqual, isSame ... etc.)
+The NetCoreTestingUtilities package provides supplementary tools for .NET Core 2 unit testing.  The package is divided into four main classes:
+1. **[ObjectExtensions](https://github.com/denmitchell/NetCoreTestingUtilities/wiki/Object-Extensions)** -- which provides methods for loading objects from JSON and SQL, generating JSON from objects, and performing deep comparisons of objects.
+2. **[Json](https://github.com/denmitchell/NetCoreTestingUtilities/wiki/Json-Class)** -- which provides methods similar to ObjectExtensions, but which targets a Json.NET JToken, rather than objects of specific classes.
+3. **[Jxml](https://github.com/denmitchell/NetCoreTestingUtilities/wiki/Jxml-Class-and-JXML)**-- which provides methods for translating between JSON and JXML -- a flavor of XML that includes special processing instructions, as well as generic elements and attributes, for ensuring the full recovery of a JSON document from XML.
+4. **[JsonAssert](https://github.com/denmitchell/NetCoreTestingUtilities/wiki/JsonAssert-Class)** -- which provides a highly structured, file-driven testing framework, in which test cases are specified in JSON files.

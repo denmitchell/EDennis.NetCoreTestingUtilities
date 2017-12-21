@@ -5,13 +5,15 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Dennis Mitchell</Authors>
     <Company>edennis.com</Company>
-    <Description>Provides methods for executing test cases defined in JSON files, and also provides helpful Object extensions (e.g., toJsonString, fromJsonString, fromJsonPath, isEqual, isSame ... etc.)</Description>
-    <PackageTags>Json Testing</PackageTags>
+    <Description>Provides various classes that assist with .NET Core 2 unit testing.  Among the classes are ObjectExtensions, which provides useful extensions to the Object class (e.g., methods for deep comparison, deep cloning, JSON serialization/deserialization); Json, which provides a fluent API wrapper around Json.NET JToken; Jxml, which provides methods for converting JSON to and from 'JXML' (a special form of XML that includes processing instructions and namespace-specific elements and attributes to aid with the recovery of JSON from XML); and JsonAssert, which provides a highly structured, JSON-file-driven approach to unit testing.</Description>
+    <PackageTags>Json Testing JXML XML</PackageTags>
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://github.com/denmitchell/NetCoreTestingUtilities/blob/master/EDennis.NetCoreTestingUtilities/EDennis.NetCoreTestingUtilities/edennis128.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>2.0.0</Version>
-    <PackageReleaseNotes>Includes (a) methods for building objects from SQL Server FOR JSON queries, (b) new Json class, which provides functionality similar to the Object extensions, but targets a Json.NET JToken, rather than an object of a particuar class.</PackageReleaseNotes>
+    <Version>2.1.0.0</Version>
+    <PackageReleaseNotes>Includes (a) Json class, and (b) Jxml class</PackageReleaseNotes>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+    <FileVersion>2.1.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
