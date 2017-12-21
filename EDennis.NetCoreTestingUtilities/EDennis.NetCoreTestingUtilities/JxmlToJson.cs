@@ -56,7 +56,7 @@ namespace EDennis.NetCoreTestingUtilities.Json {
                             //write a property key
                             case XmlNodeType.Element: {
                                     if (xreader.Prefix != JsonToJxml.NAMESPACE_PREFIX
-                                        && xreader.GetAttribute(JsonToJxml.IGNORE, JsonToJxml.NAMESPACE_URI) != JsonToJxml.IGNORE) {
+                                        && xreader.GetAttribute(JsonToJxml.SUBSIB, JsonToJxml.NAMESPACE_URI) != "true") {
                                         jwriter.WritePropertyName(xreader.Name);
                                     }
                                     //get the data type from the jx:type attribute, if present.

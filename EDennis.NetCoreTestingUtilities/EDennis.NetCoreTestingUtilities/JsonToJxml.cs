@@ -29,7 +29,7 @@ namespace EDennis.NetCoreTestingUtilities.Json {
         public const string ROOT = "root";
         public const string OBJECT = "object";
         public const string VALUE = "value";
-        public const string IGNORE = "ignore";
+        public const string SUBSIB = "sub-sib";
         public const string TYPE = "type";
         public const string NAMESPACE_URI = "http://edennis.com/2013/jsonxml";
         public const string NAMESPACE_PREFIX = "jx";
@@ -150,9 +150,9 @@ namespace EDennis.NetCoreTestingUtilities.Json {
 
                                     //if this object is part of an array ... 
                                     if (lineage.Peek().Type == JsonContextType.ARRAY) {
-                                        //if this is a subsequent item in the same array, output a jx:ignore="ignore" attribute
+                                        //if this is a subsequent item in the same array, output a jx:sub-sib="true" attribute
                                         if (lineage.Peek().ChildCount > 1)
-                                            xwriter.WriteAttributeString(NAMESPACE_PREFIX, IGNORE, NAMESPACE_URI, IGNORE);
+                                            xwriter.WriteAttributeString(NAMESPACE_PREFIX, SUBSIB, NAMESPACE_URI, "true");
                                         //output all relevant <?array ___________?> processing instructions
                                         WriteArrayItems();
                                         //increment the counter for children of this array
@@ -289,9 +289,9 @@ namespace EDennis.NetCoreTestingUtilities.Json {
 
             //if this value is part of an array ... 
             if (lineage.Peek().Type == JsonContextType.ARRAY) {
-                //if this is a subsequent item in the same array, output a jx:ignore="ignore" attribute
+                //if this is a subsequent item in the same array, output a jx:sub-sib="true" attribute
                 if (lineage.Peek().ChildCount > 1)
-                    xwriter.WriteAttributeString(NAMESPACE_PREFIX, IGNORE, NAMESPACE_URI, IGNORE);
+                    xwriter.WriteAttributeString(NAMESPACE_PREFIX, SUBSIB, NAMESPACE_URI, "true");
                 //output all relevant <?array ___________?> processing instructions
                 WriteArrayItems();
                 //increment the counter for children of this array

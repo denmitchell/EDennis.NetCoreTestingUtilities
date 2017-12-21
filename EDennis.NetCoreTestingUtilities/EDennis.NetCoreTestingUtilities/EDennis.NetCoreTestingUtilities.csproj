@@ -10,8 +10,8 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://github.com/denmitchell/NetCoreTestingUtilities/blob/master/EDennis.NetCoreTestingUtilities/EDennis.NetCoreTestingUtilities/edennis128.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>2.1.0.0</Version>
-    <PackageReleaseNotes>Includes (a) Json class, and (b) Jxml class</PackageReleaseNotes>
+    <Version>2.1.0.1</Version>
+    <PackageReleaseNotes>Replaced jx:ignore with jx:sub-sib</PackageReleaseNotes>
     <AssemblyVersion>2.1.0.0</AssemblyVersion>
     <FileVersion>2.1.0.0</FileVersion>
   </PropertyGroup>
