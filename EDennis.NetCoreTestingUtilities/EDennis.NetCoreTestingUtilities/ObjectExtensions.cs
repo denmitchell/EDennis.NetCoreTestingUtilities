@@ -146,21 +146,25 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
             //use regular expression to split jsonFileObjectPath into a 
             //separate file path and object path
-            MatchCollection mc = Regex.Matches(jsonFileObjectPath, @".*\.json(\\|/|\.)");
+            MatchCollection mc = Regex.Matches(jsonFileObjectPath, @".*\.json(\\|/|\.)?");
             if (mc.Count == 0)
-                throw new FormatException($"jsonFileObjectPath value ({jsonFileObjectPath}) must be a .json file name followed by \\ and then path to the object");
+                throw new FormatException($"jsonFileObjectPath value ({jsonFileObjectPath}) must be a .json file name optionally followed by \\ and then path to the object");
 
-            string[] paths = Regex.Split(jsonFileObjectPath, @"\.json(\\|/|\.)");
+            string[] paths = Regex.Split(jsonFileObjectPath, @"\.json(\\|/|\.)?");
 
             string filePath = paths[0] + ".json";
-            string objectPath = paths[2].Replace(@"\", ".").Replace(@"/", ".");
 
             string json = System.IO.File.ReadAllText(filePath);
             JToken jtoken = JToken.Parse(json);
-            jtoken = jtoken.SelectToken(objectPath);
 
-            if (jtoken == null) {
-                throw new FormatException($"{filePath} does not contain the target json path: \"{objectPath}\".");
+            if (paths.Length == 3) {
+                var objectPath = paths[2].Replace(@"\", ".").Replace(@"/", ".");
+                jtoken = jtoken.SelectToken(objectPath);
+
+                if (jtoken == null) {
+                    throw new FormatException($"{filePath} does not contain the target json path: \"{objectPath}\".");
+                }
+
             }
 
             T objNew = jtoken.ToObject<T>();

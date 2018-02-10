@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace EDennis.NetCoreTestingUtilities {
 
@@ -22,16 +23,29 @@ namespace EDennis.NetCoreTestingUtilities {
         /// method assumes an instance (non-static) method.
         /// NOTE: for this version of the ExecuteTest method, the
         /// JSON file must reside in a subfolder having the same
-        /// name as the method under test, and this subfolder
-        /// must be in a folder having the same name as as the 
-        /// class under test.
+        /// name as the method under test.  If the method subfolder
+        /// resides in a top-level folder having the class name under
+        /// test, then the filePath parameter can consist of just the
+        /// file name.  The method name will be determined by 
+        /// reflection.
         /// </summary>
         /// <typeparam name="T">Type of the object under test</typeparam>
         /// <param name="obj">The object under test</param>
-        /// <param name="testCase">The name of the JSON file (excluding its extension)</param>
-        /// <seealso cref="ExecuteTest{T}(T, string, string, string)"/>
-        public static void ExecuteTest<T>(T obj, string testCase){
-            var test = new Test<T>(obj, testCase);
+        /// <param name="filePath">The path to the JSON file.  The file
+        /// path can be the full (relative) file path or, if the file
+        /// is nested in a folder named for the class name under test and a 
+        /// subfolder named for the method name under test, the simple 
+        /// file name (with or without the .json extension)
+        /// </param>
+        /// <seealso cref="ExecuteTest{T}(T, string, string)"/>
+        public static void ExecuteTest<T>(T obj, string filePath){
+            Test<T> test;
+            if (Regex.IsMatch(filePath, @"(?:[^\\]*\\)?([^\\]*)\\[^\\]*")) {
+                var methodName = Regex.Replace(filePath, @"(?:[^\\]*\\)?([^\\]*)\\[^\\]*", "$1");
+                test = new Test<T>(obj, methodName, filePath);
+            } else {
+                test = new Test<T>(obj, filePath);
+            }
             ExecuteTest(obj, test);
         }
 
@@ -96,8 +110,8 @@ namespace EDennis.NetCoreTestingUtilities {
             object expectedOutput = null;
             try {
                 expectedOutput = test.JToken["returns"].ToObject(methodInfo.ReturnType);
-            } catch (Exception) {
-                throw new FormatException($"\"returns\" is missing in the JSON test file.  \"returns\" must be a top-level object property in that file.");
+            } catch (Exception e) {
+                throw new FormatException($"\"returns\" is missing in the JSON test file.  \"returns\" must be a top-level object property in that file. ..." + e.Message);
             }
 
             //test expected versus actual output
@@ -155,7 +169,7 @@ namespace EDennis.NetCoreTestingUtilities {
             /// <param name="testCase">The name of the JSON file (excluding its extension)</param>
             public Test(T obj, string testCase) {
                 ClassName = obj.GetType().Name;
-                TestCase = testCase;
+                TestCase = Regex.Replace(testCase,"\\.json$","");
                 GetMethodName(ClassName);
                 BuildJToken();
             }

@@ -10,10 +10,10 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://github.com/denmitchell/NetCoreTestingUtilities/blob/master/EDennis.NetCoreTestingUtilities/EDennis.NetCoreTestingUtilities/edennis128.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>2.1.0.1</Version>
-    <PackageReleaseNotes>Replaced jx:ignore with jx:sub-sib</PackageReleaseNotes>
-    <AssemblyVersion>2.1.0.0</AssemblyVersion>
-    <FileVersion>2.1.0.0</FileVersion>
+    <Version>2.2.0</Version>
+    <PackageReleaseNotes>This release contains an attribute called Folder which takes an optional parameter for a path.  The Folder attribute is designed to be used in conjunction with an Xunit Theory attribute.  The Folder attribute returns an IEnumerable of objects representing paths of files in the target folder.  JsonAssert.Execute has been modified to optionally accept a file path as a parameter (as opposed to only accepting a simple file name).  This change makes it easier to use the new Folder attribute with JsonAssert.Execute.</PackageReleaseNotes>
+    <AssemblyVersion>2.2.0.0</AssemblyVersion>
+    <FileVersion>2.2.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +23,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.1" />
     <PackageReference Include="JsonDiffPatch" Version="2.0.45" />
+    <PackageReference Include="xunit" Version="2.3.1" />
   </ItemGroup>
   
   </Project>
