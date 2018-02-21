@@ -11,10 +11,10 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://github.com/denmitchell/NetCoreTestingUtilities/blob/master/EDennis.NetCoreTestingUtilities/EDennis.NetCoreTestingUtilities/edennis128.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>2.2.1</Version>
-    <PackageReleaseNotes>The overloads of ToJsonString and IsEqual that take a string[] parameter of pathsToIgnore have been updated to address circular referencing.</PackageReleaseNotes>
-    <AssemblyVersion>2.2.1.0</AssemblyVersion>
-    <FileVersion>2.2.1.0</FileVersion>
+    <Version>2.2.2</Version>
+    <PackageReleaseNotes>Fixed minor bug with the overload of IsEqual that takes pathsToIgnore parameter.</PackageReleaseNotes>
+    <AssemblyVersion>2.2.2.0</AssemblyVersion>
+    <FileVersion>2.2.2.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

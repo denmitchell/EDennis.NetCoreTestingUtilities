@@ -78,7 +78,7 @@ namespace EDennis.NetCoreTestingUtilities.Json
             xpath = xpath.Replace(@"/", ".").Replace(@"\", ".");
 
             //escape disallowed XML characters
-            xpath = Escape(xpath);
+            //xpath = Escape(xpath);
 
 
             //handle the root element
@@ -126,13 +126,14 @@ namespace EDennis.NetCoreTestingUtilities.Json
             //restore decimal points in predicates
             xpath = xpath.Replace(guid, ".");
 
-            //handle arrays of objects, whose XPATH begins with /jx:root/jx:object or /js:root/jx:value
-            xpath = xpath + "|" + xpath.Replace($"/{JsonToJxml.NAMESPACE_PREFIX + ":" + JsonToJxml.ROOT}/",
-                $"/{JsonToJxml.NAMESPACE_PREFIX + ":" + JsonToJxml.ROOT}/{JsonToJxml.NAMESPACE_PREFIX + ":" + JsonToJxml.OBJECT}")
+            //handle arrays of objects, whose XPATH begins with /jx:root
+            if (xpath.StartsWith("/jx:root")){
+                xpath = xpath + "|" + xpath.Replace($"/{JsonToJxml.NAMESPACE_PREFIX + ":" + JsonToJxml.ROOT}/",
+                    $"/{JsonToJxml.NAMESPACE_PREFIX + ":" + JsonToJxml.ROOT}/{JsonToJxml.NAMESPACE_PREFIX + ":" + JsonToJxml.OBJECT}")
 
-                + "|" + xpath.Replace($"/{JsonToJxml.NAMESPACE_PREFIX + ":" + JsonToJxml.ROOT}/",
-                $"/{JsonToJxml.NAMESPACE_PREFIX + ":" + JsonToJxml.ROOT}/{JsonToJxml.NAMESPACE_PREFIX + ":" + JsonToJxml.VALUE}");
-
+                    + "|" + xpath.Replace($"/{JsonToJxml.NAMESPACE_PREFIX + ":" + JsonToJxml.ROOT}/",
+                    $"/{JsonToJxml.NAMESPACE_PREFIX + ":" + JsonToJxml.ROOT}/{JsonToJxml.NAMESPACE_PREFIX + ":" + JsonToJxml.VALUE}");
+            }
             xpath = xpath.Replace("/[", "[").Replace("/[", "["); //handle invalid path
             return xpath;
         }
