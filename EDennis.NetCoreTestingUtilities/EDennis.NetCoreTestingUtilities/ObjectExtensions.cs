@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using EDennis.NetCoreTestingUtilities.Json;
+using Newtonsoft.Json;
 
 namespace EDennis.NetCoreTestingUtilities.Extensions {
 
@@ -73,10 +74,14 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <see href="https://github.com/json-path/JsonPath"/>
         public static bool IsEqual<T>(this object obj1, T obj2, string[] pathsToIgnore) {
 
-            var jtokens = new JToken[] { JToken.FromObject(obj1), JToken.FromObject(obj2) };
+            var json1 = obj1.ToJsonString(pathsToIgnore);
+            var json2 = obj2.ToJsonString(pathsToIgnore);
+            return json1 == json2;
 
-            return jtokens[0].Filter(pathsToIgnore).ToString() 
-                == jtokens[1].Filter(pathsToIgnore).ToString();
+            //var jtokens = new JToken[] { JToken.FromObject(obj1), JToken.FromObject(obj2) };
+
+            //return jtokens[0].Filter(pathsToIgnore).ToString() 
+            //    == jtokens[1].Filter(pathsToIgnore).ToString();
 
         }
 
@@ -86,9 +91,29 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// </summary>
         /// <param name="obj">the current object</param>
         /// <returns>A JSON string representation of the object</returns>
+        /// <seealso cref="ToJsonString(object)"/>
         public static string ToJsonString(this object obj) {
             return JToken.FromObject(obj).ToString();
         }
+
+
+        /// <summary>
+        /// Serializes an object to a JSON string
+        /// </summary>
+        /// <param name="obj">the current object</param>
+        /// <param name="pathsToIgnore">a string array of JSON Paths, whose
+        /// associated property values should be ignored.</param>
+        /// <returns>A JSON string representation of the object</returns>
+        public static string ToJsonString(this object obj, string[] pathsToIgnore) {
+
+            string json = JsonConvert.SerializeObject(obj, Formatting.Indented, new JsonSerializerSettings {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
+            var jtoken = JToken.Parse(json);
+            jtoken = jtoken.Filter(pathsToIgnore);
+            return jtoken.ToString();
+        }
+
 
 
         /// <summary>
