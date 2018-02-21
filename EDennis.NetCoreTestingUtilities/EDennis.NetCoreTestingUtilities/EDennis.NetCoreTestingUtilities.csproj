@@ -5,7 +5,8 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Dennis Mitchell</Authors>
     <Company>edennis.com</Company>
-    <Description>Provides various classes that assist with .NET Core 2 unit testing.  Among the classes are ObjectExtensions, which provides useful extensions to the Object class (e.g., methods for deep comparison, deep cloning, JSON serialization/deserialization); Json, which provides a fluent API wrapper around Json.NET JToken; Jxml, which provides methods for converting JSON to and from 'JXML' (a special form of XML that includes processing instructions and namespace-specific elements and attributes to aid with the recovery of JSON from XML); and JsonAssert, which provides a highly structured, JSON-file-driven approach to unit testing.</Description>
+    <Description>Provides various classes that assist with .NET Core 2 unit testing.</Description>
+    <Summary>Provides various classes that assist with .NET Core 2 unit testing.</Summary>
     <PackageTags>Json Testing JXML XML</PackageTags>
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://github.com/denmitchell/NetCoreTestingUtilities/blob/master/EDennis.NetCoreTestingUtilities/EDennis.NetCoreTestingUtilities/edennis128.png</PackageIconUrl>
@@ -17,13 +18,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="OLDJson2Xml2.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.1" />
     <PackageReference Include="JsonDiffPatch" Version="2.0.45" />
-    <PackageReference Include="xunit" Version="2.3.1" />
+
   </ItemGroup>
   
   </Project>
