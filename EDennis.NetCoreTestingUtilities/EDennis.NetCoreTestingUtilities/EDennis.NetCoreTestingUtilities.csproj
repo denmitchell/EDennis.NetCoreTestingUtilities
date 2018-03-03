@@ -11,19 +11,16 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://github.com/denmitchell/NetCoreTestingUtilities/blob/master/EDennis.NetCoreTestingUtilities/EDennis.NetCoreTestingUtilities/edennis128.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>2.2.3</Version>
-    <PackageReleaseNotes>Added FileStringComparer, which provides a side-by-side rendering of two strings -- most suitable for JSON or XML.  ObjectExtensions includes a new method IsEqualOrPrint, which works with ITestOutputHelper from XUnit.Abstractions to print side-by-side renderings of JSON when two objects are not equal.</PackageReleaseNotes>
-    <AssemblyVersion>2.2.3.0</AssemblyVersion>
+    <Version>2.2.3.1</Version>
+    <PackageReleaseNotes>Bug Fix with Xunit reference</PackageReleaseNotes>
+    <AssemblyVersion>2.2.3.1</AssemblyVersion>
     <FileVersion>2.2.2.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.1" />
     <PackageReference Include="JsonDiffPatch" Version="2.0.45" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\EDennis.NetCoreTestingUtilities.XUnit\EDennis.NetCoreTestingUtilities.XUnit.csproj" />
+    <PackageReference Include="xunit.abstractions" Version="2.0.1" />
   </ItemGroup>
   
   </Project>

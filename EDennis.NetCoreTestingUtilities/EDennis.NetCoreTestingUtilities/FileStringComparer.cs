@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Xunit;
 
 namespace EDennis.NetCoreTestingUtilities {
 
@@ -103,11 +102,6 @@ namespace EDennis.NetCoreTestingUtilities {
                 if (s.Length > maxLen)
                     maxLen = s.Length;
             return maxLen;
-        }
-
-        [Fact]
-        public void DummyTest() {
-
         }
 
     }
