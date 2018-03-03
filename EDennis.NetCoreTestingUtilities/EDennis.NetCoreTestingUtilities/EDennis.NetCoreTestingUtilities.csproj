@@ -11,9 +11,9 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://github.com/denmitchell/NetCoreTestingUtilities/blob/master/EDennis.NetCoreTestingUtilities/EDennis.NetCoreTestingUtilities/edennis128.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>2.2.3.1</Version>
+    <Version>2.2.4</Version>
     <PackageReleaseNotes>Bug Fix with Xunit reference</PackageReleaseNotes>
-    <AssemblyVersion>2.2.3.1</AssemblyVersion>
+    <AssemblyVersion>2.2.4</AssemblyVersion>
     <FileVersion>2.2.2.0</FileVersion>
   </PropertyGroup>
 
