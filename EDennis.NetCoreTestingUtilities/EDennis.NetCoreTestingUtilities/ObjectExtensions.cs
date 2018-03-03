@@ -6,6 +6,8 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using EDennis.NetCoreTestingUtilities.Json;
 using Newtonsoft.Json;
+using Xunit.Abstractions;
+using Xunit;
 
 namespace EDennis.NetCoreTestingUtilities.Extensions {
 
@@ -78,10 +80,108 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
             var json2 = obj2.ToJsonString(pathsToIgnore);
             return json1 == json2;
 
-            //var jtokens = new JToken[] { JToken.FromObject(obj1), JToken.FromObject(obj2) };
+        }
 
-            //return jtokens[0].Filter(pathsToIgnore).ToString() 
-            //    == jtokens[1].Filter(pathsToIgnore).ToString();
+
+        /// <summary>
+        /// Determines if two objects have the same exact values for
+        /// all of their corresponding properties.  Note: this is a
+        /// deep comparison.  This method will print side-by-side
+        /// comparisons if the two objects are not equal.
+        /// NOTE: Requires Xunit
+        /// NOTE: The current object should be the "actual" object
+        /// </summary>
+        /// <typeparam name="T">The type of the current object</typeparam>
+        /// <param name="obj1">The current object</param>
+        /// <param name="obj2">The object to compare</param>
+        /// <param name="output">object used by Xunit to print to console</param>
+        /// <returns>true, if equal; false, otherwise</returns>
+        /// <seealso cref="IsEqualOrPrint{T}(object, T, string[])"/>
+        public static bool IsEqualOrPrint<T>(this object obj1, T obj2, ITestOutputHelper output) {
+            var json1 = obj1.ToJsonString();
+            var json2 = obj2.ToJsonString();
+            var isEqual = (json1 == json2);
+
+            if (!isEqual)
+                output.WriteLine(FileStringComparer.GetSideBySideFileStrings(json2, json1, "EXPECTED", "ACTUAL"));
+
+            return isEqual;
+        }
+
+        /// <summary>
+        /// Determines if two objects have the same exact values for
+        /// all of their corresponding properties, excluding the properties
+        /// associated with pathsToIgnore.  This method will print side-by-side
+        /// comparisons if the two objects are not equal.
+        /// NOTE: Requires Xunit
+        /// NOTE: The current object should be the "actual" object
+        /// </summary>
+        /// <typeparam name="T">The type of the current object</typeparam>
+        /// <param name="obj1">The current object</param>
+        /// <param name="obj2">The object to compare</param>
+        /// <param name="pathsToIgnore">a string array of JSON Paths, whose
+        /// associated property values should be ignored.</param>
+        /// <param name="output">object used by Xunit to print to console</param>
+        /// <returns>true, if equal; false, otherwise</returns>
+        /// <seealso cref="IsEqualOrPrint{T}(object, T)"/>
+        /// <see href="https://github.com/json-path/JsonPath"/>
+        public static bool IsEqualOrPrint<T>(this object obj1, T obj2, string[] pathsToIgnore, ITestOutputHelper output) {
+
+            var json1 = obj1.ToJsonString(pathsToIgnore);
+            var json2 = obj2.ToJsonString(pathsToIgnore);
+            var isEqual = (json1 == json2);
+
+            if (!isEqual)
+                output.WriteLine(FileStringComparer.GetSideBySideFileStrings(json2, json1, "EXPECTED", "ACTUAL"));
+
+            return isEqual;
+
+        }
+
+
+
+
+        /// <summary>
+        /// Determines if two objects have the same exact values for
+        /// all of their corresponding properties.  Note: this is a
+        /// deep comparison.
+        /// </summary>
+        /// <typeparam name="T">The type of the current object</typeparam>
+        /// <param name="obj1">The current object</param>
+        /// <param name="obj2">The object to compare</param>
+        /// <param name="label1">Label for the current object</param>
+        /// <param name="label2">Label for the object to compare</param>
+        /// <returns>side-by-side rendering of objects</returns>
+        /// <seealso cref="Juxtapose{T}(object, T, string[])"/>
+        public static string Juxtapose<T>(this object obj1, T obj2, string label1, string label2) {
+
+            var json1 = obj1.ToJsonString();
+            var json2 = obj2.ToJsonString();
+
+            return FileStringComparer.GetSideBySideFileStrings(json1, json2, label1, label2);
+        }
+
+        /// <summary>
+        /// Determines if two objects have the same exact values for
+        /// all of their corresponding properties, excluding the properties
+        /// associated with pathsToIgnore.
+        /// </summary>
+        /// <typeparam name="T">The type of the current object</typeparam>
+        /// <param name="obj1">The current object</param>
+        /// <param name="obj2">The object to compare</param>
+        /// <param name="label1">Label for the current object</param>
+        /// <param name="label2">Label for the object to compare</param>
+        /// <param name="pathsToIgnore">a string array of JSON Paths, whose
+        /// associated property values should be ignored.</param>
+        /// <returns>side-by-side rendering of objects</returns>
+        /// <seealso cref="Juxtapose{T}(object, T)"/>
+        /// <see href="https://github.com/json-path/JsonPath"/>
+        public static string Juxtapose<T>(this object obj1, T obj2, string label1, string label2, string[] pathsToIgnore) {
+
+            var json1 = obj1.ToJsonString(pathsToIgnore);
+            var json2 = obj2.ToJsonString(pathsToIgnore);
+
+            return FileStringComparer.GetSideBySideFileStrings(json1, json2, label1, label2);
 
         }
 
