@@ -8,6 +8,7 @@ using EDennis.NetCoreTestingUtilities.Json;
 using Newtonsoft.Json;
 using Xunit.Abstractions;
 using Xunit;
+using EDennis.JsonUtils;
 
 namespace EDennis.NetCoreTestingUtilities.Extensions {
 
@@ -57,8 +58,12 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <returns>true, if equal; false, otherwise</returns>
         /// <seealso cref="IsEqual{T}(object, T, string[])"/>
         public static bool IsEqual<T>(this object obj1, T obj2) {
-            return JToken.FromObject(obj1).ToString()
-                    == JToken.FromObject(obj2).ToString();
+            string json1 = JsonConvert.SerializeObject(obj1,
+                Formatting.Indented, new SafeJsonSerializerSettings());
+            string json2 = JsonConvert.SerializeObject(obj2,
+                Formatting.Indented, new SafeJsonSerializerSettings());
+
+            return json1 == json2;
         }
 
         /// <summary>
@@ -69,17 +74,21 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <typeparam name="T">The type of the current object</typeparam>
         /// <param name="obj1">The current object</param>
         /// <param name="obj2">The object to compare</param>
-        /// <param name="pathsToIgnore">a string array of JSON Paths, whose
-        /// associated property values should be ignored.</param>
+        /// <param name="propertiesToIgnore">a string array of 
+        /// property names that will be ignored.</param>
         /// <returns>true, if equal; false, otherwise</returns>
         /// <seealso cref="IsEqual{T}(object, T)"/>
         /// <see href="https://github.com/json-path/JsonPath"/>
-        public static bool IsEqual<T>(this object obj1, T obj2, string[] pathsToIgnore) {
+        public static bool IsEqual<T>(this object obj1, T obj2, string[] propertiesToIgnore) {
 
-            var json1 = obj1.ToJsonString(pathsToIgnore);
-            var json2 = obj2.ToJsonString(pathsToIgnore);
+            string json1 = JsonConvert.SerializeObject(obj1,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    99,propertiesToIgnore));
+            string json2 = JsonConvert.SerializeObject(obj2,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    99, propertiesToIgnore));
+
             return json1 == json2;
-
         }
 
 
@@ -96,11 +105,15 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <param name="obj2">The object to compare</param>
         /// <param name="output">object used by Xunit to print to console</param>
         /// <returns>true, if equal; false, otherwise</returns>
-        /// <seealso cref="IsEqualOrPrint{T}(object, T, string[])"/>
-        public static bool IsEqualOrPrint<T>(this object obj1, T obj2, ITestOutputHelper output) {
-            var json1 = obj1.ToJsonString();
-            var json2 = obj2.ToJsonString();
-            var isEqual = (json1 == json2);
+        /// <seealso cref="IsEqualOrWrite{T}(object, T, string[])"/>
+        public static bool IsEqualOrWrite<T>(this object obj1, T obj2, ITestOutputHelper output) {
+
+            string json1 = JsonConvert.SerializeObject(obj1,
+                Formatting.Indented, new SafeJsonSerializerSettings());
+            string json2 = JsonConvert.SerializeObject(obj2,
+                Formatting.Indented, new SafeJsonSerializerSettings());
+
+            var isEqual = json1 == json2;
 
             if (!isEqual)
                 output.WriteLine(FileStringComparer.GetSideBySideFileStrings(json2, json1, "EXPECTED", "ACTUAL"));
@@ -119,16 +132,21 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <typeparam name="T">The type of the current object</typeparam>
         /// <param name="obj1">The current object</param>
         /// <param name="obj2">The object to compare</param>
-        /// <param name="pathsToIgnore">a string array of JSON Paths, whose
-        /// associated property values should be ignored.</param>
+        /// <param name="propertiesToIgnore">a string array of 
+        /// property names that will be ignored.</param>
         /// <param name="output">object used by Xunit to print to console</param>
         /// <returns>true, if equal; false, otherwise</returns>
-        /// <seealso cref="IsEqualOrPrint{T}(object, T)"/>
+        /// <seealso cref="IsEqualOrWrite{T}(object, T)"/>
         /// <see href="https://github.com/json-path/JsonPath"/>
-        public static bool IsEqualOrPrint<T>(this object obj1, T obj2, string[] pathsToIgnore, ITestOutputHelper output) {
+        public static bool IsEqualOrWrite<T>(this object obj1, T obj2, string[] propertiesToIgnore, ITestOutputHelper output) {
 
-            var json1 = obj1.ToJsonString(pathsToIgnore);
-            var json2 = obj2.ToJsonString(pathsToIgnore);
+            string json1 = JsonConvert.SerializeObject(obj1,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    99, propertiesToIgnore));
+            string json2 = JsonConvert.SerializeObject(obj2,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    99, propertiesToIgnore));
+
             var isEqual = (json1 == json2);
 
             if (!isEqual)
@@ -155,8 +173,10 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <seealso cref="Juxtapose{T}(object, T, string[])"/>
         public static string Juxtapose<T>(this object obj1, T obj2, string label1, string label2) {
 
-            var json1 = obj1.ToJsonString();
-            var json2 = obj2.ToJsonString();
+            string json1 = JsonConvert.SerializeObject(obj1,
+                Formatting.Indented, new SafeJsonSerializerSettings());
+            string json2 = JsonConvert.SerializeObject(obj2,
+                Formatting.Indented, new SafeJsonSerializerSettings());
 
             return FileStringComparer.GetSideBySideFileStrings(json1, json2, label1, label2);
         }
@@ -171,15 +191,19 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <param name="obj2">The object to compare</param>
         /// <param name="label1">Label for the current object</param>
         /// <param name="label2">Label for the object to compare</param>
-        /// <param name="pathsToIgnore">a string array of JSON Paths, whose
-        /// associated property values should be ignored.</param>
+        /// <param name="propertiesToIgnore">a string array of 
+        /// property names that will be ignored.</param>
         /// <returns>side-by-side rendering of objects</returns>
         /// <seealso cref="Juxtapose{T}(object, T)"/>
         /// <see href="https://github.com/json-path/JsonPath"/>
-        public static string Juxtapose<T>(this object obj1, T obj2, string label1, string label2, string[] pathsToIgnore) {
+        public static string Juxtapose<T>(this object obj1, T obj2, string label1, string label2, string[] propertiesToIgnore) {
 
-            var json1 = obj1.ToJsonString(pathsToIgnore);
-            var json2 = obj2.ToJsonString(pathsToIgnore);
+            string json1 = JsonConvert.SerializeObject(obj1,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    99, propertiesToIgnore));
+            string json2 = JsonConvert.SerializeObject(obj2,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    99, propertiesToIgnore));
 
             return FileStringComparer.GetSideBySideFileStrings(json1, json2, label1, label2);
 
@@ -193,7 +217,8 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <returns>A JSON string representation of the object</returns>
         /// <seealso cref="ToJsonString(object)"/>
         public static string ToJsonString(this object obj) {
-            return JToken.FromObject(obj).ToString();
+            return JsonConvert.SerializeObject(obj,
+                Formatting.Indented, new SafeJsonSerializerSettings());
         }
 
 
@@ -201,17 +226,14 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// Serializes an object to a JSON string
         /// </summary>
         /// <param name="obj">the current object</param>
-        /// <param name="pathsToIgnore">a string array of JSON Paths, whose
+        /// <param name="propertiesToIgnore">a string array of JSON Paths, whose
         /// associated property values should be ignored.</param>
         /// <returns>A JSON string representation of the object</returns>
-        public static string ToJsonString(this object obj, string[] pathsToIgnore) {
+        public static string ToJsonString(this object obj, string[] propertiesToIgnore) {
 
-            string json = JsonConvert.SerializeObject(obj, Formatting.Indented, new JsonSerializerSettings {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            });
-            var jtoken = JToken.Parse(json);
-            jtoken = jtoken.Filter(pathsToIgnore);
-            return jtoken.ToString();
+            return JsonConvert.SerializeObject(obj,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    99, propertiesToIgnore));
         }
 
 
@@ -392,5 +414,8 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         public static JToken Filter(this JToken jtoken, string[] pathsToRemove) {
             return JsonFilterer.ApplyFilter(jtoken, pathsToRemove);
         }
+
+
+
     }
 }

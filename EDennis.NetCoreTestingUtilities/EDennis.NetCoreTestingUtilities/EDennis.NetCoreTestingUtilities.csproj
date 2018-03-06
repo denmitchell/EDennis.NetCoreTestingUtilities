@@ -11,13 +11,14 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://github.com/denmitchell/NetCoreTestingUtilities/blob/master/EDennis.NetCoreTestingUtilities/EDennis.NetCoreTestingUtilities/edennis128.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>2.2.4</Version>
-    <PackageReleaseNotes>Bug Fix with Xunit reference</PackageReleaseNotes>
-    <AssemblyVersion>2.2.4</AssemblyVersion>
-    <FileVersion>2.2.2.0</FileVersion>
+    <Version>2.3.0-alpha</Version>
+    <PackageReleaseNotes>Incorporated SafeJsonConverter from EDennis.JsonUtils into the following ObjectExtensions methods: IsEqual, IsEqualOrWrite, ToJsonString</PackageReleaseNotes>
+    <AssemblyVersion>2.3.0</AssemblyVersion>
+    <FileVersion>2.3.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EDennis.JsonUtils" Version="0.0.4-alpha" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.1" />
     <PackageReference Include="JsonDiffPatch" Version="2.0.45" />
     <PackageReference Include="xunit.abstractions" Version="2.0.1" />
