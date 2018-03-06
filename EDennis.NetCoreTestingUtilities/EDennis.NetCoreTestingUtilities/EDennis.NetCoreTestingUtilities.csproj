@@ -11,10 +11,10 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://github.com/denmitchell/NetCoreTestingUtilities/blob/master/EDennis.NetCoreTestingUtilities/EDennis.NetCoreTestingUtilities/edennis128.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>2.3.0-alpha</Version>
-    <PackageReleaseNotes>Incorporated SafeJsonConverter from EDennis.JsonUtils into the following ObjectExtensions methods: IsEqual, IsEqualOrWrite, ToJsonString</PackageReleaseNotes>
-    <AssemblyVersion>2.3.0</AssemblyVersion>
-    <FileVersion>2.3.0</FileVersion>
+    <Version>2.3.1-alpha</Version>
+    <PackageReleaseNotes>Upgraded EDennis.JsonUtils to 0.0.4-alpha, which provides MaxDepth and PropertiesToIgnore support in SafeJsonSerializerSettings</PackageReleaseNotes>
+    <AssemblyVersion>2.3.1</AssemblyVersion>
+    <FileVersion>2.3.1</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
