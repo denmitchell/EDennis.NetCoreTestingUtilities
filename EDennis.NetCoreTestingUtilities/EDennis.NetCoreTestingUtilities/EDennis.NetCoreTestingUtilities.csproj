@@ -11,14 +11,14 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://github.com/denmitchell/NetCoreTestingUtilities/blob/master/EDennis.NetCoreTestingUtilities/EDennis.NetCoreTestingUtilities/edennis128.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>2.3.1-alpha</Version>
-    <PackageReleaseNotes>Upgraded EDennis.JsonUtils to 0.0.4-alpha, which provides MaxDepth and PropertiesToIgnore support in SafeJsonSerializerSettings</PackageReleaseNotes>
-    <AssemblyVersion>2.3.1</AssemblyVersion>
-    <FileVersion>2.3.1</FileVersion>
+    <Version>2.3.2</Version>
+    <PackageReleaseNotes>Upgraded EDennis.JsonUtils to 0.1.0, which adds additional constructors for SafeJsonSerializerSettings and SafeJsonConverter</PackageReleaseNotes>
+    <AssemblyVersion>2.3.2</AssemblyVersion>
+    <FileVersion>2.3.2</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EDennis.JsonUtils" Version="0.0.4-alpha" />
+    <PackageReference Include="EDennis.JsonUtils" Version="0.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.1" />
     <PackageReference Include="JsonDiffPatch" Version="2.0.45" />
     <PackageReference Include="xunit.abstractions" Version="2.0.1" />

@@ -18,6 +18,8 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
     /// </summary>
     public static class ObjectExtensions {
 
+        public const int DEFAULT_MAXDEPTH = 99;
+
         /// <summary>
         /// Creates a deep copy of the current object
         /// </summary>
@@ -74,6 +76,58 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <typeparam name="T">The type of the current object</typeparam>
         /// <param name="obj1">The current object</param>
         /// <param name="obj2">The object to compare</param>
+        /// <param name="maxDepth">The maximum depth of the object graph to serialize (1=flat)</param>
+        /// <param name="propertiesToIgnore">a string array of 
+        /// property names that will be ignored.</param>
+        /// <returns>true, if equal; false, otherwise</returns>
+        /// <seealso cref="IsEqual{T}(object, T)"/>
+        /// <see href="https://github.com/json-path/JsonPath"/>
+        public static bool IsEqual<T>(this object obj1, T obj2, int maxDepth, string[] propertiesToIgnore) {
+
+            string json1 = JsonConvert.SerializeObject(obj1,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    maxDepth,propertiesToIgnore));
+            string json2 = JsonConvert.SerializeObject(obj2,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    maxDepth, propertiesToIgnore));
+
+            return json1 == json2;
+        }
+
+
+        /// <summary>
+        /// Determines if two objects have the same exact values for
+        /// all of their corresponding properties, excluding the properties
+        /// associated with pathsToIgnore.
+        /// </summary>
+        /// <typeparam name="T">The type of the current object</typeparam>
+        /// <param name="obj1">The current object</param>
+        /// <param name="obj2">The object to compare</param>
+        /// <param name="maxDepth">The maximum depth of the object graph to serialize (1=flat)</param>
+        /// <returns>true, if equal; false, otherwise</returns>
+        /// <seealso cref="IsEqual{T}(object, T)"/>
+        /// <see href="https://github.com/json-path/JsonPath"/>
+        public static bool IsEqual<T>(this object obj1, T obj2, int maxDepth) {
+
+            string json1 = JsonConvert.SerializeObject(obj1,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    maxDepth));
+            string json2 = JsonConvert.SerializeObject(obj2,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    maxDepth));
+
+            return json1 == json2;
+        }
+
+
+        /// <summary>
+        /// Determines if two objects have the same exact values for
+        /// all of their corresponding properties, excluding the properties
+        /// associated with pathsToIgnore.
+        /// </summary>
+        /// <typeparam name="T">The type of the current object</typeparam>
+        /// <param name="obj1">The current object</param>
+        /// <param name="obj2">The object to compare</param>
         /// <param name="propertiesToIgnore">a string array of 
         /// property names that will be ignored.</param>
         /// <returns>true, if equal; false, otherwise</returns>
@@ -83,10 +137,10 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
             string json1 = JsonConvert.SerializeObject(obj1,
                 Formatting.Indented, new SafeJsonSerializerSettings(
-                    99,propertiesToIgnore));
+                    DEFAULT_MAXDEPTH, propertiesToIgnore));
             string json2 = JsonConvert.SerializeObject(obj2,
                 Formatting.Indented, new SafeJsonSerializerSettings(
-                    99, propertiesToIgnore));
+                    DEFAULT_MAXDEPTH, propertiesToIgnore));
 
             return json1 == json2;
         }
@@ -121,6 +175,83 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
             return isEqual;
         }
 
+
+        
+        /// <summary>
+        /// Determines if two objects have the same exact values for
+        /// all of their corresponding properties, excluding the properties
+        /// associated with pathsToIgnore.  This method will print side-by-side
+        /// comparisons if the two objects are not equal.
+        /// NOTE: Requires Xunit
+        /// NOTE: The current object should be the "actual" object
+        /// </summary>
+        /// <typeparam name="T">The type of the current object</typeparam>
+        /// <param name="obj1">The current object</param>
+        /// <param name="obj2">The object to compare</param>
+        /// <param name="maxDepth">The maximum depth of the object graph to serialize (1=flat)</param>
+        /// <param name="propertiesToIgnore">a string array of 
+        /// property names that will be ignored.</param>
+        /// <param name="output">object used by Xunit to print to console</param>
+        /// <returns>true, if equal; false, otherwise</returns>
+        /// <seealso cref="IsEqualOrWrite{T}(object, T)"/>
+        /// <see href="https://github.com/json-path/JsonPath"/>
+        public static bool IsEqualOrWrite<T>(this object obj1, T obj2, int maxDepth, string[] propertiesToIgnore, ITestOutputHelper output) {
+
+            string json1 = JsonConvert.SerializeObject(obj1,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    maxDepth, propertiesToIgnore));
+            string json2 = JsonConvert.SerializeObject(obj2,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    maxDepth, propertiesToIgnore));
+
+            var isEqual = (json1 == json2);
+
+            if (!isEqual)
+                output.WriteLine(FileStringComparer.GetSideBySideFileStrings(json2, json1, "EXPECTED", "ACTUAL"));
+
+            return isEqual;
+
+        }
+
+
+
+        /// <summary>
+        /// Determines if two objects have the same exact values for
+        /// all of their corresponding properties, excluding the properties
+        /// associated with pathsToIgnore.  This method will print side-by-side
+        /// comparisons if the two objects are not equal.
+        /// NOTE: Requires Xunit
+        /// NOTE: The current object should be the "actual" object
+        /// </summary>
+        /// <typeparam name="T">The type of the current object</typeparam>
+        /// <param name="obj1">The current object</param>
+        /// <param name="obj2">The object to compare</param>
+        /// <param name="maxDepth">The maximum depth of the object graph to serialize (1=flat)</param>
+        /// <param name="output">object used by Xunit to print to console</param>
+        /// <returns>true, if equal; false, otherwise</returns>
+        /// <seealso cref="IsEqualOrWrite{T}(object, T)"/>
+        /// <see href="https://github.com/json-path/JsonPath"/>
+        public static bool IsEqualOrWrite<T>(this object obj1, T obj2, int maxDepth, ITestOutputHelper output) {
+
+            string json1 = JsonConvert.SerializeObject(obj1,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    maxDepth));
+            string json2 = JsonConvert.SerializeObject(obj2,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    maxDepth));
+
+            var isEqual = (json1 == json2);
+
+            if (!isEqual)
+                output.WriteLine(FileStringComparer.GetSideBySideFileStrings(json2, json1, "EXPECTED", "ACTUAL"));
+
+            return isEqual;
+
+        }
+
+
+
+
         /// <summary>
         /// Determines if two objects have the same exact values for
         /// all of their corresponding properties, excluding the properties
@@ -142,10 +273,10 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
             string json1 = JsonConvert.SerializeObject(obj1,
                 Formatting.Indented, new SafeJsonSerializerSettings(
-                    99, propertiesToIgnore));
+                    DEFAULT_MAXDEPTH, propertiesToIgnore));
             string json2 = JsonConvert.SerializeObject(obj2,
                 Formatting.Indented, new SafeJsonSerializerSettings(
-                    99, propertiesToIgnore));
+                    DEFAULT_MAXDEPTH, propertiesToIgnore));
 
             var isEqual = (json1 == json2);
 
@@ -158,11 +289,10 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
 
 
-
         /// <summary>
-        /// Determines if two objects have the same exact values for
-        /// all of their corresponding properties.  Note: this is a
-        /// deep comparison.
+        /// Generates a side-by-side comparison of two objects
+        /// as JSON strings.  This version uses a default value
+        /// for maximum depth (99) and no property filters
         /// </summary>
         /// <typeparam name="T">The type of the current object</typeparam>
         /// <param name="obj1">The current object</param>
@@ -181,10 +311,68 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
             return FileStringComparer.GetSideBySideFileStrings(json1, json2, label1, label2);
         }
 
+
         /// <summary>
-        /// Determines if two objects have the same exact values for
-        /// all of their corresponding properties, excluding the properties
-        /// associated with pathsToIgnore.
+        /// Generates a side-by-side comparison of two objects
+        /// as JSON strings.  This version allows specification of
+        /// maximum depth and property filters
+        /// </summary>
+        /// <typeparam name="T">The type of the current object</typeparam>
+        /// <param name="obj1">The current object</param>
+        /// <param name="obj2">The object to compare</param>
+        /// <param name="label1">Label for the current object</param>
+        /// <param name="label2">Label for the object to compare</param>
+        /// <param name="maxDepth">The maximum depth of the object graph to serialize (1=flat)</param>
+        /// <param name="propertiesToIgnore">a string array of 
+        /// property names that will be ignored.</param>
+        /// <returns>side-by-side rendering of objects</returns>
+        /// <seealso cref="Juxtapose{T}(object, T)"/>
+        /// <see href="https://github.com/json-path/JsonPath"/>
+        public static string Juxtapose<T>(this object obj1, T obj2, string label1, string label2, int maxDepth, string[] propertiesToIgnore) {
+
+            string json1 = JsonConvert.SerializeObject(obj1,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    maxDepth, propertiesToIgnore));
+            string json2 = JsonConvert.SerializeObject(obj2,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    maxDepth, propertiesToIgnore));
+
+            return FileStringComparer.GetSideBySideFileStrings(json1, json2, label1, label2);
+
+        }
+
+        /// <summary>
+        /// Generates a side-by-side comparison of two objects
+        /// as JSON strings.  This version allows specification of
+        /// maximum depth, but no property filters
+        /// </summary>
+        /// <typeparam name="T">The type of the current object</typeparam>
+        /// <param name="obj1">The current object</param>
+        /// <param name="obj2">The object to compare</param>
+        /// <param name="label1">Label for the current object</param>
+        /// <param name="label2">Label for the object to compare</param>
+        /// <param name="maxDepth">The maximum depth of the object graph to serialize (1=flat)</param>
+        /// <returns>side-by-side rendering of objects</returns>
+        /// <seealso cref="Juxtapose{T}(object, T)"/>
+        /// <see href="https://github.com/json-path/JsonPath"/>
+        public static string Juxtapose<T>(this object obj1, T obj2, string label1, string label2, int maxDepth) {
+
+            string json1 = JsonConvert.SerializeObject(obj1,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    maxDepth));
+            string json2 = JsonConvert.SerializeObject(obj2,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    maxDepth));
+
+            return FileStringComparer.GetSideBySideFileStrings(json1, json2, label1, label2);
+
+        }
+
+        /// <summary>
+        /// Generates a side-by-side comparison of two objects
+        /// as JSON strings.  This version uses a default value
+        /// for maximum depth (99), but allows specification of
+        /// property filters
         /// </summary>
         /// <typeparam name="T">The type of the current object</typeparam>
         /// <param name="obj1">The current object</param>
@@ -200,18 +388,19 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
             string json1 = JsonConvert.SerializeObject(obj1,
                 Formatting.Indented, new SafeJsonSerializerSettings(
-                    99, propertiesToIgnore));
+                    DEFAULT_MAXDEPTH, propertiesToIgnore));
             string json2 = JsonConvert.SerializeObject(obj2,
                 Formatting.Indented, new SafeJsonSerializerSettings(
-                    99, propertiesToIgnore));
+                    DEFAULT_MAXDEPTH, propertiesToIgnore));
 
             return FileStringComparer.GetSideBySideFileStrings(json1, json2, label1, label2);
 
         }
 
-
         /// <summary>
-        /// Serializes an object to a JSON string
+        /// Serializes an object to a JSON string.  This version
+        /// assumes no property filters and uses a default value
+        /// for maximum depth (99)
         /// </summary>
         /// <param name="obj">the current object</param>
         /// <returns>A JSON string representation of the object</returns>
@@ -223,7 +412,44 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
 
         /// <summary>
-        /// Serializes an object to a JSON string
+        /// Serializes an object to a JSON string.  This version
+        /// allows specification of maximum depth and property 
+        /// filters 
+        /// </summary>
+        /// <param name="obj">the current object</param>
+        /// <param name="maxDepth">The maximum depth of the object graph to serialize (1=flat)</param>
+        /// <param name="propertiesToIgnore">a string array of JSON Paths, whose
+        /// associated property values should be ignored.</param>
+        /// <returns>A JSON string representation of the object</returns>
+        public static string ToJsonString(this object obj, int maxDepth, string[] propertiesToIgnore) {
+
+            return JsonConvert.SerializeObject(obj,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    maxDepth, propertiesToIgnore));
+        }
+
+
+        /// <summary>
+        /// Serializes an object to a JSON string.  This version
+        /// allows specification of maximum depth, but no property 
+        /// filters 
+        /// </summary>
+        /// <param name="obj">the current object</param>
+        /// <param name="maxDepth">The maximum depth of the object graph to serialize (1=flat)</param>
+        /// associated property values should be ignored.</param>
+        /// <returns>A JSON string representation of the object</returns>
+        public static string ToJsonString(this object obj, int maxDepth) {
+
+            return JsonConvert.SerializeObject(obj,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    maxDepth));
+        }
+
+
+        /// <summary>
+        /// Serializes an object to a JSON string.  This version
+        /// allows specification of property filters, but uses 
+        /// a default value for maximum depth (99)
         /// </summary>
         /// <param name="obj">the current object</param>
         /// <param name="propertiesToIgnore">a string array of JSON Paths, whose
@@ -233,11 +459,10 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
             return JsonConvert.SerializeObject(obj,
                 Formatting.Indented, new SafeJsonSerializerSettings(
-                    99, propertiesToIgnore));
+                    DEFAULT_MAXDEPTH, propertiesToIgnore));
         }
 
-
-
+        
         /// <summary>
         /// Deserializes a JSON string into an object
         /// </summary>
