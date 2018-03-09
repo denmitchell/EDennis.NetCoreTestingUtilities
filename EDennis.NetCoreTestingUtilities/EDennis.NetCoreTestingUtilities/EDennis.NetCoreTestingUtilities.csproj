@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Dennis Mitchell</Authors>
     <Company>edennis.com</Company>
     <Description>Provides various classes that assist with .NET Core 2 unit testing.</Description>
@@ -11,14 +11,14 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/2938333?s=400&amp;v=4</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>2.3.4</Version>
-    <PackageReleaseNotes>Upgraded EDennis.JsonUtils to 0.2.0, which adds JsonSimpleValueAttribute, for serializing objects as simple values and which serializes leaf nodes (those objects without navigation properties) even when the same object has already been serialized at another depth.</PackageReleaseNotes>
-    <AssemblyVersion>2.3.4</AssemblyVersion>
+    <Version>2.3.5</Version>
+    <PackageReleaseNotes>Upgraded EDennis.JsonUtils to 0.2.2, which fixed a bug with initializing PropertiesToFilter</PackageReleaseNotes>
+    <AssemblyVersion>2.3.5</AssemblyVersion>
     <FileVersion>2.3.4</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EDennis.JsonUtils" Version="0.2.0" />
+    <PackageReference Include="EDennis.JsonUtils" Version="0.2.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.1" />
     <PackageReference Include="JsonDiffPatch" Version="2.0.45" />
     <PackageReference Include="xunit.abstractions" Version="2.0.1" />
