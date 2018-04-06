@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Xunit.Abstractions;
 using Xunit;
 using EDennis.JsonUtils;
+using System.Collections;
 
 namespace EDennis.NetCoreTestingUtilities.Extensions {
 
@@ -84,6 +85,8 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <see href="https://github.com/json-path/JsonPath"/>
         public static bool IsEqual<T>(this object obj1, T obj2, int maxDepth, string[] propertiesToIgnore) {
 
+            CheckDepth(obj1, maxDepth);
+
             string json1 = JsonConvert.SerializeObject(obj1,
                 Formatting.Indented, new SafeJsonSerializerSettings(
                     maxDepth,propertiesToIgnore));
@@ -108,6 +111,8 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <seealso cref="IsEqual{T}(object, T)"/>
         /// <see href="https://github.com/json-path/JsonPath"/>
         public static bool IsEqual<T>(this object obj1, T obj2, int maxDepth) {
+
+            CheckDepth(obj1, maxDepth);
 
             string json1 = JsonConvert.SerializeObject(obj1,
                 Formatting.Indented, new SafeJsonSerializerSettings(
@@ -197,6 +202,8 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <see href="https://github.com/json-path/JsonPath"/>
         public static bool IsEqualOrWrite<T>(this object obj1, T obj2, int maxDepth, string[] propertiesToIgnore, ITestOutputHelper output) {
 
+            CheckDepth(obj1, maxDepth);
+
             string json1 = JsonConvert.SerializeObject(obj1,
                 Formatting.Indented, new SafeJsonSerializerSettings(
                     maxDepth, propertiesToIgnore));
@@ -232,6 +239,9 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <seealso cref="IsEqualOrWrite{T}(object, T)"/>
         /// <see href="https://github.com/json-path/JsonPath"/>
         public static bool IsEqualOrWrite<T>(this object obj1, T obj2, int maxDepth, ITestOutputHelper output) {
+
+
+            CheckDepth(obj1, maxDepth);
 
             string json1 = JsonConvert.SerializeObject(obj1,
                 Formatting.Indented, new SafeJsonSerializerSettings(
@@ -330,6 +340,8 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <see href="https://github.com/json-path/JsonPath"/>
         public static string Juxtapose<T>(this object obj1, T obj2, string label1, string label2, int maxDepth, string[] propertiesToIgnore) {
 
+            CheckDepth(obj1, maxDepth);
+
             string json1 = JsonConvert.SerializeObject(obj1,
                 Formatting.Indented, new SafeJsonSerializerSettings(
                     maxDepth, propertiesToIgnore));
@@ -356,6 +368,8 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <seealso cref="Juxtapose{T}(object, T)"/>
         /// <see href="https://github.com/json-path/JsonPath"/>
         public static string Juxtapose<T>(this object obj1, T obj2, string label1, string label2, int maxDepth) {
+
+            CheckDepth(obj1, maxDepth);
 
             string json1 = JsonConvert.SerializeObject(obj1,
                 Formatting.Indented, new SafeJsonSerializerSettings(
@@ -423,6 +437,7 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <returns>A JSON string representation of the object</returns>
         public static string ToJsonString(this object obj, int maxDepth, string[] propertiesToIgnore) {
 
+
             return JsonConvert.SerializeObject(obj,
                 Formatting.Indented, new SafeJsonSerializerSettings(
                     maxDepth, propertiesToIgnore));
@@ -439,6 +454,8 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// associated property values should be ignored.</param>
         /// <returns>A JSON string representation of the object</returns>
         public static string ToJsonString(this object obj, int maxDepth) {
+
+            CheckDepth(obj, maxDepth);
 
             return JsonConvert.SerializeObject(obj,
                 Formatting.Indented, new SafeJsonSerializerSettings(
@@ -640,6 +657,39 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
             return JsonFilterer.ApplyFilter(jtoken, pathsToRemove);
         }
 
+        /// <summary>
+        /// Ensures that the maxDepth is not less than the minimum depth 
+        /// for an object or collection type
+        /// </summary>
+        /// <param name="obj">The object or collection to inspect</param>
+        /// <param name="maxDepth">The provided maximum depth of the object graph</param>
+        private static void CheckDepth(object obj, int maxDepth) {
+
+            Type objType = obj.GetType().GetInterface(nameof(IEnumerable));
+            Type itemType = null;
+            if (objType != null) {
+                itemType = GetElementTypeOfEnumerable(obj);
+                if (itemType != null) {
+                    if (itemType.IsClass && maxDepth == 1) {
+                        throw new ArgumentException("maxDepth must be 2 or greater for a collection");
+                    }
+                }
+            }
+
+        }
+
+        private static Type GetElementTypeOfEnumerable(object o) {
+            var enumerable = o as IEnumerable;
+            // if it's not an enumerable why do you call this method all ?
+            if (enumerable == null)
+                return null;
+
+            Type[] interfaces = enumerable.GetType().GetInterfaces();
+
+            return (from i in interfaces
+                    where i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>)
+                    select i.GetGenericArguments()[0]).FirstOrDefault();
+        }
 
 
     }
