@@ -420,8 +420,6 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <returns>A JSON string representation of the object</returns>
         /// <seealso cref="ToJsonString(object)"/>
         public static string ToJsonString(this object obj) {
-            var x = new SafeSerializerSettings();
-
             return JsonConvert.SerializeObject(obj,
                 Formatting.Indented, new SafeJsonSerializerSettings());
         }
