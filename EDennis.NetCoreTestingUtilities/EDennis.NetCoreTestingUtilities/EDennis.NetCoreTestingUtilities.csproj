@@ -11,16 +11,17 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/2938333?s=400&amp;v=4</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>2.3.9</Version>
-    <PackageReleaseNotes>Upgraded to latest version of EDennis.JsonUtils, which fixed a bug with SafeJsonConverter.ReadJson()</PackageReleaseNotes>
-    <AssemblyVersion>2.3.9</AssemblyVersion>
-    <FileVersion>2.3.9</FileVersion>
+    <Version>2.4.0</Version>
+    <PackageReleaseNotes>Added FromTestJsonTable() method to allow retrieving JSON test data from a database table.</PackageReleaseNotes>
+    <AssemblyVersion>2.4.0</AssemblyVersion>
+    <FileVersion>2.4.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="EDennis.JsonUtils" Version="0.2.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.1" />
     <PackageReference Include="JsonDiffPatch" Version="2.0.45" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.5.0-rc1" />
     <PackageReference Include="xunit.abstractions" Version="2.0.1" />
   </ItemGroup>
   

@@ -1,14 +1,24 @@
 ﻿using EDennis.NetCoreTestingUtilities.Extensions;
 using EDennis.NetCoreTestingUtilities.Json;
+using EDennis.NetCoreTestingUtilities.Tests.TestJsonTable;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace EDennis.NetCoreTestingUtilities.Tests {
     public class ObjectExtensionsTests {
+
+        private readonly ITestOutputHelper _output;
+
+        public ObjectExtensionsTests(ITestOutputHelper output) {
+            _output = output;
+        }
 
         [Fact]
         public void ObjExt_Copy() {
@@ -258,6 +268,40 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
                 Assert.True(expectedJson.IsEqual(actualJson));
             }
 
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(2)]
+        public void ObjExt_FromTestJsonTable(int partId) {
+            var options = new DbContextOptionsBuilder<PartSupplierContext>()
+                .UseInMemoryDatabase(databaseName: "FromTestJsonTable")
+                .Options;
+            using (var context = new PartSupplierContext()) {
+
+                context.ResetValueGenerators();
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
+
+                PartSupplierFactory.PopulateContext(context);
+                
+                Part expected = context.Parts.FirstOrDefault(p => p.PartId == partId);
+                var json = expected.ToJsonString(3);
+
+                context.TestJsons.Add(new TestJson {
+                    Project = "EDennis.NetCoreTestingUtilities.Tests", Class = "ObjectExtensions",
+                    Method = "FromTestJsonTable", FileName = $"expected{partId}", Json = json
+                });
+
+                context.SaveChanges();
+
+                Part actual = new Part().FromTestJsonTable(context, null, "TestJson",
+                        "EDennis.NetCoreTestingUtilities.Tests", "ObjectExtensions",
+                        "FromTestJsonTable", $"expected{partId}");
+
+                Assert.True(actual.IsEqualOrWrite(expected, 3, _output));                
+
+            }
         }
 
 

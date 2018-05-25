@@ -10,6 +10,7 @@ using Xunit.Abstractions;
 using Xunit;
 using EDennis.JsonUtils;
 using System.Collections;
+using System.Data.SqlClient;
 
 namespace EDennis.NetCoreTestingUtilities.Extensions {
 
@@ -634,6 +635,64 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
 
         /// <summary>
+        /// Retrieves JSON from a TestJson table having the following structure,
+        /// and deserializes the JSON into an object.
+        /// CREATE TABLE _maintenance.TestJson(
+        ///     Project varchar(100),
+	    ///     Class varchar(100),
+	    ///     Method varchar(100),
+	    ///     FileName varchar(100),
+	    ///     Json varchar(max),
+	    ///     constraint pk_maintenanceTestJson
+        ///         primary key(Project, Class, Method, FileName)
+        ///);
+        /// </summary>
+        /// <typeparam name="T">The type of the current object</typeparam>
+        /// <param name="obj">The current object</param>
+        /// <param name="context">The Entity Framework DB Context.</param>
+        /// <param name="testJsonSchema">The schema for the TestJson table</param>
+        /// <param name="testJsonTable">The name of the TestJson table</param>
+        /// <param name="projectName">The project name for the test json</param>
+        /// <param name="className">The class name for the test json</param>
+        /// <param name="methodName">The method name for the test json</param>
+        /// <param name="fileName">The file name for the test json</param>
+        /// <returns>A new object based deserialized from the retrieved json</returns>
+        public static T FromTestJsonTable<T>(this T obj, DbContext context,
+                string testJsonSchema, string testJsonTable,
+                string projectName, string className, string methodName, string fileName) {
+
+            var dbConnection = context.Database.GetDbConnection().ConnectionString;
+            var schema = (testJsonSchema == null) ? "" : (testJsonSchema + ".");
+            var sql = $"select json from {schema}{testJsonTable} where Project = '{projectName}' and Class = '{className}' and Method = '{methodName}' and FileName = '{fileName}';";
+
+            string json = null;
+
+            using (SqlConnection cxn = (SqlConnection)context.Database.GetDbConnection()) {
+                using (SqlCommand cmd = new SqlCommand(sql, cxn)) {
+                    cxn.Open();
+                    var returnValue = cmd.ExecuteScalar();
+                    json = returnValue?.ToString();
+                }
+            }
+
+            if (json == null) {
+                throw new MissingRecordException($"No Json found for \"{sql}\"");
+            }
+
+            //parse the returned JSON
+            JToken jtoken = JToken.Parse(json);
+
+            //convert the JSON to an object
+            T objNew = jtoken.ToObject<T>();
+            obj = objNew;
+
+            return obj;
+
+        }
+
+
+
+        /// <summary>
         /// Provides all properties associated with a JToken object,
         /// cast as a JObject.
         /// </summary>
@@ -690,6 +749,9 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
                     where i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>)
                     select i.GetGenericArguments()[0]).FirstOrDefault();
         }
+
+
+
 
 
     }
