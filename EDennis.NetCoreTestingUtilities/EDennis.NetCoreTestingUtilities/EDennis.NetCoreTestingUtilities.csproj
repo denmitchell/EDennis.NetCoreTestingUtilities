@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Dennis Mitchell</Authors>
     <Company>edennis.com</Company>
@@ -19,9 +19,9 @@
 
   <ItemGroup>
     <PackageReference Include="EDennis.JsonUtils" Version="1.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.0" />
     <PackageReference Include="JsonDiffPatch" Version="2.0.45" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.5.0-rc1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.5.0" />
     <PackageReference Include="xunit.abstractions" Version="2.0.1" />
   </ItemGroup>
   
