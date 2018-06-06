@@ -11,10 +11,10 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/2938333?s=400&amp;v=4</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>2.4.1</Version>
-    <PackageReleaseNotes>Upgraded to support JsonUtils 1.0.1, which adds support for primitive arrays.</PackageReleaseNotes>
-    <AssemblyVersion>2.4.1</AssemblyVersion>
-    <FileVersion>2.4.1</FileVersion>
+    <Version>2.5.0</Version>
+    <PackageReleaseNotes>Targets .NET Core 2.1</PackageReleaseNotes>
+    <AssemblyVersion>2.5.0</AssemblyVersion>
+    <FileVersion>2.5.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
