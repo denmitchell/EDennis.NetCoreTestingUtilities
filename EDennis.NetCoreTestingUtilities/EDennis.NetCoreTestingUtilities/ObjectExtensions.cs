@@ -667,7 +667,7 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
             string json = null;
 
-            using (SqlConnection cxn = (SqlConnection)context.Database.GetDbConnection()) {
+            using (SqlConnection cxn = new SqlConnection(context.Database.GetDbConnection().ConnectionString)) {
                 using (SqlCommand cmd = new SqlCommand(sql, cxn)) {
                     cxn.Open();
                     var returnValue = cmd.ExecuteScalar();

@@ -11,10 +11,10 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/2938333?s=400&amp;v=4</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>2.5.0</Version>
-    <PackageReleaseNotes>Targets .NET Core 2.1</PackageReleaseNotes>
-    <AssemblyVersion>2.5.0</AssemblyVersion>
-    <FileVersion>2.5.0</FileVersion>
+    <Version>2.5.1</Version>
+    <PackageReleaseNotes>Fixes a bug with ObjectExtensions.FromTestJsonTable</PackageReleaseNotes>
+    <AssemblyVersion>2.5.1</AssemblyVersion>
+    <FileVersion>2.5.1</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
