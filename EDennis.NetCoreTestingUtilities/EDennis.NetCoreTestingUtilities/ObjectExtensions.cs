@@ -690,7 +690,43 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
         }
 
+        /// <summary>
+        /// Retrieves a JSON string from a JSON Test table
+        /// </summary>
+        /// <param name="obj">Any string (used merely to execute the method)</param>
+        /// <param name="context">The Entity Framework DB Context.</param>
+        /// <param name="testJsonSchema">The schema for the TestJson table</param>
+        /// <param name="testJsonTable">The name of the TestJson table</param>
+        /// <param name="projectName">The project name for the test json</param>
+        /// <param name="className">The class name for the test json</param>
+        /// <param name="methodName">The method name for the test json</param>
+        /// <param name="fileName">The file name for the test json</param>
+        /// <returns>JSON retrieved from a table</returns>
+        public static string FromTestJsonTable(this String obj, DbContext context,
+                string testJsonSchema, string testJsonTable,
+                string projectName, string className, string methodName, string fileName) {
 
+            var dbConnection = context.Database.GetDbConnection().ConnectionString;
+            var schema = (testJsonSchema == null) ? "" : (testJsonSchema + ".");
+            var sql = $"select json from {schema}{testJsonTable} where Project = '{projectName}' and Class = '{className}' and Method = '{methodName}' and FileName = '{fileName}';";
+
+            string json = null;
+
+            using (SqlConnection cxn = new SqlConnection(context.Database.GetDbConnection().ConnectionString)) {
+                using (SqlCommand cmd = new SqlCommand(sql, cxn)) {
+                    cxn.Open();
+                    var returnValue = cmd.ExecuteScalar();
+                    json = returnValue?.ToString();
+                }
+            }
+
+            if (json == null) {
+                throw new MissingRecordException($"No Json found for \"{sql}\"");
+            }
+
+            return json;
+
+        }
 
         /// <summary>
         /// Provides all properties associated with a JToken object,

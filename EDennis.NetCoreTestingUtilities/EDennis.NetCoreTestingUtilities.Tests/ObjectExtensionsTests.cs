@@ -304,6 +304,41 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
             }
         }
 
+        [Theory]
+        [InlineData(1)]
+        [InlineData(2)]
+        public void ObjExt_FromTestJsonTableAsString(int partId) {
+            var options = new DbContextOptionsBuilder<PartSupplierContext>()
+                .UseInMemoryDatabase(databaseName: "FromTestJsonTable")
+                .Options;
+            using (var context = new PartSupplierContext()) {
+
+                context.ResetValueGenerators();
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
+
+                PartSupplierFactory.PopulateContext(context);
+
+                Part expected = context.Parts.FirstOrDefault(p => p.PartId == partId);
+                var json = expected.ToJsonString(3);
+
+                context.TestJsons.Add(new TestJson {
+                    Project = "EDennis.NetCoreTestingUtilities.Tests", Class = "ObjectExtensions",
+                    Method = "FromTestJsonTable", FileName = $"expected{partId}", Json = json
+                });
+
+                context.SaveChanges();
+
+                string actualJson = new string("").FromTestJsonTable(context, null, "TestJson",
+                        "EDennis.NetCoreTestingUtilities.Tests", "ObjectExtensions",
+                        "FromTestJsonTable", $"expected{partId}");
+
+                Part actual = JToken.Parse(actualJson).ToObject<Part>();
+
+                Assert.True(actual.IsEqualOrWrite(expected, 3, _output));
+
+            }
+        }
 
     }
 }
