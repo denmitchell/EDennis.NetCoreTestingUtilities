@@ -24,7 +24,7 @@
     <PackageReference Include="JsonDiffPatch" Version="2.0.46" />
     <PackageReference Include="System.Data.SqlClient" Version="4.5.1" />
     <PackageReference Include="xunit.abstractions" Version="2.0.2" />
-    <PackageReference Include="xunit.core" Version="2.4.0" />
+    <PackageReference Include="xunit.extensibility.core" Version="2.4.0" />
   </ItemGroup>
   
   </Project>
