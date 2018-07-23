@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace EDennis.NetCoreTestingUtilities.Tests.TestJsonTable {
+namespace EDennis.NetCoreTestingUtilities{
     public class TestJson {
         public string Project { get; set; }
         public string Class { get; set; }

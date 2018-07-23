@@ -11,18 +11,20 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/2938333?s=400&amp;v=4</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>2.5.3</Version>
-    <PackageReleaseNotes>Upgraded to Microsoft.EntityFrameworkCore.xxx 2.1.1</PackageReleaseNotes>
-    <AssemblyVersion>2.5.3</AssemblyVersion>
-    <FileVersion>2.5.3</FileVersion>
+    <Version>2.5.4</Version>
+    <PackageReleaseNotes>Added TestJsonAttribute class for querying records from a TestJson table with Xunit tests.  This attribute is used in conjunction with the Theory attribute.  Each record is treated as a separate test.</PackageReleaseNotes>
+    <AssemblyVersion>2.5.4</AssemblyVersion>
+    <FileVersion>2.5.4</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="1.50.5" />
     <PackageReference Include="EDennis.JsonUtils" Version="1.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.1" />
     <PackageReference Include="JsonDiffPatch" Version="2.0.46" />
     <PackageReference Include="System.Data.SqlClient" Version="4.5.1" />
     <PackageReference Include="xunit.abstractions" Version="2.0.2" />
+    <PackageReference Include="xunit.core" Version="2.4.0" />
   </ItemGroup>
   
   </Project>
