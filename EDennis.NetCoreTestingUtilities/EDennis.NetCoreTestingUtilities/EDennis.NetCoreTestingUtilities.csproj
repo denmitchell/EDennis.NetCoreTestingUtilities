@@ -11,18 +11,18 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/2938333?s=400&amp;v=4</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>2.5.2</Version>
-    <PackageReleaseNotes>Adds overload to ObjectExtensions.FromTestJsonTable to allow retrieving the raw JSON as a string only (and not deserializing into an object).</PackageReleaseNotes>
-    <AssemblyVersion>2.5.2</AssemblyVersion>
-    <FileVersion>2.5.2</FileVersion>
+    <Version>2.5.3</Version>
+    <PackageReleaseNotes>Upgraded to Microsoft.EntityFrameworkCore.xxx 2.1.1</PackageReleaseNotes>
+    <AssemblyVersion>2.5.3</AssemblyVersion>
+    <FileVersion>2.5.3</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EDennis.JsonUtils" Version="1.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.0" />
-    <PackageReference Include="JsonDiffPatch" Version="2.0.45" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.5.0" />
-    <PackageReference Include="xunit.abstractions" Version="2.0.1" />
+    <PackageReference Include="EDennis.JsonUtils" Version="1.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.1" />
+    <PackageReference Include="JsonDiffPatch" Version="2.0.46" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.5.1" />
+    <PackageReference Include="xunit.abstractions" Version="2.0.2" />
   </ItemGroup>
   
   </Project>
