@@ -1,0 +1,90 @@
+﻿{
+  "ErrorCount": 1,
+  "PassesJsonStructureTest": true,
+  "Results": [
+    {
+      "AttemptedOperation": "Add",
+      "Errors": [
+        {
+          "Code": 12345,
+          "Description": "Test Error 2",
+          "Properties": [
+            {
+              "Code": 12345,
+              "Property": "TestField1",
+              "SubmitterId": 2,
+              "SubmitterRecordId": 10002
+            },
+            {
+              "Code": 12345,
+              "Property": "TestField2",
+              "SubmitterId": 2,
+              "SubmitterRecordId": 10002
+            }
+          ],
+          "SubmitterId": 2,
+          "SubmitterRecordId": 10002
+        },
+        {
+          "Code": 3333,
+          "Description": "Test Error 3",
+          "Properties": [
+            {
+              "Code": 3333,
+              "Property": "TestField1",
+              "SubmitterId": 2,
+              "SubmitterRecordId": 10002
+            },
+            {
+              "Code": 3333,
+              "Property": "TestField2",
+              "SubmitterId": 2,
+              "SubmitterRecordId": 10002
+            }
+          ],
+          "SubmitterId": 2,
+          "SubmitterRecordId": 10002
+        },
+        {
+          "Code": 54321,
+          "Description": "Test Error",
+          "Properties": [
+            {
+              "Code": 54321,
+              "Property": "TestField1",
+              "SubmitterId": 2,
+              "SubmitterRecordId": 10002
+            }
+          ],
+          "SubmitterId": 2,
+          "SubmitterRecordId": 10002
+        }
+      ],
+      "SubmitterId": 2,
+      "SubmitterRecordId": 10002,
+      "Successful": false
+    },
+    {
+      "AttemptedOperation": "Add",
+      "Errors": null,
+      "SubmitterId": 55,
+      "SubmitterRecordId": 10055,
+      "Successful": true
+    },
+    {
+      "AttemptedOperation": "Add",
+      "Errors": null,
+      "SubmitterId": 7,
+      "SubmitterRecordId": 10007,
+      "Successful": true
+    },
+    {
+      "AttemptedOperation": "Add",
+      "Errors": null,
+      "SubmitterId": 7,
+      "SubmitterRecordId": 20007,
+      "Successful": true
+    }
+  ],
+  "SuccessCount": 2
+}

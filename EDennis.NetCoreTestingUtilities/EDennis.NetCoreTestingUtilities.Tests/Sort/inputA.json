@@ -1,0 +1,32 @@
+﻿[
+  {
+    "LastName": "Carey",
+    "FirstName": "Drew",
+    "Hobbies": [ "Painting", "Horseback riding" ],
+    "Children": [
+      {
+        "LastName": "Carey",
+        "FirstName": "Rex"
+      },
+      {
+        "LastName": "Carey",
+        "FirstName": "Dan"
+      }
+    ]
+  },
+  {
+    "LastName": "Barker",
+    "FirstName": "Bob",
+    "Hobbies": [ "Running", "Video Games", "Cycling" ],
+    "Children": [
+      {
+        "LastName": "Barker",
+        "FirstName": "Jim"
+      },
+      {
+        "LastName": "Barker",
+        "FirstName": "Jill"
+      }
+    ]
+  }
+]
