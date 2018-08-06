@@ -289,15 +289,16 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
                 var json = expected.ToJsonString(3);
 
                 context.TestJsons.Add(new TestJson {
-                    Project = "EDennis.NetCoreTestingUtilities.Tests", Class = "ObjectExtensions",
-                    Method = "FromTestJsonTable", FileName = $"expected{partId}", Json = json
+                    ProjectName = "EDennis.NetCoreTestingUtilities.Tests", ClassName = "ObjectExtensions",
+                    MethodName = "FromTestJsonTable", TestScenario = "Test",
+                    TestCase = $"{ partId }", TestFile = $"Expected", Json = json
                 });
 
                 context.SaveChanges();
 
-                Part actual = new Part().FromTestJsonTable(context, null, "TestJson",
+                Part actual = new Part().FromTestJsonTable(context, "dbo", "TestJson",
                         "EDennis.NetCoreTestingUtilities.Tests", "ObjectExtensions",
-                        "FromTestJsonTable", $"expected{partId}");
+                        "FromTestJsonTable", "Test", $"{ partId }", $"Expected");
 
                 Assert.True(actual.IsEqualOrWrite(expected, 3, _output));                
 
@@ -323,15 +324,16 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
                 var json = expected.ToJsonString(3);
 
                 context.TestJsons.Add(new TestJson {
-                    Project = "EDennis.NetCoreTestingUtilities.Tests", Class = "ObjectExtensions",
-                    Method = "FromTestJsonTable", FileName = $"expected{partId}", Json = json
+                    ProjectName = "EDennis.NetCoreTestingUtilities.Tests", ClassName = "ObjectExtensions",
+                    MethodName = "FromTestJsonTable", TestScenario = "Test",
+                    TestCase = $"{ partId }", TestFile = $"Expected", Json = json
                 });
 
                 context.SaveChanges();
 
-                string actualJson = new string("").FromTestJsonTable(context, null, "TestJson",
+                string actualJson = new string("").FromTestJsonTable(context, "dbo", "TestJson",
                         "EDennis.NetCoreTestingUtilities.Tests", "ObjectExtensions",
-                        "FromTestJsonTable", $"expected{partId}");
+                        "FromTestJsonTable", "Test", $"{ partId }", $"Expected");
 
                 Part actual = JToken.Parse(actualJson).ToObject<Part>();
 

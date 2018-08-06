@@ -11,15 +11,18 @@ namespace EDennis.NetCoreTestingUtilities.Tests.TestJsonTable {
     /// </summary>
     public class PartSupplierContext : DbContext{
 
-        public PartSupplierContext(string connectionString) :
-            base(new DbContextOptionsBuilder()
-                .UseSqlServer(connectionString)
-                .Options) { }
 
-        public PartSupplierContext() :
-            base(new DbContextOptionsBuilder()
-                .UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=EFProviders.InMemory;Trusted_Connection=True;")
-                .Options) {}
+        public PartSupplierContext() { }
+
+        public PartSupplierContext(DbContextOptions<PartSupplierContext> options) :
+            base(options) { }
+
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+            if (!optionsBuilder.IsConfigured) {
+                optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=Tmp;Trusted_Connection=True;ConnectRetryCount=0");
+            }
+        }
 
         public DbSet<Part> Parts {get; set;}
         public DbSet<Supplier> Suppliers{ get; set; }
@@ -27,11 +30,6 @@ namespace EDennis.NetCoreTestingUtilities.Tests.TestJsonTable {
         public DbSet<TestJson> TestJsons { get; set; }
 
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-            if (!optionsBuilder.IsConfigured) {
-                optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=EFProviders.InMemory;Trusted_Connection=True;ConnectRetryCount=0");
-            }
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
 
@@ -69,7 +67,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests.TestJsonTable {
 
 
             modelBuilder.Entity<TestJson>().ToTable("TestJson")
-                .HasKey(s => new { s.Project, s.Class, s.Method, s.FileName });
+                .HasKey(s => new { s.ProjectName, s.ClassName, s.MethodName, s.TestScenario, s.TestCase, s.TestFile });
 
 
         }

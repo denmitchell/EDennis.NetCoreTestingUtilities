@@ -710,15 +710,24 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <param name="projectName">The project name for the test json</param>
         /// <param name="className">The class name for the test json</param>
         /// <param name="methodName">The method name for the test json</param>
-        /// <param name="fileName">The file name for the test json</param>
+        /// <param name="testScenario">The general scenario to be tested</param>
+        /// <param name="testCase">The specific test case to be tested</param>
+        /// <param name="testFile">The JSON to be used in the test (e.g., Input, Expected)</param>
         /// <returns>A new object based deserialized from the retrieved json</returns>
         public static T FromTestJsonTable<T>(this T obj, DbContext context,
                 string testJsonSchema, string testJsonTable,
-                string projectName, string className, string methodName, string fileName) {
+                string projectName, string className, string methodName, string testScenario,
+                string testCase, string testFile) {
 
             var dbConnection = context.Database.GetDbConnection().ConnectionString;
             var schema = (testJsonSchema == null) ? "" : (testJsonSchema + ".");
-            var sql = $"select json from {schema}{testJsonTable} where Project = '{projectName}' and Class = '{className}' and Method = '{methodName}' and FileName = '{fileName}';";
+            var sql = $"select json from {schema}{testJsonTable} " +
+                $"where ProjectName = '{projectName}' " +
+                $"and ClassName = '{className}' " +
+                $"and MethodName = '{methodName}' " +
+                $"and TestScenario = '{testScenario}' " +
+                $"and TestCase = '{testCase}' " +
+                $"and TestFile = '{testFile}' ";
 
             string json = null;
 
@@ -755,15 +764,24 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <param name="projectName">The project name for the test json</param>
         /// <param name="className">The class name for the test json</param>
         /// <param name="methodName">The method name for the test json</param>
-        /// <param name="fileName">The file name for the test json</param>
+        /// <param name="testScenario">The general scenario to be tested</param>
+        /// <param name="testCase">The specific test case to be tested</param>
+        /// <param name="testFile">The JSON to be used in the test (e.g., Input, Expected)</param>
         /// <returns>JSON retrieved from a table</returns>
         public static string FromTestJsonTable(this String obj, DbContext context,
                 string testJsonSchema, string testJsonTable,
-                string projectName, string className, string methodName, string fileName) {
+                string projectName, string className, string methodName, string testScenario,
+                string testCase, string testFile) {
 
             var dbConnection = context.Database.GetDbConnection().ConnectionString;
             var schema = (testJsonSchema == null) ? "" : (testJsonSchema + ".");
-            var sql = $"select json from {schema}{testJsonTable} where Project = '{projectName}' and Class = '{className}' and Method = '{methodName}' and FileName = '{fileName}';";
+            var sql = $"select json from {schema}{testJsonTable} " +
+                $"where ProjectName = '{projectName}' " +
+                $"and ClassName = '{className}' " +
+                $"and MethodName = '{methodName}' " +
+                $"and TestScenario = '{testScenario}' " +
+                $"and TestCase = '{testCase}' " +
+                $"and TestFile = '{testFile}' ";
 
             string json = null;
 

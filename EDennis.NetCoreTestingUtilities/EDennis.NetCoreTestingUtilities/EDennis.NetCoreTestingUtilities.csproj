@@ -11,10 +11,10 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/2938333?s=400&amp;v=4</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>2.6.0</Version>
-    <PackageReleaseNotes>Added a JsonSorter, which sorts Json properties and array elements alphabetically.  This class can be used to compare two JSON strings independent of internal order of array elements and properties.  Added an optional parameter (ignoreOrderOfArrayElements) to IsEqual and IsEqualOrWrite in ObjectExtensions.</PackageReleaseNotes>
-    <AssemblyVersion>2.6.0</AssemblyVersion>
-    <FileVersion>2.6.0</FileVersion>
+    <Version>2.7.0</Version>
+    <PackageReleaseNotes>Reworked the TestJson table and associated classes (including TestJsonAttribute) to provide a more uniform way of storing and retrieving test cases.</PackageReleaseNotes>
+    <AssemblyVersion>2.7.0</AssemblyVersion>
+    <FileVersion>2.7.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
