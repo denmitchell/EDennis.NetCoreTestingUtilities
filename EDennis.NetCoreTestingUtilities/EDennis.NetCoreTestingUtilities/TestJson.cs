@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EDennis.NetCoreTestingUtilities.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -35,6 +36,13 @@ namespace EDennis.NetCoreTestingUtilities{
         public string GetJson(string testFile) {
             return JsonTestFiles.FirstOrDefault(f => f.TestFile == testFile).Json;
         }
+
+        public static T GetObject<T>(this JsonTestCase obj, string testFile)
+            where T : new() {
+            var json = obj.GetJson(testFile);
+            return new T().FromJsonString(json);
+        }
+
     }
 
     /// <summary>
