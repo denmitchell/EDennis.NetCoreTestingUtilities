@@ -37,9 +37,9 @@ namespace EDennis.NetCoreTestingUtilities{
             return JsonTestFiles.FirstOrDefault(f => f.TestFile == testFile).Json;
         }
 
-        public static T GetObject<T>(this JsonTestCase obj, string testFile)
+        public T GetObject<T>(string testFile)
             where T : new() {
-            var json = obj.GetJson(testFile);
+            var json = GetJson(testFile);
             return new T().FromJsonString(json);
         }
 
