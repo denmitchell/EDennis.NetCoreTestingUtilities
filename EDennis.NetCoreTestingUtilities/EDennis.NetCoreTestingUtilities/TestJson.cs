@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace EDennis.NetCoreTestingUtilities{
@@ -30,6 +31,10 @@ namespace EDennis.NetCoreTestingUtilities{
         public string TestCase { get; set; }
 
         public List<JsonTestFile> JsonTestFiles { get; set; }
+
+        public string GetJson(string testFile) {
+            return JsonTestFiles.FirstOrDefault(f => f.TestFile == testFile).Json;
+        }
     }
 
     /// <summary>

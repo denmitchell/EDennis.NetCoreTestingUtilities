@@ -11,10 +11,10 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/2938333?s=400&amp;v=4</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>2.7.0</Version>
-    <PackageReleaseNotes>Reworked the TestJson table and associated classes (including TestJsonAttribute) to provide a more uniform way of storing and retrieving test cases.</PackageReleaseNotes>
-    <AssemblyVersion>2.7.0</AssemblyVersion>
-    <FileVersion>2.7.0</FileVersion>
+    <Version>2.7.1</Version>
+    <PackageReleaseNotes>Added GetJson convenience method to JsonTestCase class</PackageReleaseNotes>
+    <AssemblyVersion>2.7.1</AssemblyVersion>
+    <FileVersion>2.7.1</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
