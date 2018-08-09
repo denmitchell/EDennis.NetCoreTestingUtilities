@@ -11,15 +11,17 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/2938333?s=400&amp;v=4</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>2.7.2</Version>
-    <PackageReleaseNotes>Added GetObject convenience method to JsonTestCase class</PackageReleaseNotes>
-    <AssemblyVersion>2.7.2</AssemblyVersion>
-    <FileVersion>2.7.2</FileVersion>
+    <Version>2.8.0</Version>
+    <PackageReleaseNotes>Added HttpClientPair to facilitate testing of solutions having both an Internal API and an External API, requiring two HttpClient instances.  Also, added a PortInspector class to find available ports on the test machine</PackageReleaseNotes>
+    <AssemblyVersion>2.8.0</AssemblyVersion>
+    <FileVersion>2.8.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.5" />
     <PackageReference Include="EDennis.JsonUtils" Version="1.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.1" />
     <PackageReference Include="JsonDiffPatch" Version="2.0.46" />
     <PackageReference Include="System.Data.SqlClient" Version="4.5.1" />
