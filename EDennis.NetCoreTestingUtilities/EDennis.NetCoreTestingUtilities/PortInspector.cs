@@ -5,7 +5,7 @@ using System.Text;
 using System.Net.NetworkInformation;
 using System.Net;
 
-namespace EDennis.NetCoreTestingUtilities.Json {
+namespace EDennis.NetCoreTestingUtilities {
 
     /// <summary>
     /// This class finds available ports.

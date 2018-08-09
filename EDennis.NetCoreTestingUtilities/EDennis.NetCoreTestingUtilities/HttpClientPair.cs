@@ -5,7 +5,7 @@ using System;
 using System.Net.Http;
 
 
-namespace EDennis.NetCoreTestingUtilities.Json {
+namespace EDennis.NetCoreTestingUtilities {
 
     /// <summary>
     /// This class is analogous to the WebApplicationFactory class used
