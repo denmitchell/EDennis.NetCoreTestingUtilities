@@ -11,19 +11,22 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/2938333?s=400&amp;v=4</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>2.8.3</Version>
-    <PackageReleaseNotes>Updated TestJson and TestJsonAttribute classes to work better with Xunit.</PackageReleaseNotes>
-    <AssemblyVersion>2.8.3</AssemblyVersion>
-    <FileVersion>2.8.3</FileVersion>
+    <Version>2.9.0</Version>
+    <PackageReleaseNotes>Added extension methods for IActionResult to extract the returned object and the status code result.  These extension methods use the FluentAssertions library.</PackageReleaseNotes>
+    <AssemblyVersion>2.9.0</AssemblyVersion>
+    <FileVersion>2.9.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.2" />
     <PackageReference Include="Dapper" Version="1.50.5" />
     <PackageReference Include="EDennis.JsonUtils" Version="1.2.0" />
+    <PackageReference Include="FluentAssertions" Version="5.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.1" />
     <PackageReference Include="JsonDiffPatch" Version="2.0.46" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.5.1" />
     <PackageReference Include="xunit.abstractions" Version="2.0.2" />
     <PackageReference Include="xunit.extensibility.core" Version="2.4.0" />
