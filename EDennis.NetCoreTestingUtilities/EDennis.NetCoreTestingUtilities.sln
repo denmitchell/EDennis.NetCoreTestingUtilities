@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EDennis.NetCoreTestingUtili
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EDennis.NetCoreTestingUtilities.Tests", "EDennis.NetCoreTestingUtilities.Tests\EDennis.NetCoreTestingUtilities.Tests.csproj", "{900BBB6A-AFA0-44A7-B571-463F24289A46}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EDennis.NetCoreTestingUtilities.TestApi", "EDennis.NetCoreTestingUtilities.TestApi\EDennis.NetCoreTestingUtilities.TestApi.csproj", "{56FD09BC-9605-4615-9750-A4A0C434DD4C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{900BBB6A-AFA0-44A7-B571-463F24289A46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{900BBB6A-AFA0-44A7-B571-463F24289A46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{900BBB6A-AFA0-44A7-B571-463F24289A46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56FD09BC-9605-4615-9750-A4A0C434DD4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56FD09BC-9605-4615-9750-A4A0C434DD4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56FD09BC-9605-4615-9750-A4A0C434DD4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56FD09BC-9605-4615-9750-A4A0C434DD4C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

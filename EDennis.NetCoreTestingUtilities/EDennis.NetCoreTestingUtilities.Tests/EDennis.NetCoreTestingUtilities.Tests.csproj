@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EDennis.NetCoreTestingUtilities.TestApi\EDennis.NetCoreTestingUtilities.TestApi.csproj" />
     <ProjectReference Include="..\EDennis.NetCoreTestingUtilities\EDennis.NetCoreTestingUtilities.csproj" />
   </ItemGroup>
 

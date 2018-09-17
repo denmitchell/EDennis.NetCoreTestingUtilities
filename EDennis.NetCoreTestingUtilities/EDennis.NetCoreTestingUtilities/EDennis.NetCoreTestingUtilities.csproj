@@ -11,17 +11,16 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/2938333?s=400&amp;v=4</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>2.9.0</Version>
-    <PackageReleaseNotes>Added extension methods for IActionResult to extract the returned object and the status code result.  These extension methods use the FluentAssertions library.</PackageReleaseNotes>
-    <AssemblyVersion>2.9.0</AssemblyVersion>
-    <FileVersion>2.9.0</FileVersion>
+    <Version>2.9.1</Version>
+    <PackageReleaseNotes>Updated extension methods for IActionResult to extract the returned object and the status code.  These extension methods no longer use the FluentAssertions library.</PackageReleaseNotes>
+    <AssemblyVersion>2.9.1</AssemblyVersion>
+    <FileVersion>2.9.1</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.2" />
     <PackageReference Include="Dapper" Version="1.50.5" />
     <PackageReference Include="EDennis.JsonUtils" Version="1.2.0" />
-    <PackageReference Include="FluentAssertions" Version="5.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.1" />

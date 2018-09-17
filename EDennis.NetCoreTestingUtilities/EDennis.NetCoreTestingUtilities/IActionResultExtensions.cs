@@ -1,90 +1,59 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+
 
 namespace EDennis.NetCoreTestingUtilities {
     
     /// <summary>
-    /// These extension methods use the FluentAssertions library
-    /// to check the status code result and get the returned object 
-    /// from MVC controller actions that return an IActionResult
+    /// These extension methods return the body object and status
+    /// code from an IActionResult object.
     /// </summary>
     public static class IActionResultExtensions {
-        public static T GetObject<T>(this IActionResult result) {
-            ObjectResult objResult = null;
-            try {
-                objResult = result.Should().BeAssignableTo<ObjectResult>().Subject;
-                return objResult.Value.Should().BeAssignableTo<T>().Subject;
-            } catch {
+
+        /// <summary>
+        /// Returns the object contained in the response body
+        /// </summary>
+        /// <typeparam name="T">The type of the object</typeparam>
+        /// <param name="result">The HTTP response object</param>
+        /// <returns>The response body object or null/default value</returns>
+        public static T GetObject<T>(this IActionResult result) {            
+            if (result is ObjectResult) {
+                var objResult = result as ObjectResult;
+                return (T)objResult.Value;
+            } else if (result is JsonResult) {
+                var jsonResult = result as JsonResult;
+                return (T)jsonResult.Value;
+            } else
                 return default(T);
-            }
         }
 
-        public static bool IsOk(this IActionResult result)
-            => result.IsResultOfType<OkResult>();
-
-        public static bool IsCreated(this IActionResult result)
-            => result.IsResultOfType<CreatedResult>();
-
-        public static bool IsCreatedAtAction(this IActionResult result)
-            => result.IsResultOfType<CreatedAtActionResult>();
-
-        public static bool IsCreatedAtRoute(this IActionResult result)
-            => result.IsResultOfType<CreatedAtRouteResult>();
-
-        public static bool IsAccepted(this IActionResult result)
-            => result.IsResultOfType<AcceptedResult>();
-
-        public static bool IsAcceptedAtAction(this IActionResult result)
-            => result.IsResultOfType<AcceptedAtActionResult>();
-
-        public static bool IsAcceptedAtRoute(this IActionResult result)
-            => result.IsResultOfType<AcceptedAtRouteResult>();
-
-        public static bool IsNoContent(this IActionResult result)
-            => result.IsResultOfType<NoContentResult>();
-
-        public static bool IsEmpty(this IActionResult result)
-            => result.IsResultOfType<EmptyResult>();
-
-        public static bool IsNotFound(this IActionResult result)
-            => result.IsResultOfType<NotFoundResult>();
-
-        public static bool IsUnauthorized(this IActionResult result)
-            => result.IsResultOfType<UnauthorizedResult>();
-
-        public static bool IsForbidden(this IActionResult result)
-            => result.IsResultOfType<ForbidResult>();
-
-        public static bool IsBadRequest(this IActionResult result)
-            => result.IsResultOfType<BadRequestResult>();
-
-        public static bool IsFile(this IActionResult result)
-            => result.IsResultOfType<FileResult>();
-
-        public static bool IsChallenge(this IActionResult result)
-            => result.IsResultOfType<ChallengeResult>();
-
-        public static bool IsRedirect(this IActionResult result)
-            => result.IsResultOfType<RedirectResult>();
-
-        public static bool IsRedirectToAction(this IActionResult result)
-            => result.IsResultOfType<RedirectToActionResult>();
-
-        public static bool IsRedirectToRoute(this IActionResult result)
-            => result.IsResultOfType<RedirectToRouteResult>();
-
-        private static bool IsResultOfType<T>(this IActionResult result)
-            where T : ActionResult {
-            try {
-                var nfResult = result.Should().BeOfType<T>().Subject;
-                return true;
-            } catch {
-                return false;
-            }
+        /// <summary>
+        /// Gets the Status Code from an action result or 0
+        /// if the result does not have a StatusCode property
+        /// </summary>
+        /// <param name="result">IActionResult object</param>
+        /// <returns>Status code of the HTTP response</returns>
+        public static int GetStatusCode(this IActionResult result) {
+            if (result is StatusCodeResult)
+                return (result as StatusCodeResult).StatusCode;
+            else if (result is ObjectResult)
+                return (int)(result as ObjectResult).StatusCode;
+            else if (result is ContentResult)
+                return (int)(result as ContentResult).StatusCode;
+            else if (result is JsonResult)
+                return (int)(result as JsonResult).StatusCode;
+            else if (result is ViewResult)
+                return (int)(result as ViewResult).StatusCode;
+            else if (result is ViewComponentResult)
+                return (int)(result as ViewComponentResult).StatusCode;
+            else if (result is PartialViewResult)
+                return (int)(result as PartialViewResult).StatusCode;
+            else if (result is PageResult)
+                return (int)(result as PageResult).StatusCode;
+            else
+                return 0;
         }
+
 
     }
 }
