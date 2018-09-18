@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using EDennis.NetCoreTestingUtilities.Extensions;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -56,10 +57,10 @@ namespace EDennis.NetCoreTestingUtilities{
         public string GetJson(string testFile) {
             var rec = JsonTestFiles.FirstOrDefault(f => f.TestFile == testFile);
             if (rec == null)
-                throw new MissingRecordException($"Cannot find testFile {testFile} " +
-                    $"for Project {ProjectName}, Class {ClassName}, " +
-                    $"Method {MethodName}, TestScenario {TestScenario}, " +
-                    $"TestCase {TestCase}");
+                throw new MissingRecordException($"Cannot find testFile '{testFile}' " +
+                    $"for Project '{ProjectName}', Class '{ClassName}', " +
+                    $"Method '{MethodName}', TestScenario '{TestScenario}', " +
+                    $"TestCase '{TestCase}'");
             return rec.Json;
         }
 
@@ -70,47 +71,22 @@ namespace EDennis.NetCoreTestingUtilities{
         /// <typeparam name="T">Type of object stored</typeparam>
         /// <param name="testFile">Name of test file</param>
         /// <returns>object of type T (can be a boxed primitive)</returns>
-        public T GetObject<T>(string testFile)
-            where T : class, new() {
+        public T GetObject<T>(string testFile) {
             var json = GetJson(testFile);
-            var result = default(T);
-            try {
-                if (result is int)
-                    result = int.Parse(json) as T;
-                else if (result is short)
-                    result = short.Parse(json) as T;
-                else if (result is long)
-                    result = long.Parse(json) as T;
-                else if (result is sbyte)
-                    result = sbyte.Parse(json) as T;
-                else if (result is uint)
-                    result = uint.Parse(json) as T;
-                else if (result is ushort)
-                    result = ushort.Parse(json) as T;
-                else if (result is ulong)
-                    result = ulong.Parse(json) as T;
-                else if (result is byte)
-                    result = byte.Parse(json) as T;
-                else if (result is bool)
-                    result = bool.Parse(json) as T;
-                else if (result is decimal)
-                    result = decimal.Parse(json) as T;
-                else if (result is float)
-                    result = float.Parse(json) as T;
-                else if (result is double)
-                    result = double.Parse(json) as T;
-                else if (result is DateTime)
-                    result = DateTime.Parse(json) as T;
-                else if (result is char)
-                    result = char.Parse(json) as T;
-                else if (result is string)
-                    result = json as T;
-                else
-                    result = result.FromJsonString(json);
+            if (json == null && default(T) == null)
+                return default(T);
 
-            } catch { }
-                
-            return result;
+            try {
+                JToken jtoken = JToken.Parse(json);
+                T objNew = jtoken.ToObject<T>();
+                return objNew;
+            } catch (ArgumentException) {
+                throw new ArgumentException(
+                    $"Cannot cast '{json}' to {default(T).GetType().Name} " +
+                    $"for Project: '{ProjectName}', Class: '{ClassName}', " +
+                    $"Method: '{MethodName}', TestScenario: '{TestScenario}', " +
+                    $"TestCase: '{TestCase}', TestFile: '{testFile}' ");
+            }
         }
 
         public static List<JsonTestCase> GetTestCasesForProject(string connectionString, string testJsonSchema, string testJsonTable, string projectName) {
