@@ -25,6 +25,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
         [InlineData("json-result/person", 200, "{\"firstName\":\"Bob\",\"lastName\":\"Barker\"}")]
         [InlineData("ok-result",200,"")]
         [InlineData("not-found",404,"")]
+        [InlineData("not-found-null", 404, "")]
         [InlineData("forbid",403,"")]
         public void Get(string path, int expectedStatusCode, string expectedObject) {
             var response = _client.GetAsync("api/test/" + path).Result;

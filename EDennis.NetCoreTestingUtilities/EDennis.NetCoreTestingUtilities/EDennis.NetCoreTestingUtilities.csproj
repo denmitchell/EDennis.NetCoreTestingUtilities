@@ -11,10 +11,10 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/2938333?s=400&amp;v=4</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>2.9.1</Version>
-    <PackageReleaseNotes>Updated extension methods for IActionResult to extract the returned object and the status code.  These extension methods no longer use the FluentAssertions library.</PackageReleaseNotes>
-    <AssemblyVersion>2.9.1</AssemblyVersion>
-    <FileVersion>2.9.1</FileVersion>
+    <Version>2.9.2</Version>
+    <PackageReleaseNotes>Fixed TestJson.ToObject so that it can handle primitives stored in the Json column of the TestJson table.  Also, added explicit error message when TestJson.GetJson does not return a record.</PackageReleaseNotes>
+    <AssemblyVersion>2.9.2</AssemblyVersion>
+    <FileVersion>2.9.2</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

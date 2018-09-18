@@ -55,6 +55,12 @@ namespace EDennis.NetCoreTestingUtilities.TestApi.Controllers {
             return new NotFoundResult();
         }
 
+        [HttpGet("not-found-null")]
+        public IActionResult GetNotFoundNull() {
+            return NotFound(null);
+        }
+
+
         [HttpGet("forbid")]
         public IActionResult GetForbid() {
             return new StatusCodeResult(403);

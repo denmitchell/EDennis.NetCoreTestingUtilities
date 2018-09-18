@@ -54,13 +54,63 @@ namespace EDennis.NetCoreTestingUtilities{
         }
 
         public string GetJson(string testFile) {
-            return JsonTestFiles.FirstOrDefault(f => f.TestFile == testFile).Json;
+            var rec = JsonTestFiles.FirstOrDefault(f => f.TestFile == testFile);
+            if (rec == null)
+                throw new MissingRecordException($"Cannot find testFile {testFile} " +
+                    $"for Project {ProjectName}, Class {ClassName}, " +
+                    $"Method {MethodName}, TestScenario {TestScenario}, " +
+                    $"TestCase {TestCase}");
+            return rec.Json;
         }
 
+        /// <summary>
+        /// Gets the object stored in the Json column of the
+        /// TestJson table
+        /// </summary>
+        /// <typeparam name="T">Type of object stored</typeparam>
+        /// <param name="testFile">Name of test file</param>
+        /// <returns>object of type T (can be a boxed primitive)</returns>
         public T GetObject<T>(string testFile)
-            where T : new() {
+            where T : class, new() {
             var json = GetJson(testFile);
-            return new T().FromJsonString(json);
+            var result = default(T);
+            try {
+                if (result is int)
+                    result = int.Parse(json) as T;
+                else if (result is short)
+                    result = short.Parse(json) as T;
+                else if (result is long)
+                    result = long.Parse(json) as T;
+                else if (result is sbyte)
+                    result = sbyte.Parse(json) as T;
+                else if (result is uint)
+                    result = uint.Parse(json) as T;
+                else if (result is ushort)
+                    result = ushort.Parse(json) as T;
+                else if (result is ulong)
+                    result = ulong.Parse(json) as T;
+                else if (result is byte)
+                    result = byte.Parse(json) as T;
+                else if (result is bool)
+                    result = bool.Parse(json) as T;
+                else if (result is decimal)
+                    result = decimal.Parse(json) as T;
+                else if (result is float)
+                    result = float.Parse(json) as T;
+                else if (result is double)
+                    result = double.Parse(json) as T;
+                else if (result is DateTime)
+                    result = DateTime.Parse(json) as T;
+                else if (result is char)
+                    result = char.Parse(json) as T;
+                else if (result is string)
+                    result = json as T;
+                else
+                    result = result.FromJsonString(json);
+
+            } catch { }
+                
+            return result;
         }
 
         public static List<JsonTestCase> GetTestCasesForProject(string connectionString, string testJsonSchema, string testJsonTable, string projectName) {
