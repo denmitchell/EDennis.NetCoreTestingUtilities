@@ -26,7 +26,6 @@ namespace EDennis.NetCoreTestingUtilities {
 
         private static void BuildConfig() {
             config = new TestJsonConfig().FromJsonPath(TestJsonConfigPath);
-            config.PopulatedOn = DateTime.Now;
             TestCases = JsonTestCase.GetTestCasesForProject(
             config.ConnectionString,
             config.TestJsonSchema,
@@ -43,8 +42,6 @@ namespace EDennis.NetCoreTestingUtilities {
             public string MethodName { get; set; }
             public string TestScenario { get; set; }
             public string TestCase { get; set; }
-            public DateTime PopulatedOn { get; set; }
-            public int RebuildConfigAfterMinutes { get; set; } = 5;
         }
 
         private string _className;
@@ -62,10 +59,6 @@ namespace EDennis.NetCoreTestingUtilities {
             TestJsonConfigPath = testJsonConfigPath;
 
             if (config == null)
-                BuildConfig();
-
-            var configAge = DateTime.Now - config.PopulatedOn;
-            if (configAge.Minutes > config.RebuildConfigAfterMinutes)
                 BuildConfig();
 
             _className = className ?? config.ClassName;
