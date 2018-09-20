@@ -9,6 +9,9 @@ namespace EDennis.NetCoreTestingUtilities.Tests.TestJsonTable {
         public DbFixture() {
             using (var context = new PartSupplierContext()) {
 
+                //context.Database.EnsureDeleted();
+                //context.Database.EnsureCreated();
+
                 var range = context.TestJsons.Where(r => r.ProjectName == "SomeProject");
                 context.TestJsons.RemoveRange(range);
                 context.SaveChanges();
@@ -54,7 +57,6 @@ namespace EDennis.NetCoreTestingUtilities.Tests.TestJsonTable {
                     TestCase = "B", TestFile = "Expected", Json = "[8]"
                 });
 
-                context.SaveChanges();
 
             }
         }

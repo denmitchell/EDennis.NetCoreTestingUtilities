@@ -11,10 +11,10 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/2938333?s=400&amp;v=4</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>2.9.3</Version>
-    <PackageReleaseNotes>Fixed TestJson.ToObject so that it can handle primitives stored in the Json column of the TestJson table.  Also, added explicit error message when TestJson.GetJson does not return a record.</PackageReleaseNotes>
-    <AssemblyVersion>2.9.3</AssemblyVersion>
-    <FileVersion>2.9.3</FileVersion>
+    <Version>2.9.4</Version>
+    <PackageReleaseNotes>Added TestJsonAttribute class that faciliates retrieval of test records from a TestJson table.  This class is designed to work with Xunit and SQL Server.</PackageReleaseNotes>
+    <AssemblyVersion>2.9.4</AssemblyVersion>
+    <FileVersion>2.9.4</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
