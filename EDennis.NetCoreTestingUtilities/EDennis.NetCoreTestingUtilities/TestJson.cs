@@ -78,7 +78,7 @@ namespace EDennis.NetCoreTestingUtilities{
                 return default(T);
 
             try {
-                if (default(T) is DateTime || default(T) is string)
+                if (typeof(T) == typeof(DateTime) || typeof(T) == typeof(string))
                     json = "\"" + json + "\"";
 
                 JToken jtoken = JToken.Parse(json);

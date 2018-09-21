@@ -16,8 +16,16 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
             TestCase = "MyCase",
             JsonTestFiles = new List<JsonTestFile> {
                     new JsonTestFile() {
-                        TestFile = "Input",
+                        TestFile = "Integer",
                         Json = "123"
+                    },
+                    new JsonTestFile() {
+                        TestFile = "String",
+                        Json = "abc"
+                    },
+                    new JsonTestFile() {
+                        TestFile = "DateTime",
+                        Json = "2018-01-01"
                     },
                     new JsonTestFile() {
                         TestFile = "Expected",
@@ -147,7 +155,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
                 Assert.Equal("[\"G\",\"H\",\"I\"]", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Expected").Json);
             } else if (jsonTestCase.TestScenario.EndsWith("B")
                 && jsonTestCase.TestCase.EndsWith("B")) {
-                Assert.Equal("123", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Input").Json);
+                Assert.Equal("abc", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Input").Json);
                 Assert.Equal("[\"J\",\"K\",\"L\"]", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Expected").Json);
             }
         }
@@ -167,14 +175,26 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
 
         [Fact]
         public void ToObjectInt() {
-            int value = jcase.GetObject<int>("Input");
+            int value = jcase.GetObject<int>("Integer");
             Assert.Equal(123, value);
+        }
+
+        [Fact]
+        public void ToObjectDateTime() {
+            DateTime value = jcase.GetObject<DateTime>("DateTime");
+            Assert.Equal(DateTime.Parse("2018-01-01"), value);
         }
 
 
         [Fact]
+        public void ToObjectString() {
+            string value = jcase.GetObject<string>("String");
+            Assert.Equal("abc", value);
+        }
+
+        [Fact]
         public void ToObjectBadCast() {
-            Assert.Throws<System.ArgumentException>(() => jcase.GetObject<DateTime>("Input"));
+            Assert.Throws<System.ArgumentException>(() => jcase.GetObject<DateTime>("Integer"));
         }
 
 

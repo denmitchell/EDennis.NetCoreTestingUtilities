@@ -11,10 +11,10 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/2938333?s=400&amp;v=4</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>2.9.6</Version>
-    <PackageReleaseNotes>Fixed TestJsonAttribute and related classes to handle solo DateTime values in the Json column of the TestJson table.</PackageReleaseNotes>
-    <AssemblyVersion>2.9.6</AssemblyVersion>
-    <FileVersion>2.9.6</FileVersion>
+    <Version>2.9.7</Version>
+    <PackageReleaseNotes>Updated TestJsonAttribute for better handling of solo string values in Json column of TestJson table.</PackageReleaseNotes>
+    <AssemblyVersion>2.9.7</AssemblyVersion>
+    <FileVersion>2.9.7</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
