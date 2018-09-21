@@ -139,7 +139,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
                 Assert.Equal("[\"A\",\"B\",\"C\"]", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Expected").Json);
             } else if (jsonTestCase.TestScenario.EndsWith("A")
                 && jsonTestCase.TestCase.EndsWith("B")) {
-                Assert.Equal("456", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Input").Json);
+                Assert.Equal("2018-01-01", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Input").Json);
                 Assert.Equal("[\"D\",\"E\",\"F\"]", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Expected").Json);
             } else if (jsonTestCase.TestScenario.EndsWith("B")
                 && jsonTestCase.TestCase.EndsWith("A")) {

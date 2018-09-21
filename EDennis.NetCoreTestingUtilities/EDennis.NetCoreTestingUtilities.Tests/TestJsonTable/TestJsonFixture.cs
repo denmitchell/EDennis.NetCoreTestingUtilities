@@ -84,7 +84,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests.TestJsonTable {
                         TestScenario = "TestScenarioA",
                         TestCase = "TestCaseB",
                         TestFile = "Input",
-                        Json = "456"
+                        Json = "2018-01-01"
                     });
 
                     context.TestJsons.Add(new TestJson {

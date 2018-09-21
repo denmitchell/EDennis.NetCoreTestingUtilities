@@ -64,6 +64,7 @@ namespace EDennis.NetCoreTestingUtilities{
             return rec.Json;
         }
 
+
         /// <summary>
         /// Gets the object stored in the Json column of the
         /// TestJson table
@@ -77,10 +78,13 @@ namespace EDennis.NetCoreTestingUtilities{
                 return default(T);
 
             try {
+                if (default(T) is DateTime || default(T) is string)
+                    json = "\"" + json + "\"";
+
                 JToken jtoken = JToken.Parse(json);
                 T objNew = jtoken.ToObject<T>();
                 return objNew;
-            } catch (ArgumentException) {
+            } catch (Exception ex) when (ex is ArgumentException || ex is FormatException) {
                 throw new ArgumentException(
                     $"Cannot cast '{json}' to {default(T).GetType().Name} " +
                     $"for Project: '{ProjectName}', Class: '{ClassName}', " +
