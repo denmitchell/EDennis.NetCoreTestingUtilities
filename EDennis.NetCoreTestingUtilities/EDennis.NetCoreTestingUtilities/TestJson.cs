@@ -130,10 +130,20 @@ namespace EDennis.NetCoreTestingUtilities{
         }
 
         public static IEnumerable<object[]> GetDataForXUnit(List<JsonTestCase> TestCases,
-            string className, string methodName, string testScenario, string testCase) {
+            TestJsonConfig config, string className, string methodName, string testScenario, string testCase) {
+
+            if (TestCases == null) {
+                throw new ArgumentException(
+                    $"No TestJson records found for ConnectionString: {config.ConnectionString}, TestJsonSchema: {config.TestJsonSchema}, TestJsonTable: {config.TestJsonTable}, ProjectName: {config.ProjectName}.  Check your configuration file for possible errors.");
+            }
 
             var qry = TestCases.Where(t => t.ClassName == className && t.MethodName == methodName
                             && t.TestScenario == testScenario && t.TestCase == testCase);
+
+            if (qry == null || qry.Count() == 0) {
+                throw new ArgumentException(
+                    $"No TestJson record found for ProjectName: {TestCases[0].ProjectName}, ClassName: {className}, MethodName: {methodName}, TestScenario: {testScenario}, TestCase {testCase}");
+            }
 
             //return all objects
             foreach (var rec in qry.AsEnumerable())

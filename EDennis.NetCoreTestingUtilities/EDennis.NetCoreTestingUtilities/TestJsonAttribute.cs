@@ -16,7 +16,7 @@ namespace EDennis.NetCoreTestingUtilities {
     /// should be placed in the top-level directory of the test project,
     /// unless the full path to the config file is provided in the attribute
     /// </summary>
-    public class TestJsonAttribute : DataAttribute {
+    public partial class TestJsonAttribute : DataAttribute {
 
         public static List<JsonTestCase> TestCases { get; set; }
 
@@ -31,17 +31,6 @@ namespace EDennis.NetCoreTestingUtilities {
             config.TestJsonSchema,
             config.TestJsonTable,
             config.ProjectName);
-        }
-
-        protected class TestJsonConfig {
-            public string ConnectionString { get; set; }
-            public string TestJsonSchema { get; set; }
-            public string TestJsonTable { get; set; }
-            public string ProjectName { get; set; }
-            public string ClassName { get; set; }
-            public string MethodName { get; set; }
-            public string TestScenario { get; set; }
-            public string TestCase { get; set; }
         }
 
         private string _className;
@@ -69,7 +58,7 @@ namespace EDennis.NetCoreTestingUtilities {
 
 
         public override IEnumerable<object[]> GetData(MethodInfo methodInfo) =>
-                JsonTestCase.GetDataForXUnit(TestCases, _className, _methodName, _testScenario, _testCase);
+                JsonTestCase.GetDataForXUnit(TestCases, config, _className, _methodName, _testScenario, _testCase);
 
     }
 
