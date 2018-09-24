@@ -28,6 +28,14 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
                         Json = "2018-01-01"
                     },
                     new JsonTestFile() {
+                        TestFile = "DateTimeOffset",
+                        Json = "2018-04-05 10:15:00 -04:00"
+                    },
+                    new JsonTestFile() {
+                        TestFile = "TimeSpan",
+                        Json = "10:15:00"
+                    },
+                    new JsonTestFile() {
                         TestFile = "Expected",
                         Json = "{\"firstName\":\"Bob\",\"lastName\":\"Barker\"}"
                     },
@@ -185,6 +193,17 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
             Assert.Equal(DateTime.Parse("2018-01-01"), value);
         }
 
+        [Fact]
+        public void ToObjectDateTimeOffset() {
+            DateTimeOffset value = jcase.GetObject<DateTimeOffset>("DateTimeOffset");
+            Assert.Equal(DateTimeOffset.Parse("2018-04-05 10:15:00 -04:00"), value);
+        }
+
+        [Fact]
+        public void ToObjectTimeSpan() {
+            TimeSpan value = jcase.GetObject<TimeSpan>("TimeSpan");
+            Assert.Equal(TimeSpan.Parse("10:15:00"), value);
+        }
 
         [Fact]
         public void ToObjectString() {
