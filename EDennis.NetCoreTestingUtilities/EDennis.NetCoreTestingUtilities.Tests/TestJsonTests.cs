@@ -42,6 +42,10 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
                     new JsonTestFile() {
                         TestFile = "NullRec",
                         Json = null
+                    },
+                    new JsonTestFile() {
+                        TestFile = "Guid",
+                        Json = "0E984725-C51C-4BF4-9960-E1C80E27ABA0"
                     }
             }
         };
@@ -203,6 +207,12 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
         public void ToObjectTimeSpan() {
             TimeSpan value = jcase.GetObject<TimeSpan>("TimeSpan");
             Assert.Equal(TimeSpan.Parse("10:15:00"), value);
+        }
+
+        [Fact]
+        public void ToObjectGuid() {
+            Guid value = jcase.GetObject<Guid>("Guid");
+            Assert.Equal(Guid.Parse("0E984725-C51C-4BF4-9960-E1C80E27ABA0"), value);
         }
 
         [Fact]
