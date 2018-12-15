@@ -4,9 +4,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace EDennis.NetCoreTestingUtilities.Tests {
     public class TestJsonTests : IClassFixture<TestJsonFixture>{
+
+        private readonly ITestOutputHelper _output;
+        public TestJsonTests(ITestOutputHelper output) {
+            _output = output;
+        }
 
         private JsonTestCase jcase = new JsonTestCase() {
             ProjectName = "MyProject",
@@ -50,102 +56,6 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
             }
         };
 
-        static TestJsonTests() {
-            /*
-            var options = new DbContextOptionsBuilder<PartSupplierContext>()
-                .UseInMemoryDatabase(databaseName: "FromTestJsonTable")
-                .Options;
-            using (var context = new PartSupplierContext()) {
-
-                context.ResetValueGenerators();
-                context.Database.EnsureDeleted();
-                context.Database.EnsureCreated();
-
-                context.TestJsons.Add(new TestJson {
-                    ProjectName = "EDennis.NetCoreTestingUtilities.Tests",
-                    ClassName = "ClassA",
-                    MethodName = "MethodA",
-                    TestScenario = "TestScenarioA",
-                    TestCase = "TestCaseA",
-                    TestFile = "Input",
-                    Json = "123"
-                });
-
-                context.TestJsons.Add(new TestJson {
-                    ProjectName = "EDennis.NetCoreTestingUtilities.Tests",
-                    ClassName = "ClassA",
-                    MethodName = "MethodA",
-                    TestScenario = "TestScenarioA",
-                    TestCase = "TestCaseA",
-                    TestFile = "Expected",
-                    Json = "[\"A\",\"B\",\"C\"]"
-                });
-
-                context.TestJsons.Add(new TestJson {
-                    ProjectName = "EDennis.NetCoreTestingUtilities.Tests",
-                    ClassName = "ClassA",
-                    MethodName = "MethodA",
-                    TestScenario = "TestScenarioA",
-                    TestCase = "TestCaseB",
-                    TestFile = "Input",
-                    Json = "456"
-                });
-
-                context.TestJsons.Add(new TestJson {
-                    ProjectName = "EDennis.NetCoreTestingUtilities.Tests",
-                    ClassName = "ClassA",
-                    MethodName = "MethodA",
-                    TestScenario = "TestScenarioA",
-                    TestCase = "TestCaseB",
-                    TestFile = "Expected",
-                    Json = "[\"D\",\"E\",\"F\"]"
-                });
-
-                context.TestJsons.Add(new TestJson {
-                    ProjectName = "EDennis.NetCoreTestingUtilities.Tests",
-                    ClassName = "ClassA",
-                    MethodName = "MethodA",
-                    TestScenario = "TestScenarioB",
-                    TestCase = "TestCaseA",
-                    TestFile = "Input",
-                    Json = "789"
-                });
-
-                context.TestJsons.Add(new TestJson {
-                    ProjectName = "EDennis.NetCoreTestingUtilities.Tests",
-                    ClassName = "ClassA",
-                    MethodName = "MethodA",
-                    TestScenario = "TestScenarioB",
-                    TestCase = "TestCaseA",
-                    TestFile = "Expected",
-                    Json = "[\"G\",\"H\",\"I\"]"
-                });
-
-                context.TestJsons.Add(new TestJson {
-                    ProjectName = "EDennis.NetCoreTestingUtilities.Tests",
-                    ClassName = "ClassA",
-                    MethodName = "MethodA",
-                    TestScenario = "TestScenarioB",
-                    TestCase = "TestCaseB",
-                    TestFile = "Input",
-                    Json = "123"
-                });
-
-                context.TestJsons.Add(new TestJson {
-                    ProjectName = "EDennis.NetCoreTestingUtilities.Tests",
-                    ClassName = "ClassA",
-                    MethodName = "MethodA",
-                    TestScenario = "TestScenarioB",
-                    TestCase = "TestCaseB",
-                    TestFile = "Expected",
-                    Json = "[\"J\",\"K\",\"L\"]"
-                });
-
-                context.SaveChanges();
-*/
-            
-
-        }
 
         [Theory]
         [TestJson("ClassA", "MethodA", "TestScenarioA", "TestCaseA")]
@@ -153,6 +63,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
         [TestJson("ClassA", "MethodA", "TestScenarioB", "TestCaseA")]
         [TestJson("ClassA", "MethodA", "TestScenarioB", "TestCaseB")]
         public void TestJson_GetData(string t, JsonTestCase jsonTestCase) {
+            _output.WriteLine($"Test case: {t}");
             if (jsonTestCase.TestScenario.EndsWith("A")
                 && jsonTestCase.TestCase.EndsWith("A")) {
                 Assert.Equal("123", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Input").Json);
