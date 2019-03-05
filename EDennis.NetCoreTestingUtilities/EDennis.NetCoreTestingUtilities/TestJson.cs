@@ -93,6 +93,7 @@ namespace EDennis.NetCoreTestingUtilities{
             }
         }
 
+
         public static List<JsonTestCase> GetTestCasesForProject(string connectionString, string testJsonSchema, string testJsonTable, string projectName) {
             var testCases = new List<JsonTestCase>();
 
