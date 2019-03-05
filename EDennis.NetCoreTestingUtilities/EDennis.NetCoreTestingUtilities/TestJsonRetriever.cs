@@ -64,6 +64,8 @@ namespace EDennis.NetCoreTestingUtilities {
                 TestJsonConfig.TestJsonSchema = testJsonSchema;
             if (testJsonTable != null)
                 TestJsonConfig.TestJsonTable = testJsonTable;
+            if (projectName != null)
+                TestJsonConfig.ProjectName = projectName;
             if (className != null)
                 TestJsonConfig.ClassName = className;
             if (methodName != null)

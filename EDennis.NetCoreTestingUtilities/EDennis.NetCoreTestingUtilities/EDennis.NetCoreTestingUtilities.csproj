@@ -11,10 +11,10 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/2938333?s=400&amp;v=4</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>3.3.0</Version>
+    <Version>3.3.1</Version>
     <PackageReleaseNotes>Added TestJsonRetriever class with GetObject&lt;T&gt; method for retrieving TestJson records from the database.  In the TestJson table, test parameters are spread across multiple rows.  Accordingly, special handling is required to retrieve a record that meets several criteria.</PackageReleaseNotes>
-    <AssemblyVersion>3.3.0</AssemblyVersion>
-    <FileVersion>3.3.0</FileVersion>
+    <AssemblyVersion>3.3.1</AssemblyVersion>
+    <FileVersion>3.3.1</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
