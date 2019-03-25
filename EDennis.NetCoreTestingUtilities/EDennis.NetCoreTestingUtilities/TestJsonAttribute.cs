@@ -1,7 +1,8 @@
-﻿using EDennis.NetCoreTestingUtilities.Extensions;
-using System;
+﻿
+
+
+
 using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
 using Xunit.Sdk;
 
@@ -18,49 +19,63 @@ namespace EDennis.NetCoreTestingUtilities {
     /// </summary>
     public partial class TestJsonAttribute : DataAttribute {
 
-        public static List<JsonTestCase> TestCases { get; set; }
+        public static Dictionary<string, List<JsonTestCase>> TestCases { get; set; }
+            = new Dictionary<string, List<JsonTestCase>>();
 
-        private static string TestJsonConfigPath { get; set; } = "TestJsonConfig.json";
-        private static TestJsonConfig config;
+        private TestJsonConfig _config;
+        private string _configKey;
 
-
-        private static void BuildConfig() {
-            config = new TestJsonConfig().FromJsonPath(TestJsonConfigPath);
-            TestCases = JsonTestCase.GetTestCasesForProject(
-            config.ConnectionString,
-            config.TestJsonSchema,
-            config.TestJsonTable,
-            config.ProjectName);
-        }
-
-        private string _className;
-        private string _methodName;
-        private string _testScenario;
-        private string _testCase;
 
         public TestJsonAttribute(
-                string className = null,
-                string methodName = null,
-                string testScenario = null,
-                string testCase = null,
-                string testJsonConfigPath = "TestJsonConfig.json") {
+                string databaseName,
+                string projectName,
+                string className,
+                string methodName,
+                string testScenario,
+                string testCase,
+                string serverName = "(LocalDb)\\MSSQLLocalDb",
+                string testJsonSchema = "_",
+                string testJsonTable = "TestJson"
+            ) {
 
-            TestJsonConfigPath = testJsonConfigPath;
+            _config = new TestJsonConfig {
+                DatabaseName = databaseName,
+                ServerName = serverName,
+                ConnectionString = $"Server={serverName};Database={databaseName};Trusted_Connection=True;MultipleActiveResultSets=true",
+                TestJsonSchema = testJsonSchema,
+                TestJsonTable = testJsonTable,
+                ProjectName = projectName,
+                ClassName = className,
+                MethodName = methodName,
+                TestScenario = testScenario,
+                TestCase = testCase
+            };
 
-            if (config == null)
-                BuildConfig();
 
-            _className = className ?? config.ClassName;
-            _methodName = methodName ?? config.MethodName;
-            _testScenario = testScenario ?? config.TestScenario;
-            _testCase = testCase ?? config.TestCase;
+            _configKey = new TestJsonConfig {
+                ConnectionString = _config.ConnectionString,
+                TestJsonSchema = _config.TestJsonSchema,
+                TestJsonTable = _config.TestJsonTable,
+                ProjectName = _config.ProjectName
+            }.ToString();
+
+
+            if (!TestCases.ContainsKey(_configKey))
+                TestCases.Add(_configKey, JsonTestCase.GetTestCasesForProject(
+                    _config.ConnectionString,
+                    _config.TestJsonSchema,
+                    _config.TestJsonTable,
+                    _config.ProjectName));
+
         }
 
 
         public override IEnumerable<object[]> GetData(MethodInfo methodInfo) =>
-                JsonTestCase.GetDataForXUnit(TestCases, config, _className, _methodName, _testScenario, _testCase);
+                JsonTestCase.GetDataForXUnit(TestCases[_configKey], _config);
 
     }
 
 }
+
+
 

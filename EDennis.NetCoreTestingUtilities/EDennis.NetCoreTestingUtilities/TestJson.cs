@@ -1,4 +1,6 @@
-﻿using Dapper;
+﻿
+
+using Dapper;
 using EDennis.NetCoreTestingUtilities.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -9,7 +11,7 @@ using System.Linq;
 using System.Text;
 using Xunit.Abstractions;
 
-namespace EDennis.NetCoreTestingUtilities{
+namespace EDennis.NetCoreTestingUtilities {
 
     /// <summary>
     /// Flat TestJson record, which reflects the 
@@ -134,25 +136,24 @@ namespace EDennis.NetCoreTestingUtilities{
 
         }
 
-        public static IEnumerable<object[]> GetDataForXUnit(List<JsonTestCase> TestCases,
-            TestJsonConfig config, string className, string methodName, string testScenario, string testCase) {
+        public static IEnumerable<object[]> GetDataForXUnit(List<JsonTestCase> TestCases, TestJsonConfig config) {
 
             if (TestCases == null) {
                 throw new ArgumentException(
                     $"No TestJson records found for ConnectionString: {config.ConnectionString}, TestJsonSchema: {config.TestJsonSchema}, TestJsonTable: {config.TestJsonTable}, ProjectName: {config.ProjectName}.  Check your configuration file for possible errors.");
             }
 
-            var qry = TestCases.Where(t => t.ClassName == className && t.MethodName == methodName
-                            && t.TestScenario == testScenario && t.TestCase == testCase);
+            var qry = TestCases.Where(t => t.ClassName == config.ClassName && t.MethodName == config.MethodName
+                            && t.TestScenario == config.TestScenario && t.TestCase == config.TestCase);
 
             if (qry == null || qry.Count() == 0) {
                 throw new ArgumentException(
-                    $"No TestJson record found for ProjectName: {TestCases[0].ProjectName}, ClassName: {className}, MethodName: {methodName}, TestScenario: {testScenario}, TestCase {testCase}");
+                    $"No TestJson record found for ProjectName: {TestCases[0].ProjectName}, ClassName: {config.ClassName}, MethodName: {config.MethodName}, TestScenario: {config.TestScenario}, TestCase {config.TestCase}");
             }
 
             //return all objects
             foreach (var rec in qry.AsEnumerable())
-                yield return new object[] { $"{testScenario}({testCase})", rec };
+                yield return new object[] { $"{config.TestScenario}({config.TestCase})", rec };
         }
 
 

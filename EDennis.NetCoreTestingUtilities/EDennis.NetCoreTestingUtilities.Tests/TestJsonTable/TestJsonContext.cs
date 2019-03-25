@@ -31,7 +31,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests.TestJsonTable {
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
 
             modelBuilder.Entity<TestJson>()
-                .ToTable("TestJson","_maintenance")
+                .ToTable("TestJson","_")
                 .HasKey(s => new { s.ProjectName, s.ClassName, s.MethodName, s.TestScenario, s.TestCase, s.TestFile });
 
 

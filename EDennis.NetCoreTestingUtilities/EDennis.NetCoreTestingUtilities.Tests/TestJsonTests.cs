@@ -56,13 +56,54 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
             }
         };
 
+        internal class TestJsonA : TestJsonAttribute {
+            public TestJsonA(string methodName, string testScenario, string testCase) 
+                : base("TestJson", "EDennis.NetCoreTestingUtilities.Tests", "ClassA", 
+                      methodName, testScenario, testCase) {
+            }
+        }
+
+        internal class TestJsonB : TestJsonAttribute {
+            public TestJsonB(string methodName, string testScenario, string testCase)
+                : base("TestJson2", "EDennis.NetCoreTestingUtilities.Tests", "ClassB",
+                      methodName, testScenario, testCase) {
+            }
+        }
+
 
         [Theory]
-        [TestJson("ClassA", "MethodA", "TestScenarioA", "TestCaseA")]
-        [TestJson("ClassA", "MethodA", "TestScenarioA", "TestCaseB")]
-        [TestJson("ClassA", "MethodA", "TestScenarioB", "TestCaseA")]
-        [TestJson("ClassA", "MethodA", "TestScenarioB", "TestCaseB")]
-        public void TestJson_GetData(string t, JsonTestCase jsonTestCase) {
+        [TestJsonA("MethodA", "TestScenarioA", "TestCaseA")]
+        [TestJsonA("MethodA", "TestScenarioA", "TestCaseB")]
+        [TestJsonA("MethodA", "TestScenarioB", "TestCaseA")]
+        [TestJsonA("MethodA", "TestScenarioB", "TestCaseB")]
+        public void TestJsonA_GetData(string t, JsonTestCase jsonTestCase) {
+            _output.WriteLine($"Test case: {t}");
+            if (jsonTestCase.TestScenario.EndsWith("A")
+                && jsonTestCase.TestCase.EndsWith("A")) {
+                Assert.Equal("123", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Input").Json);
+                Assert.Equal("[\"A\",\"B\",\"C\"]", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Expected").Json);
+            } else if (jsonTestCase.TestScenario.EndsWith("A")
+                && jsonTestCase.TestCase.EndsWith("B")) {
+                Assert.Equal("2018-01-01", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Input").Json);
+                Assert.Equal("[\"D\",\"E\",\"F\"]", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Expected").Json);
+            } else if (jsonTestCase.TestScenario.EndsWith("B")
+                && jsonTestCase.TestCase.EndsWith("A")) {
+                Assert.Equal("789", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Input").Json);
+                Assert.Equal("[\"G\",\"H\",\"I\"]", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Expected").Json);
+            } else if (jsonTestCase.TestScenario.EndsWith("B")
+                && jsonTestCase.TestCase.EndsWith("B")) {
+                Assert.Equal("abc", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Input").Json);
+                Assert.Equal("[\"J\",\"K\",\"L\"]", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Expected").Json);
+            }
+        }
+
+
+        [Theory]
+        [TestJsonB("MethodA", "TestScenarioA", "TestCaseA")]
+        [TestJsonB("MethodA", "TestScenarioA", "TestCaseB")]
+        [TestJsonB("MethodA", "TestScenarioB", "TestCaseA")]
+        [TestJsonB("MethodA", "TestScenarioB", "TestCaseB")]
+        public void TestJsonB_GetData(string t, JsonTestCase jsonTestCase) {
             _output.WriteLine($"Test case: {t}");
             if (jsonTestCase.TestScenario.EndsWith("A")
                 && jsonTestCase.TestCase.EndsWith("A")) {
