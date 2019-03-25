@@ -16,6 +16,7 @@ namespace EDennis.NetCoreTestingUtilities {
     /// 
     /// For Unit tests, see https://github.com/denmitchell/SampleApi
     /// </summary>
+    [Obsolete]
     public abstract class HttpClientPairBase<TInternalStartup,TExternalStartup> : IDisposable 
         where TInternalStartup : class 
         where TExternalStartup : class

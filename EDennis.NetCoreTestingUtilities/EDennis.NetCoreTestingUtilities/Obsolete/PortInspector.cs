@@ -11,6 +11,7 @@ namespace EDennis.NetCoreTestingUtilities {
     /// This class finds available ports.
     /// Adapted from https://gist.github.com/jrusbatch/4211535
     /// </summary>
+    [Obsolete]
     public class PortInspector {
 
         /// <summary>

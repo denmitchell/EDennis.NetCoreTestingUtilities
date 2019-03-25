@@ -13,6 +13,7 @@ namespace EDennis.NetCoreTestingUtilities.Json
     /// This class provides a fluent API wrapper around
     /// some selected Json.NET operations.
     /// </summary>
+    [Obsolete]
     public class Json {
 
         /// <summary>

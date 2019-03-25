@@ -14,6 +14,7 @@ namespace EDennis.NetCoreTestingUtilities {
     /// input parameters and expected output are retrieved
     /// from a JSON file
     /// </summary>
+    [Obsolete]
     public class JsonAssert {
 
 

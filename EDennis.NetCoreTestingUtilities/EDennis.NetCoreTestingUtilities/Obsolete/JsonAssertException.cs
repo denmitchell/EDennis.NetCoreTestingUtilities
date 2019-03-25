@@ -11,6 +11,7 @@ namespace EDennis.NetCoreTestingUtilities {
     /// formatted JSON.  Also, a JsonDiffPatch is calculated and presented.  The
     /// class makes heavy use of Newtonsoft and JsonDiffPatch libraries.
     /// </summary>
+    [Obsolete]
     public class JsonAssertException : Exception {
         public JsonAssertException(object expected, object actual) :
             base(new {  Expected = expected,

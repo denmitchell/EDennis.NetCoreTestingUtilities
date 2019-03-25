@@ -9,6 +9,7 @@ namespace EDennis.NetCoreTestingUtilities.Json {
     /// This class is the DbContext class for the SQL Server 
     /// FOR JSON query functionality.
     /// </summary>
+    [Obsolete]
     public class JsonResultContext : DbContext{
 
         public JsonResultContext(string connectionString) :

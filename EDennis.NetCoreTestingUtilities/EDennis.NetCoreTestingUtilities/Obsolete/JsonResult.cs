@@ -8,6 +8,7 @@ namespace EDennis.NetCoreTestingUtilities.Json {
     /// <summary>
     /// Holds JSON from a SQL Server FOR JSON query
     /// </summary>
+    [Obsolete]
     public class JsonResult {
 
         [Key]
