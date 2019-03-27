@@ -7,12 +7,30 @@ using Xunit;
 using Xunit.Abstractions;
 
 namespace EDennis.NetCoreTestingUtilities.Tests {
-    public class TestJsonTests : IClassFixture<TestJsonFixture>{
+    public class TestJsonTests : IClassFixture<TestJsonFixture> {
 
         private readonly ITestOutputHelper _output;
         public TestJsonTests(ITestOutputHelper output) {
             _output = output;
         }
+
+        private Dictionary<string, string[]> mockActualA
+            = new Dictionary<string, string[]>{
+                { "123", new string[] {"A","B","C" } },
+                { "2018-01-01", new string[] {"D","E","F" } },
+                { "789", new string[] {"G","H","I" } },
+                { "abc", new string[] {"J","K","L" } },
+                { "uvw", new string[] {"U","V","W" } },
+                { "xyz", new string[] {"X","Y","Z" } }
+            };
+
+        private Dictionary<string, string[]> mockActualB
+            = new Dictionary<string, string[]>{
+                { "123", new string[] {"A","B","C" } },
+                { "2018-01-01", new string[] {"D","E","F" } },
+                { "789", new string[] {"G","H","I" } },
+                { "abc", new string[] {"J","K","L" } },
+            };
 
         private JsonTestCase jcase = new JsonTestCase() {
             ProjectName = "MyProject",
@@ -57,8 +75,8 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
         };
 
         internal class TestJsonA : TestJsonAttribute {
-            public TestJsonA(string methodName, string testScenario, string testCase) 
-                : base("TestJson", "EDennis.NetCoreTestingUtilities.Tests", "ClassA", 
+            public TestJsonA(string methodName, string testScenario, string testCase)
+                : base("TestJson", "EDennis.NetCoreTestingUtilities.Tests", "ClassA",
                       methodName, testScenario, testCase) {
             }
         }
@@ -76,25 +94,16 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
         [TestJsonA("MethodA", "TestScenarioA", "TestCaseB")]
         [TestJsonA("MethodA", "TestScenarioB", "TestCaseA")]
         [TestJsonA("MethodA", "TestScenarioB", "TestCaseB")]
+        [TestJsonA("MethodA", "", "TestCaseA")]
+        [TestJsonA("MethodA", "", "TestCaseB")]
         public void TestJsonA_GetData(string t, JsonTestCase jsonTestCase) {
             _output.WriteLine($"Test case: {t}");
-            if (jsonTestCase.TestScenario.EndsWith("A")
-                && jsonTestCase.TestCase.EndsWith("A")) {
-                Assert.Equal("123", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Input").Json);
-                Assert.Equal("[\"A\",\"B\",\"C\"]", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Expected").Json);
-            } else if (jsonTestCase.TestScenario.EndsWith("A")
-                && jsonTestCase.TestCase.EndsWith("B")) {
-                Assert.Equal("2018-01-01", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Input").Json);
-                Assert.Equal("[\"D\",\"E\",\"F\"]", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Expected").Json);
-            } else if (jsonTestCase.TestScenario.EndsWith("B")
-                && jsonTestCase.TestCase.EndsWith("A")) {
-                Assert.Equal("789", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Input").Json);
-                Assert.Equal("[\"G\",\"H\",\"I\"]", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Expected").Json);
-            } else if (jsonTestCase.TestScenario.EndsWith("B")
-                && jsonTestCase.TestCase.EndsWith("B")) {
-                Assert.Equal("abc", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Input").Json);
-                Assert.Equal("[\"J\",\"K\",\"L\"]", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Expected").Json);
-            }
+
+            var input = jsonTestCase.GetObject<string>("Input");
+            var expected = jsonTestCase.GetObject<string[]>("Expected");
+            var actual = mockActualA[input];
+
+            Assert.Equal(expected, actual);
         }
 
 
@@ -105,23 +114,12 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
         [TestJsonB("MethodA", "TestScenarioB", "TestCaseB")]
         public void TestJsonB_GetData(string t, JsonTestCase jsonTestCase) {
             _output.WriteLine($"Test case: {t}");
-            if (jsonTestCase.TestScenario.EndsWith("A")
-                && jsonTestCase.TestCase.EndsWith("A")) {
-                Assert.Equal("123", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Input").Json);
-                Assert.Equal("[\"A\",\"B\",\"C\"]", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Expected").Json);
-            } else if (jsonTestCase.TestScenario.EndsWith("A")
-                && jsonTestCase.TestCase.EndsWith("B")) {
-                Assert.Equal("2018-01-01", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Input").Json);
-                Assert.Equal("[\"D\",\"E\",\"F\"]", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Expected").Json);
-            } else if (jsonTestCase.TestScenario.EndsWith("B")
-                && jsonTestCase.TestCase.EndsWith("A")) {
-                Assert.Equal("789", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Input").Json);
-                Assert.Equal("[\"G\",\"H\",\"I\"]", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Expected").Json);
-            } else if (jsonTestCase.TestScenario.EndsWith("B")
-                && jsonTestCase.TestCase.EndsWith("B")) {
-                Assert.Equal("abc", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Input").Json);
-                Assert.Equal("[\"J\",\"K\",\"L\"]", jsonTestCase.JsonTestFiles.Find(f => f.TestFile == "Expected").Json);
-            }
+
+            var input = jsonTestCase.GetObject<string>("Input");
+            var expected = jsonTestCase.GetObject<string[]>("Expected");
+            var actual = mockActualB[input];
+
+            Assert.Equal(expected, actual);
         }
 
 

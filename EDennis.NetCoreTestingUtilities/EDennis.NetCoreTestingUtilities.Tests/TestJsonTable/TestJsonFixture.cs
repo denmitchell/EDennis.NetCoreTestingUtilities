@@ -137,7 +137,48 @@ namespace EDennis.NetCoreTestingUtilities.Tests.TestJsonTable {
                         Json = "[\"J\",\"K\",\"L\"]"
                     });
 
-                    context.SaveChanges();
+                context.TestJsons.Add(new TestJson {
+                    ProjectName = "EDennis.NetCoreTestingUtilities.Tests",
+                    ClassName = "ClassA",
+                    MethodName = "MethodA",
+                    TestScenario = "",
+                    TestCase = "TestCaseA",
+                    TestFile = "Input",
+                    Json = "uvw"
+                });
+
+                context.TestJsons.Add(new TestJson {
+                    ProjectName = "EDennis.NetCoreTestingUtilities.Tests",
+                    ClassName = "ClassA",
+                    MethodName = "MethodA",
+                    TestScenario = "",
+                    TestCase = "TestCaseA",
+                    TestFile = "Expected",
+                    Json = "[\"U\",\"V\",\"W\"]"
+                });
+
+
+                context.TestJsons.Add(new TestJson {
+                    ProjectName = "EDennis.NetCoreTestingUtilities.Tests",
+                    ClassName = "ClassA",
+                    MethodName = "MethodA",
+                    TestScenario = "",
+                    TestCase = "TestCaseB",
+                    TestFile = "Input",
+                    Json = "xyz"
+                });
+
+                context.TestJsons.Add(new TestJson {
+                    ProjectName = "EDennis.NetCoreTestingUtilities.Tests",
+                    ClassName = "ClassA",
+                    MethodName = "MethodA",
+                    TestScenario = "",
+                    TestCase = "TestCaseB",
+                    TestFile = "Expected",
+                    Json = "[\"X\",\"Y\",\"Z\"]"
+                });
+
+                context.SaveChanges();
 
             }
         }
