@@ -1,0 +1,23 @@
+﻿[
+  {
+    "obj1": null,
+    "obj2": {
+      "FirstName": "Alan",
+      "LastName": "Davis"
+    },
+    "obj3": {
+      "FirstName": "Bob",
+      "LastName": "Smith"
+    },
+    "obj4": {
+      "FirstName": "Jim",
+      "LastName": "Jones"
+    },
+    "obj5": [ "A", "B", "C" ],
+    "obj6": [
+      [ 1, 2 ],
+      [ 2, 3 ],
+      [ 3, 4 ]
+    ]
+  }
+]

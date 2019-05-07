@@ -20,6 +20,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
         [Theory]
         [InlineData("A")]
         [InlineData("B")]
+        [InlineData("C")]
         public void Sort(string testCase) {
             var expected = File.ReadAllText($"Sort\\expected{testCase}.json");
             var input = File.ReadAllText($"Sort\\input{testCase}.json");

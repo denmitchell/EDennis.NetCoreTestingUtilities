@@ -1,7 +1,8 @@
 ﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 
-namespace EDennis.NetCoreTestingUtilities{
+namespace EDennis.NetCoreTestingUtilities {
 
 
     /// <summary>
@@ -14,8 +15,18 @@ namespace EDennis.NetCoreTestingUtilities{
         /// <param name="json">A string represnting valid JSON</param>
         /// <returns>A sorted version of the JSON</returns>
         public static string Sort(string json) {
-            var jtoken = JToken.Parse(json);
-            var sortedJtoken = Sort(jtoken);
+            JToken jtoken = null;
+            JToken sortedJtoken = null;
+            try {
+                jtoken = JToken.Parse(json);
+            } catch (Exception ex) {
+                throw new ApplicationException($"{ex.Message}: Cannot parse json string: {json}");
+            }
+            try {
+                sortedJtoken = Sort(jtoken);
+            } catch (Exception ex) {
+                throw new ApplicationException($"{ex.Message}: Cannot sort json string: {json}");
+            }
             return sortedJtoken.ToString();
         }
 
@@ -61,8 +72,13 @@ namespace EDennis.NetCoreTestingUtilities{
                 else
                     propValue = new JObject();
 
-                foreach (var key in serializedElements.Keys)
-                    propValue.Add(serializedElements[key]);
+                foreach (var key in serializedElements.Keys) {
+                    var sortedChildToAdd = serializedElements[key];
+                    if (sortedChildToAdd.Type == JTokenType.Object && propValue.Type == JTokenType.Object)
+                        propValue.Add(new JProperty((jcontainer as JProperty).Name, propValue));
+                    else
+                        propValue.Add(sortedChildToAdd);
+                }
 
                 jcontainer = new JProperty((jcontainer as JProperty).Name, propValue);
 
