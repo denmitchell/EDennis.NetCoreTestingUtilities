@@ -63,6 +63,7 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <returns>true, if equal; false, otherwise</returns>
         /// <seealso cref="IsEqual{T}(object, T, string[])"/>
         public static bool IsEqual<T>(this object obj1, T obj2, bool ignoreArrayElementOrder = false) {
+
             string json1 = JsonConvert.SerializeObject(obj1,
                 Formatting.Indented, new SafeJsonSerializerSettings());
             string json2 = JsonConvert.SerializeObject(obj2,
@@ -824,6 +825,8 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         public static JToken Filter(this JToken jtoken, string[] pathsToRemove) {
             return JsonFilterer.ApplyFilter(jtoken, pathsToRemove);
         }
+
+
 
         /// <summary>
         /// Ensures that the maxDepth is not less than the minimum depth 
