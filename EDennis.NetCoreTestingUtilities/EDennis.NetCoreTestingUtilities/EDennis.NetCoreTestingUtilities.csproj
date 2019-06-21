@@ -11,10 +11,10 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/2938333?s=400&amp;v=4</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>3.4.3</Version>
-    <PackageReleaseNotes>Upgrade to latest version of JsonUtils, which allows for serializing IOrderedEnumerable</PackageReleaseNotes>
-    <AssemblyVersion>3.4.3</AssemblyVersion>
-    <FileVersion>3.4.3</FileVersion>
+    <Version>3.4.5</Version>
+    <PackageReleaseNotes>Updated JsonUtils to support filtering with IDictionary objects</PackageReleaseNotes>
+    <AssemblyVersion>3.4.5</AssemblyVersion>
+    <FileVersion>3.4.5</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -25,7 +25,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Dapper" Version="1.50.7" />
-    <PackageReference Include="EDennis.JsonUtils" Version="1.3.4" />
+    <PackageReference Include="EDennis.JsonUtils" Version="1.3.5" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.0" />
     <PackageReference Include="JsonDiffPatch" Version="2.0.49" />
