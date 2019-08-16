@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Xunit.Abstractions;
@@ -83,8 +84,17 @@ namespace EDennis.NetCoreTestingUtilities {
                 if (typeof(T) == typeof(DateTime) || typeof(T) == typeof(TimeSpan) || typeof(T) == typeof(DateTimeOffset) || typeof(T) == typeof(string) || typeof(T) == typeof(Guid))
                     json = "\"" + json + "\"";
 
-                JToken jtoken = JToken.Parse(json);
-                T objNew = jtoken.ToObject<T>();
+                T objNew = default(T);
+                try {
+                    var reader = new JsonTextReader(new StringReader(json)) {
+                        FloatParseHandling = FloatParseHandling.Decimal
+                    };
+                    JObject jtoken = JObject.Load(reader);
+                    objNew = jtoken.ToObject<T>();
+                } catch {
+                    JToken jtoken = JToken.Parse(json);
+                    objNew = jtoken.ToObject<T>();
+                }
                 return objNew;
             } catch (Exception ex) when (ex is ArgumentException || ex is FormatException) {
                 throw new ArgumentException(
