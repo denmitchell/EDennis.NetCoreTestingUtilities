@@ -79,7 +79,8 @@ namespace EDennis.NetCoreTestingUtilities {
             var json = GetJson(testFile);
             if (json == null && default(T) == null)
                 return default(T);
-
+            else if (typeof(T) == typeof(string))
+                return (dynamic)json;
             try {
                 if (typeof(T) == typeof(DateTime) || typeof(T) == typeof(TimeSpan) || typeof(T) == typeof(DateTimeOffset) || typeof(T) == typeof(string) || typeof(T) == typeof(Guid))
                     json = "\"" + json + "\"";

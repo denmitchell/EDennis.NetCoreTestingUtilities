@@ -21,7 +21,9 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
                 { "789", new string[] {"G","H","I" } },
                 { "abc", new string[] {"J","K","L" } },
                 { "uvw", new string[] {"U","V","W" } },
-                { "xyz", new string[] {"X","Y","Z" } }
+                { "xyz", new string[] {"X","Y","Z" } },
+                { "123.0", new string[] {"M","N","O" } },
+                { "123.00", new string[] {"P","Q","R" } }
             };
 
         private Dictionary<string, string[]> mockActualB
@@ -30,6 +32,10 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
                 { "2018-01-01", new string[] {"D","E","F" } },
                 { "789", new string[] {"G","H","I" } },
                 { "abc", new string[] {"J","K","L" } },
+                { "uvw", new string[] {"U","V","W" } },
+                { "xyz", new string[] {"X","Y","Z" } },
+                { "123.0", new string[] {"M","N","O" } },
+                { "123.00", new string[] {"P","Q","R" } }
             };
 
         private JsonTestCase jcase = new JsonTestCase() {
@@ -46,6 +52,10 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
                     new JsonTestFile() {
                         TestFile = "String",
                         Json = "abc"
+                    },
+                    new JsonTestFile() {
+                        TestFile = "String2",
+                        Json = "[\"Red\",\">\",\"200\"]"
                     },
                     new JsonTestFile() {
                         TestFile = "DateTime",
@@ -70,6 +80,14 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
                     new JsonTestFile() {
                         TestFile = "Guid",
                         Json = "0E984725-C51C-4BF4-9960-E1C80E27ABA0"
+                    },
+                    new JsonTestFile() {
+                        TestFile = "Decimal1",
+                        Json = "123.0"
+                    },
+                    new JsonTestFile() {
+                        TestFile = "Decimal2",
+                        Json = "123.00"
                     }
             }
         };
@@ -170,6 +188,25 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
             string value = jcase.GetObject<string>("String");
             Assert.Equal("abc", value);
         }
+
+        [Fact]
+        public void ToObjectString2() {
+            string value = jcase.GetObject<string>("String2");
+            Assert.Equal("[\"Red\",\">\",\"200\"]", value);
+        }
+
+        [Fact]
+        public void ToObjectDecimal1() {
+            decimal value = jcase.GetObject<decimal>("Decimal1");
+            Assert.Equal(123.0M, value);
+        }
+
+        [Fact]
+        public void ToObjectDecimal2() {
+            decimal value = jcase.GetObject<decimal>("Decimal2");
+            Assert.Equal(123.00M, value);
+        }
+
 
         [Fact]
         public void ToObjectBadCast() {

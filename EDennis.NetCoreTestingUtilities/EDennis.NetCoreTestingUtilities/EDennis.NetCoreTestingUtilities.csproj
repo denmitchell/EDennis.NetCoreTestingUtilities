@@ -11,10 +11,10 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/2938333?s=400&amp;v=4</PackageIconUrl>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>3.4.6</Version>
-    <PackageReleaseNotes>Updated TestJson to support decimal places better</PackageReleaseNotes>
-    <AssemblyVersion>3.4.6</AssemblyVersion>
-    <FileVersion>3.4.6</FileVersion>
+    <Version>3.4.7</Version>
+    <PackageReleaseNotes>Fixed bug with string deserialization to a string in TestJson records.</PackageReleaseNotes>
+    <AssemblyVersion>3.4.7</AssemblyVersion>
+    <FileVersion>3.4.7</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup>

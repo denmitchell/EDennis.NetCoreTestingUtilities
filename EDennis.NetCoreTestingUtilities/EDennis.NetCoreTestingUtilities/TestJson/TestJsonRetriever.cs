@@ -27,7 +27,7 @@ namespace EDennis.NetCoreTestingUtilities {
         /// </summary>
         public TestJsonConfig TestJsonConfig { get; set; }
 
-        
+
         /// <summary>
         /// Records retrieved during initialization
         /// </summary>
@@ -51,10 +51,10 @@ namespace EDennis.NetCoreTestingUtilities {
         /// <param name="testScenario">The name of the test scenario under test (part of primary key for the test record)</param>
         public TestJsonRetriever(string connectionString = null,
             string testJsonSchema = null,
-            string testJsonTable = null, 
+            string testJsonTable = null,
             string projectName = null,
             string className = null,
-            string methodName = null, 
+            string methodName = null,
             string testScenario = null) {
 
             var json = File.ReadAllText("TestJsonConfig.json");
@@ -168,16 +168,16 @@ namespace EDennis.NetCoreTestingUtilities {
                 var source = TestJsonRecords.Where(x => x.TestCase == testCase)
                     .Select(x =>
                         JToken.FromObject(
-                            new TestFileJson{
+                            new TestFileJson {
                                 TestCase = "",
                                 TestFile = x.TestFile,
                                 Json = JToken.Parse(x.Json).ToString(Newtonsoft.Json.Formatting.None)
                             }).ToString());
                 if (!criteria.Except(source).Any())
-                    json = TestJsonRecords.Where(x=>x.TestCase == testCase 
+                    json = TestJsonRecords.Where(x => x.TestCase == testCase
                         && x.TestFile == targetTestFile).FirstOrDefault().Json;
             }
-            if(json == null)
+            if (json == null)
                 throw new ArgumentException(
                     $"Cannot find '{targetTestFile}' for {JToken.FromObject(testFileParams).ToString()} " +
                     $"where Project: '{TestJsonConfig.ProjectName}', Class: '{TestJsonConfig.ClassName}', " +
@@ -192,6 +192,9 @@ namespace EDennis.NetCoreTestingUtilities {
         private T GetObject<T>(string json) {
             if (json == null && default(T) == null)
                 return default(T);
+            if (typeof(T) == typeof(string)) {
+                return (dynamic)json;
+            }
 
             try {
                 if (typeof(T) == typeof(DateTime) || typeof(T) == typeof(TimeSpan) || typeof(T) == typeof(DateTimeOffset) || typeof(T) == typeof(string) || typeof(T) == typeof(Guid))
