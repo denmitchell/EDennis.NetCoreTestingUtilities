@@ -44,7 +44,7 @@ namespace EDennis.NetCoreTestingUtilities {
             //put corresponding lines from each string on the same line
             //do this for all lines where both strings have the same number of lines
             for (int i = 0; i < strLists[0].Length && i < strLists[1].Length; i++) {
-                sb.AppendLine(strLists[0][i] + " | " + strLists[1][i] + " | " + ((strLists[0][i] != strLists[1][i]) ? "X" : ""));
+                sb.AppendLine(strLists[0][i] + " | " + strLists[1][i] + " | " + ((strLists[0][i].Trim() != strLists[1][i].Trim()) ? "X" : ""));
             }
             //add extra lines from the second string (if any)
             for (int i = strLists[0].Length; i < strLists[1].Length; i++) {
