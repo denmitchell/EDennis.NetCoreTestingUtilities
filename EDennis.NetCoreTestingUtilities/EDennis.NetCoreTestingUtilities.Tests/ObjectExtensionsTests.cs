@@ -245,30 +245,6 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
         }
 
 
-        [Fact]
-        public void ObjExt_FromSql1() {
-            using (var context = new JsonResultContext()) {
-                var expectedJson = new List<Person>()
-                        .FromJsonPath(@"PersonRepo\GetPersons\01.json\persons");
-                var actualJson = new List<Person>()
-                        .FromSql(@"PersonRepo\GetPersons\01.sql", context);
-
-                Assert.True(expectedJson.IsEqual(actualJson));
-            }
-        }
-
-        [Fact]
-        public void ObjExt_FromSql2() {
-            using (var context = new JsonResultContext()) {
-                var expectedJson = new List<Person>()
-                        .FromJsonPath(@"PersonRepo\GetPersons\01.json\persons");
-                var actualJson = new List<Person>()
-                        .FromSql(@"PersonRepo\GetPersons\01.sql", "Server=(localdb)\\mssqllocaldb;Database=tempdb;Trusted_Connection=True;");
-
-                Assert.True(expectedJson.IsEqual(actualJson));
-            }
-
-        }
 
         [Theory]
         [InlineData(1)]

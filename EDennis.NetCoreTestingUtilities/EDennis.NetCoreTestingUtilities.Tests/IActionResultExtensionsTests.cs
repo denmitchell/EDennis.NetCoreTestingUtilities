@@ -31,10 +31,12 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
             var response = _client.GetAsync("api/test/" + path).Result;
             var actualStatusCode = (int)response.StatusCode;
             var actualObject = response.Content.ReadAsStringAsync().Result;
-            if (expectedObject != null && expectedObject.Contains("firstName"))
-                actualObject = CompressJson(actualObject);
+            if (!string.IsNullOrEmpty(expectedObject)) {
+                if(expectedObject.Contains("firstName"))
+                    actualObject = CompressJson(actualObject);
+                Assert.Equal(expectedObject, actualObject);
+            }
             Assert.Equal(expectedStatusCode, actualStatusCode);
-            Assert.Equal(expectedObject, actualObject);
         }
 
         private string CompressJson(string json) {

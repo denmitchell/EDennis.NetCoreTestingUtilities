@@ -642,53 +642,6 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         }
 
 
-        /// <summary>
-        /// Constructs a new object from the results of a SQL Server FOR JSON query.
-        /// </summary>
-        /// <typeparam name="T">The type of the current object</typeparam>
-        /// <param name="obj">The current object</param>
-        /// <param name="sqlForJsonFile">A SQL Server .sql file having a FOR JSON clause</param>
-        /// <param name="context">The Entity Framework DB Context.</param>
-        /// <returns></returns>
-        public static T FromSql<T>(this T obj, string sqlForJsonFile,
-            DbContext context) {
-            string connectionString = context.Database.GetDbConnection().ConnectionString;
-            return FromSql(obj, sqlForJsonFile, connectionString);
-        }
-
-
-        /// <summary>
-        /// Constructs a new object from the results of a SQL Server FOR JSON query.
-        /// </summary>
-        /// <typeparam name="T">The type of the current object</typeparam>
-        /// <param name="obj">The current object</param>
-        /// <param name="sqlForJsonFile">A SQL Server .sql file having a FOR JSON clause</param>
-        /// <param name="connectionString">A valid connection string</param>
-        /// <returns></returns>
-        public static T FromSql<T>(this T obj, string sqlForJsonFile,
-            string connectionString){
-
-            string sql = System.IO.File.ReadAllText(sqlForJsonFile);
-            string json = null;
-
-            //use Entity Framework class to hold results 
-            using (var context = new JsonResultContext(connectionString)) {
-                json = context.JsonResults
-                        .FromSql(sql)
-                        .FirstOrDefault()
-                        .Json;
-            }
-
-            //parse the returned JSON
-            JToken jtoken = JToken.Parse(json);
-
-            //convert the JSON to an object
-            T objNew = jtoken.ToObject<T>();
-            obj = objNew;
-
-            return obj;
-        }
-
 
         /// <summary>
         /// Retrieves JSON from a TestJson table having the following structure,
