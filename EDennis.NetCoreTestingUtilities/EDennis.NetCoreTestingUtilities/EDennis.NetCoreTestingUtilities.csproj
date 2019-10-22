@@ -6,15 +6,15 @@
     <Authors>Dennis Mitchell</Authors>
     <Company>edennis.com</Company>
     <Description>Provides various classes that assist with .NET Core 3 unit testing.</Description>
-    <Summary>Provides various classes that assist with .NET Core 2 unit testing.</Summary>
+    <Summary>Provides various classes that assist with .NET Core 3 unit testing.</Summary>
     <PackageTags>Json Testing JXML XML</PackageTags>
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>3.5.0</Version>
-    <PackageReleaseNotes>.NetCore 3.0</PackageReleaseNotes>
-    <AssemblyVersion>3.5.0</AssemblyVersion>
-    <FileVersion>3.5.0</FileVersion>
+    <Version>3.6.0</Version>
+    <PackageReleaseNotes>Via JsonUtils 3.1.0, added support for ModuloTransform and "Equivalent Class Ids" during Object/Json comparisons.  Equivalent Class Ids are Ids that are seen as constant across multiple test/reset cycles, despite having the real Ids auto-incremented by sequences -- even in a shared database environment.</PackageReleaseNotes>
+    <AssemblyVersion>3.6.0</AssemblyVersion>
+    <FileVersion>3.6.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -32,7 +32,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.30" />
-    <PackageReference Include="EDennis.JsonUtils" Version="3.0.0" />
+    <PackageReference Include="EDennis.JsonUtils" Version="3.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
     <PackageReference Include="JsonDiffPatch" Version="2.0.49" />

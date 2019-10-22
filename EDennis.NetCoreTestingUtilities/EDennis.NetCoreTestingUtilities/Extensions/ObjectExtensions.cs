@@ -122,6 +122,47 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <param name="obj1">The current object</param>
         /// <param name="obj2">The object to compare</param>
         /// <param name="maxDepth">The maximum depth of the object graph to serialize (1=flat)</param>
+        /// <param name="propertiesToIgnore">a string array of
+        /// property names that will be ignored.</param>
+        /// <param name="moduloTransform">properties to which a modulo transform will be applied</param>
+        /// <param name="ignoreArrayElementOrder">Whether to ignore the order of array elements</param>
+        /// <returns>true, if equal; false, otherwise</returns>
+        /// <seealso cref="IsEqual{T}(object, T)"/>
+        /// <see href="https://github.com/json-path/JsonPath"/>
+        public static bool IsEqual<T>(this object obj1, T obj2,
+            int maxDepth, string[] propertiesToIgnore,
+            Dictionary<string, ulong> moduloTransform,
+            bool ignoreArrayElementOrder = false) {
+
+            CheckDepth(obj1, maxDepth);
+
+            string json1 = JsonConvert.SerializeObject(obj1,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    maxDepth, propertiesToIgnore, moduloTransform));
+            string json2 = JsonConvert.SerializeObject(obj2,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    maxDepth, propertiesToIgnore, moduloTransform));
+
+            if (ignoreArrayElementOrder) {
+                json1 = JsonSorter.Sort(json1);
+                json2 = JsonSorter.Sort(json2);
+            }
+
+            return json1 == json2;
+        }
+
+
+
+
+        /// <summary>
+        /// Determines if two objects have the same exact values for
+        /// all of their corresponding properties, excluding the properties
+        /// associated with pathsToIgnore.
+        /// </summary>
+        /// <typeparam name="T">The type of the current object</typeparam>
+        /// <param name="obj1">The current object</param>
+        /// <param name="obj2">The object to compare</param>
+        /// <param name="maxDepth">The maximum depth of the object graph to serialize (1=flat)</param>
         /// <param name="ignoreArrayElementOrder">Whether to ignore the order of array elements</param>
         /// <returns>true, if equal; false, otherwise</returns>
         /// <seealso cref="IsEqual{T}(object, T)"/>
@@ -178,6 +219,43 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
             return json1 == json2;
         }
+
+
+
+        /// <summary>
+        /// Determines if two objects have the same exact values for
+        /// all of their corresponding properties, excluding the properties
+        /// associated with pathsToIgnore.
+        /// </summary>
+        /// <typeparam name="T">The type of the current object</typeparam>
+        /// <param name="obj1">The current object</param>
+        /// <param name="obj2">The object to compare</param>
+        /// <param name="propertiesToIgnore">a string array of 
+        /// property names that will be ignored.</param>
+        /// <param name="moduloTransform">properties to which a modulo transform will be applied</param>
+        /// <param name="ignoreArrayElementOrder">Whether to ignore the order of array elements</param>
+        /// <returns>true, if equal; false, otherwise</returns>
+        /// <seealso cref="IsEqual{T}(object, T)"/>
+        /// <see href="https://github.com/json-path/JsonPath"/>
+        public static bool IsEqual<T>(this object obj1, T obj2,
+            string[] propertiesToIgnore, Dictionary<string,ulong> moduloTransform,
+            bool ignoreArrayElementOrder = false) {
+
+            string json1 = JsonConvert.SerializeObject(obj1,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    DEFAULT_MAXDEPTH, propertiesToIgnore, moduloTransform));
+            string json2 = JsonConvert.SerializeObject(obj2,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    DEFAULT_MAXDEPTH, propertiesToIgnore, moduloTransform));
+
+            if (ignoreArrayElementOrder) {
+                json1 = JsonSorter.Sort(json1);
+                json2 = JsonSorter.Sort(json2);
+            }
+
+            return json1 == json2;
+        }
+
 
 
         /// <summary>
@@ -263,6 +341,53 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
         }
 
+
+        /// <summary>
+        /// Determines if two objects have the same exact values for
+        /// all of their corresponding properties, excluding the properties
+        /// associated with pathsToIgnore.  This method will print side-by-side
+        /// comparisons if the two objects are not equal.
+        /// NOTE: Requires Xunit
+        /// NOTE: The current object should be the "actual" object
+        /// </summary>
+        /// <typeparam name="T">The type of the current object</typeparam>
+        /// <param name="obj1">The current object</param>
+        /// <param name="obj2">The object to compare</param>
+        /// <param name="maxDepth">The maximum depth of the object graph to serialize (1=flat)</param>
+        /// <param name="propertiesToIgnore">a string array of 
+        /// property names that will be ignored.</param>
+        /// <param name="moduloTransform">properties to which a modulo transform will be applied</param>
+        /// <param name="output">object used by Xunit to print to console</param>
+        /// <param name="ignoreArrayElementOrder">Whether to ignore the order of array elements</param>
+        /// <returns>true, if equal; false, otherwise</returns>
+        /// <seealso cref="IsEqualOrWrite{T}(object, T)"/>
+        /// <see href="https://github.com/json-path/JsonPath"/>
+        public static bool IsEqualOrWrite<T>(this object obj1, T obj2,
+            int maxDepth, string[] propertiesToIgnore, Dictionary<string,ulong> moduloTransform, 
+            ITestOutputHelper output, bool ignoreArrayElementOrder = false) {
+
+            CheckDepth(obj1, maxDepth);
+
+            string json1 = JsonConvert.SerializeObject(obj1,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    maxDepth, propertiesToIgnore,moduloTransform));
+            string json2 = JsonConvert.SerializeObject(obj2,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    maxDepth, propertiesToIgnore, moduloTransform));
+
+            if (ignoreArrayElementOrder) {
+                json1 = JsonSorter.Sort(json1);
+                json2 = JsonSorter.Sort(json2);
+            }
+
+            var isEqual = (json1 == json2);
+
+            if (!isEqual)
+                output.WriteLine(FileStringComparer.GetSideBySideFileStrings(json2, json1, "EXPECTED", "ACTUAL"));
+
+            return isEqual;
+
+        }
 
 
         /// <summary>
@@ -355,6 +480,50 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         }
 
 
+        /// <summary>
+        /// Determines if two objects have the same exact values for
+        /// all of their corresponding properties, excluding the properties
+        /// associated with pathsToIgnore.  This method will print side-by-side
+        /// comparisons if the two objects are not equal.
+        /// NOTE: Requires Xunit
+        /// NOTE: The current object should be the "actual" object
+        /// </summary>
+        /// <typeparam name="T">The type of the current object</typeparam>
+        /// <param name="obj1">The current object</param>
+        /// <param name="obj2">The object to compare</param>
+        /// <param name="propertiesToIgnore">a string array of 
+        /// property names that will be ignored.</param>
+        /// <param name="moduloTransform">properties to which a modulo transform will be applied</param>
+        /// <param name="output">object used by Xunit to print to console</param>
+        /// <param name="ignoreArrayElementOrder">Whether to ignore the order of array elements</param>
+        /// <returns>true, if equal; false, otherwise</returns>
+        /// <seealso cref="IsEqualOrWrite{T}(object, T)"/>
+        /// <see href="https://github.com/json-path/JsonPath"/>
+        public static bool IsEqualOrWrite<T>(this object obj1, T obj2,
+            string[] propertiesToIgnore, Dictionary<string,ulong> moduloTransform, 
+            ITestOutputHelper output, bool ignoreArrayElementOrder = false) {
+
+            string json1 = JsonConvert.SerializeObject(obj1,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    DEFAULT_MAXDEPTH, propertiesToIgnore, moduloTransform));
+            string json2 = JsonConvert.SerializeObject(obj2,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    DEFAULT_MAXDEPTH, propertiesToIgnore, moduloTransform));
+
+            if (ignoreArrayElementOrder) {
+                json1 = JsonSorter.Sort(json1);
+                json2 = JsonSorter.Sort(json2);
+            }
+
+            var isEqual = (json1 == json2);
+
+            if (!isEqual)
+                output.WriteLine(FileStringComparer.GetSideBySideFileStrings(json2, json1, "EXPECTED", "ACTUAL"));
+
+            return isEqual;
+
+        }
+
 
         /// <summary>
         /// Generates a side-by-side comparison of two objects
@@ -409,6 +578,41 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
             return FileStringComparer.GetSideBySideFileStrings(json1, json2, label1, label2);
 
         }
+
+
+        /// <summary>
+        /// Generates a side-by-side comparison of two objects
+        /// as JSON strings.  This version allows specification of
+        /// maximum depth and property filters
+        /// </summary>
+        /// <typeparam name="T">The type of the current object</typeparam>
+        /// <param name="obj1">The current object</param>
+        /// <param name="obj2">The object to compare</param>
+        /// <param name="label1">Label for the current object</param>
+        /// <param name="label2">Label for the object to compare</param>
+        /// <param name="maxDepth">The maximum depth of the object graph to serialize (1=flat)</param>
+        /// <param name="propertiesToIgnore">a string array of 
+        /// property names that will be ignored.</param>
+        /// <param name="moduloTransform">properties to which a modulo transform will be applied</param>
+        /// <returns>side-by-side rendering of objects</returns>
+        /// <seealso cref="Juxtapose{T}(object, T)"/>
+        /// <see href="https://github.com/json-path/JsonPath"/>
+        public static string Juxtapose<T>(this object obj1, T obj2, string label1, string label2, 
+            int maxDepth, string[] propertiesToIgnore, Dictionary<string,ulong> moduloTransform) {
+
+            CheckDepth(obj1, maxDepth);
+
+            string json1 = JsonConvert.SerializeObject(obj1,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    maxDepth, propertiesToIgnore, moduloTransform));
+            string json2 = JsonConvert.SerializeObject(obj2,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    maxDepth, propertiesToIgnore, moduloTransform));
+
+            return FileStringComparer.GetSideBySideFileStrings(json1, json2, label1, label2);
+
+        }
+
 
         /// <summary>
         /// Generates a side-by-side comparison of two objects
@@ -468,6 +672,39 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
         }
 
+
+        /// <summary>
+        /// Generates a side-by-side comparison of two objects
+        /// as JSON strings.  This version uses a default value
+        /// for maximum depth (99), but allows specification of
+        /// property filters
+        /// </summary>
+        /// <typeparam name="T">The type of the current object</typeparam>
+        /// <param name="obj1">The current object</param>
+        /// <param name="obj2">The object to compare</param>
+        /// <param name="label1">Label for the current object</param>
+        /// <param name="label2">Label for the object to compare</param>
+        /// <param name="propertiesToIgnore">a string array of 
+        /// property names that will be ignored.</param>
+        /// <param name="moduloTransform">properties to which a modulo transform will be applied</param>
+        /// <returns>side-by-side rendering of objects</returns>
+        /// <seealso cref="Juxtapose{T}(object, T)"/>
+        /// <see href="https://github.com/json-path/JsonPath"/>
+        public static string Juxtapose<T>(this object obj1, T obj2, string label1, string label2, 
+            string[] propertiesToIgnore, Dictionary<string,ulong> moduloTransform) {
+
+            string json1 = JsonConvert.SerializeObject(obj1,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    DEFAULT_MAXDEPTH, propertiesToIgnore, moduloTransform));
+            string json2 = JsonConvert.SerializeObject(obj2,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    DEFAULT_MAXDEPTH, propertiesToIgnore, moduloTransform));
+
+            return FileStringComparer.GetSideBySideFileStrings(json1, json2, label1, label2);
+
+        }
+
+
         /// <summary>
         /// Serializes an object to a JSON string.  This version
         /// assumes no property filters and uses a default value
@@ -499,6 +736,29 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
                 Formatting.Indented, new SafeJsonSerializerSettings(
                     maxDepth, propertiesToIgnore));
         }
+
+
+        /// <summary>
+        /// Serializes an object to a JSON string.  This version
+        /// allows specification of maximum depth and property 
+        /// filters 
+        /// </summary>
+        /// <param name="obj">the current object</param>
+        /// <param name="maxDepth">The maximum depth of the object graph to serialize (1=flat)</param>
+        /// <param name="propertiesToIgnore">a string array of JSON Paths, whose
+        /// associated property values should be ignored.</param>
+        /// <param name="moduloTransform">properties to which a modulo transform will be applied</param>
+        /// <returns>A JSON string representation of the object</returns>
+        public static string ToJsonString(this object obj, int maxDepth, 
+            string[] propertiesToIgnore, Dictionary<string,ulong> moduloTransform) {
+
+
+            return JsonConvert.SerializeObject(obj,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    maxDepth, propertiesToIgnore, moduloTransform));
+        }
+
+
 
 
         /// <summary>
@@ -536,7 +796,28 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
                     DEFAULT_MAXDEPTH, propertiesToIgnore));
         }
 
-        
+
+        /// <summary>
+        /// Serializes an object to a JSON string.  This version
+        /// allows specification of property filters, but uses 
+        /// a default value for maximum depth (99)
+        /// </summary>
+        /// <param name="obj">the current object</param>
+        /// <param name="propertiesToIgnore">a string array of JSON Paths, whose
+        /// associated property values should be ignored.</param>
+        /// <param name="moduloTransform">properties to which a modulo transform will be applied</param>
+        /// <returns>A JSON string representation of the object</returns>
+        public static string ToJsonString(this object obj, 
+            string[] propertiesToIgnore, Dictionary<string,ulong> moduloTransform) {
+
+            return JsonConvert.SerializeObject(obj,
+                Formatting.Indented, new SafeJsonSerializerSettings(
+                    DEFAULT_MAXDEPTH, propertiesToIgnore, moduloTransform));
+        }
+
+
+
+
         /// <summary>
         /// Deserializes a JSON string into an object
         /// </summary>
@@ -686,11 +967,10 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
             string json = null;
 
             using (SqlConnection cxn = new SqlConnection(context.Database.GetDbConnection().ConnectionString)) {
-                using (SqlCommand cmd = new SqlCommand(sql, cxn)) {
-                    cxn.Open();
-                    var returnValue = cmd.ExecuteScalar();
-                    json = returnValue?.ToString();
-                }
+                using SqlCommand cmd = new SqlCommand(sql, cxn);
+                cxn.Open();
+                var returnValue = cmd.ExecuteScalar();
+                json = returnValue?.ToString();
             }
 
             if (json == null) {
@@ -740,11 +1020,10 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
             string json = null;
 
             using (SqlConnection cxn = new SqlConnection(context.Database.GetDbConnection().ConnectionString)) {
-                using (SqlCommand cmd = new SqlCommand(sql, cxn)) {
-                    cxn.Open();
-                    var returnValue = cmd.ExecuteScalar();
-                    json = returnValue?.ToString();
-                }
+                using SqlCommand cmd = new SqlCommand(sql, cxn);
+                cxn.Open();
+                var returnValue = cmd.ExecuteScalar();
+                json = returnValue?.ToString();
             }
 
             if (json == null) {
@@ -803,9 +1082,8 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         }
 
         private static Type GetElementTypeOfEnumerable(object o) {
-            var enumerable = o as IEnumerable;
             // if it's not an enumerable why do you call this method all ?
-            if (enumerable == null)
+            if (!(o is IEnumerable enumerable))
                 return null;
 
             Type[] interfaces = enumerable.GetType().GetInterfaces();

@@ -78,14 +78,14 @@ namespace EDennis.NetCoreTestingUtilities {
         public T GetObject<T>(string testFile) {
             var json = GetJson(testFile);
             if (json == null && default(T) == null)
-                return default(T);
+                return default;
             else if (typeof(T) == typeof(string))
                 return (dynamic)json;
             try {
                 if (typeof(T) == typeof(DateTime) || typeof(T) == typeof(TimeSpan) || typeof(T) == typeof(DateTimeOffset) || typeof(T) == typeof(string) || typeof(T) == typeof(Guid))
                     json = "\"" + json + "\"";
 
-                T objNew = default(T);
+                T objNew = default;
                 try {
                     var reader = new JsonTextReader(new StringReader(json)) {
                         FloatParseHandling = FloatParseHandling.Decimal
@@ -111,39 +111,38 @@ namespace EDennis.NetCoreTestingUtilities {
             var testCases = new List<JsonTestCase>();
 
 
-            using (var cxn = new SqlConnection(connectionString)) {
-                var testJson = cxn.Query<TestJson>(
-                    "select ProjectName, ClassName, MethodName, TestScenario, TestCase, TestFile, Json from "
-                    + $"{testJsonSchema}.{testJsonTable} where "
-                    + "ProjectName = @projectName",
-                    new { projectName });
+            using var cxn = new SqlConnection(connectionString);
+            var testJson = cxn.Query<TestJson>(
+"select ProjectName, ClassName, MethodName, TestScenario, TestCase, TestFile, Json from "
++ $"{testJsonSchema}.{testJsonTable} where "
++ "ProjectName = @projectName",
+new { projectName });
 
 
-                if (testJson.Count() == 0) {
-                    throw new ArgumentException(
-                        $"No TestJson record found for ProjectName: {projectName}.");
-                }
-
-                //construct a JsonTestCase as the return object
-                var qry = testJson.GroupBy(
-                        r => new { r.ProjectName, r.ClassName, r.MethodName, r.TestScenario, r.TestCase },
-                        r => new JsonTestFile { TestFile = r.TestFile, Json = r.Json },
-                        (key, g) =>
-                            new JsonTestCase {
-                                ProjectName = key.ProjectName,
-                                ClassName = key.ClassName,
-                                MethodName = key.MethodName,
-                                TestScenario = key.TestScenario,
-                                TestCase = key.TestCase,
-                                JsonTestFiles = g.ToList()
-                            });
-
-                //return all objects
-                foreach (var rec in qry)
-                    testCases.Add(rec);
-
-                return testCases;
+            if (testJson.Count() == 0) {
+                throw new ArgumentException(
+                    $"No TestJson record found for ProjectName: {projectName}.");
             }
+
+            //construct a JsonTestCase as the return object
+            var qry = testJson.GroupBy(
+                    r => new { r.ProjectName, r.ClassName, r.MethodName, r.TestScenario, r.TestCase },
+                    r => new JsonTestFile { TestFile = r.TestFile, Json = r.Json },
+                    (key, g) =>
+                        new JsonTestCase {
+                            ProjectName = key.ProjectName,
+                            ClassName = key.ClassName,
+                            MethodName = key.MethodName,
+                            TestScenario = key.TestScenario,
+                            TestCase = key.TestCase,
+                            JsonTestFiles = g.ToList()
+                        });
+
+            //return all objects
+            foreach (var rec in qry)
+                testCases.Add(rec);
+
+            return testCases;
 
         }
 

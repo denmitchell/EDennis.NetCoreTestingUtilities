@@ -99,39 +99,35 @@ namespace EDennis.NetCoreTestingUtilities {
             if (TestJsonConfig.TestScenario == null)
                 throw new ArgumentException("TestScenario is not optional for TestJsonRetriever");
 
-            using (var cxn = new SqlConnection(TestJsonConfig.ConnectionString)) {
-                var sql = $"select TestCase, TestFile, Json from [{TestJsonConfig.TestJsonSchema}].[{TestJsonConfig.TestJsonTable}] " +
-                    $"where ProjectName = @ProjectName and " +
-                    $"ClassName = @ClassName and " +
-                    $"MethodName = @MethodName and " +
-                    $"TestScenario = @TestScenario";
-                using (var cmd = new SqlCommand(sql, cxn)) {
+            using var cxn = new SqlConnection(TestJsonConfig.ConnectionString);
+            var sql = $"select TestCase, TestFile, Json from [{TestJsonConfig.TestJsonSchema}].[{TestJsonConfig.TestJsonTable}] " +
+$"where ProjectName = @ProjectName and " +
+$"ClassName = @ClassName and " +
+$"MethodName = @MethodName and " +
+$"TestScenario = @TestScenario";
+            using var cmd = new SqlCommand(sql, cxn);
+            cmd.Parameters.AddWithValue("@ProjectName", TestJsonConfig.ProjectName);
+            cmd.Parameters.AddWithValue("@ClassName", TestJsonConfig.ClassName);
+            cmd.Parameters.AddWithValue("@MethodName", TestJsonConfig.MethodName);
+            cmd.Parameters.AddWithValue("@TestScenario", TestJsonConfig.TestScenario);
 
-                    cmd.Parameters.AddWithValue("@ProjectName", TestJsonConfig.ProjectName);
-                    cmd.Parameters.AddWithValue("@ClassName", TestJsonConfig.ClassName);
-                    cmd.Parameters.AddWithValue("@MethodName", TestJsonConfig.MethodName);
-                    cmd.Parameters.AddWithValue("@TestScenario", TestJsonConfig.TestScenario);
+            cxn.Open();
 
-                    cxn.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
 
-                    SqlDataReader reader = cmd.ExecuteReader();
-
-                    if (reader.HasRows) {
-                        while (reader.Read()) {
-                            var rec = new TestFileJson {
-                                TestCase = reader.GetString(0),
-                                TestFile = reader.GetString(1),
-                                Json = reader.GetString(2)
-                            };
-                            TestJsonRecords.Add(rec);
-                        }
-                    } else {
-                        Console.WriteLine("No rows found.");
-                    }
-                    reader.Close();
-
+            if (reader.HasRows) {
+                while (reader.Read()) {
+                    var rec = new TestFileJson {
+                        TestCase = reader.GetString(0),
+                        TestFile = reader.GetString(1),
+                        Json = reader.GetString(2)
+                    };
+                    TestJsonRecords.Add(rec);
                 }
+            } else {
+                Console.WriteLine("No rows found.");
             }
+            reader.Close();
         }
 
 
@@ -191,7 +187,7 @@ namespace EDennis.NetCoreTestingUtilities {
 
         private T GetObject<T>(string json) {
             if (json == null && default(T) == null)
-                return default(T);
+                return default;
             if (typeof(T) == typeof(string)) {
                 return (dynamic)json;
             }
@@ -200,7 +196,7 @@ namespace EDennis.NetCoreTestingUtilities {
                 if (typeof(T) == typeof(DateTime) || typeof(T) == typeof(TimeSpan) || typeof(T) == typeof(DateTimeOffset) || typeof(T) == typeof(string) || typeof(T) == typeof(Guid))
                     json = "\"" + json + "\"";
 
-                T objNew = default(T);
+                T objNew = default;
                 try {
                     var reader = new JsonTextReader(new StringReader(json)) {
                         FloatParseHandling = FloatParseHandling.Decimal

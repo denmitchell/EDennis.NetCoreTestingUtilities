@@ -253,32 +253,29 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
             var options = new DbContextOptionsBuilder<PartSupplierContext>()
                 .UseInMemoryDatabase(databaseName: "FromTestJsonTable")
                 .Options;
-            using (var context = new PartSupplierContext()) {
+            using var context = new PartSupplierContext();
+            context.ResetValueGenerators();
+            context.Database.EnsureDeleted();
+            context.Database.EnsureCreated();
 
-                context.ResetValueGenerators();
-                context.Database.EnsureDeleted();
-                context.Database.EnsureCreated();
+            PartSupplierFactory.PopulateContext(context);
 
-                PartSupplierFactory.PopulateContext(context);
-                
-                Part expected = context.Parts.FirstOrDefault(p => p.PartId == partId);
-                var json = expected.ToJsonString(3);
+            Part expected = context.Parts.FirstOrDefault(p => p.PartId == partId);
+            var json = expected.ToJsonString(3);
 
-                context.TestJsons.Add(new TestJson {
-                    ProjectName = "EDennis.NetCoreTestingUtilities.Tests", ClassName = "ObjectExtensions",
-                    MethodName = "FromTestJsonTable", TestScenario = "Test",
-                    TestCase = $"{ partId }", TestFile = $"Expected", Json = json
-                });
+            context.TestJsons.Add(new TestJson {
+                ProjectName = "EDennis.NetCoreTestingUtilities.Tests", ClassName = "ObjectExtensions",
+                MethodName = "FromTestJsonTable", TestScenario = "Test",
+                TestCase = $"{ partId }", TestFile = $"Expected", Json = json
+            });
 
-                context.SaveChanges();
+            context.SaveChanges();
 
-                Part actual = new Part().FromTestJsonTable(context, "dbo", "TestJson",
-                        "EDennis.NetCoreTestingUtilities.Tests", "ObjectExtensions",
-                        "FromTestJsonTable", "Test", $"{ partId }", $"Expected");
+            Part actual = new Part().FromTestJsonTable(context, "dbo", "TestJson",
+                    "EDennis.NetCoreTestingUtilities.Tests", "ObjectExtensions",
+                    "FromTestJsonTable", "Test", $"{ partId }", $"Expected");
 
-                Assert.True(actual.IsEqualOrWrite(expected, 3, _output));                
-
-            }
+            Assert.True(actual.IsEqualOrWrite(expected, 3, _output));
         }
 
         [Theory]
@@ -288,34 +285,31 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
             var options = new DbContextOptionsBuilder<PartSupplierContext>()
                 .UseInMemoryDatabase(databaseName: "FromTestJsonTable")
                 .Options;
-            using (var context = new PartSupplierContext()) {
+            using var context = new PartSupplierContext();
+            context.ResetValueGenerators();
+            context.Database.EnsureDeleted();
+            context.Database.EnsureCreated();
 
-                context.ResetValueGenerators();
-                context.Database.EnsureDeleted();
-                context.Database.EnsureCreated();
+            PartSupplierFactory.PopulateContext(context);
 
-                PartSupplierFactory.PopulateContext(context);
+            Part expected = context.Parts.FirstOrDefault(p => p.PartId == partId);
+            var json = expected.ToJsonString(3);
 
-                Part expected = context.Parts.FirstOrDefault(p => p.PartId == partId);
-                var json = expected.ToJsonString(3);
+            context.TestJsons.Add(new TestJson {
+                ProjectName = "EDennis.NetCoreTestingUtilities.Tests", ClassName = "ObjectExtensions",
+                MethodName = "FromTestJsonTable", TestScenario = "Test",
+                TestCase = $"{ partId }", TestFile = $"Expected", Json = json
+            });
 
-                context.TestJsons.Add(new TestJson {
-                    ProjectName = "EDennis.NetCoreTestingUtilities.Tests", ClassName = "ObjectExtensions",
-                    MethodName = "FromTestJsonTable", TestScenario = "Test",
-                    TestCase = $"{ partId }", TestFile = $"Expected", Json = json
-                });
+            context.SaveChanges();
 
-                context.SaveChanges();
+            string actualJson = new string("").FromTestJsonTable(context, "dbo", "TestJson",
+                    "EDennis.NetCoreTestingUtilities.Tests", "ObjectExtensions",
+                    "FromTestJsonTable", "Test", $"{ partId }", $"Expected");
 
-                string actualJson = new string("").FromTestJsonTable(context, "dbo", "TestJson",
-                        "EDennis.NetCoreTestingUtilities.Tests", "ObjectExtensions",
-                        "FromTestJsonTable", "Test", $"{ partId }", $"Expected");
+            Part actual = JToken.Parse(actualJson).ToObject<Part>();
 
-                Part actual = JToken.Parse(actualJson).ToObject<Part>();
-
-                Assert.True(actual.IsEqualOrWrite(expected, 3, _output));
-
-            }
+            Assert.True(actual.IsEqualOrWrite(expected, 3, _output));
         }
 
     }

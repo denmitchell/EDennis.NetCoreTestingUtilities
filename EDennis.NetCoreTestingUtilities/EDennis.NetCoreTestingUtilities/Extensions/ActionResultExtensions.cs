@@ -27,7 +27,7 @@ namespace EDennis.NetCoreTestingUtilities {
                 var jsonResult = result as JsonResult;
                 return (T)jsonResult.Value;
             } else
-                return default(T);
+                return default;
         }
 
         /// <summary>

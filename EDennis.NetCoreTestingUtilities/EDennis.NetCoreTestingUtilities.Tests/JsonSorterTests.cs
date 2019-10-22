@@ -33,9 +33,10 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
 
         [Fact]
         public void SortedDictionary() {
-            Dictionary<string,Person> persons = new Dictionary<string, Person>();
-            persons.Add("Bob", new Person { Id = 1, FirstName = "Bob" });
-            persons.Add("Jane", new Person { Id = 2, FirstName = "Jane" });
+            Dictionary<string, Person> persons = new Dictionary<string, Person> {
+                { "Bob", new Person { Id = 1, FirstName = "Bob" } },
+                { "Jane", new Person { Id = 2, FirstName = "Jane" } }
+            };
             var sorted = persons.OrderBy(x => x.Key).ThenBy(x => x.Value.FirstName);
             Assert.True(sorted.IsEqual(sorted));
         }
@@ -43,9 +44,10 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
 
         [Fact]
         public void SortedList() {
-            List<Person> persons = new List<Person>();
-            persons.Add(new Person { Id = 1, FirstName = "Bob" });
-            persons.Add(new Person { Id = 2, FirstName = "Jane" });
+            List<Person> persons = new List<Person> {
+                new Person { Id = 1, FirstName = "Bob" },
+                new Person { Id = 2, FirstName = "Jane" }
+            };
             //var sorted = persons.OrderBy(x => x.Key).ThenBy(x => x.Value.FirstName);
             Assert.True(persons.IsEqual(persons));
         }

@@ -15,13 +15,13 @@ namespace EDennis.NetCoreTestingUtilities {
         /// <param name="json">A string represnting valid JSON</param>
         /// <returns>A sorted version of the JSON</returns>
         public static string Sort(string json) {
-            JToken jtoken = null;
-            JToken sortedJtoken = null;
+            JToken jtoken;
             try {
                 jtoken = JToken.Parse(json);
             } catch (Exception ex) {
                 throw new ApplicationException($"{ex.Message}: Cannot parse json string: {json}");
             }
+            JToken sortedJtoken;
             try {
                 sortedJtoken = Sort(jtoken);
             } catch (Exception ex) {
@@ -66,7 +66,7 @@ namespace EDennis.NetCoreTestingUtilities {
 
             //handle JProperty
             if (jcontainer is JProperty && childIsContainer) {
-                JContainer propValue = null;
+                JContainer propValue;
                 if (childType == JTokenType.Array)
                     propValue = new JArray();
                 else

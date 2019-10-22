@@ -14,7 +14,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
             _output = output;
         }
 
-        private Dictionary<string, string[]> mockActualA
+        private readonly Dictionary<string, string[]> mockActualA
             = new Dictionary<string, string[]>{
                 { "123", new string[] {"A","B","C" } },
                 { "2018-01-01", new string[] {"D","E","F" } },
@@ -26,7 +26,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
                 { "123.00", new string[] {"P","Q","R" } }
             };
 
-        private Dictionary<string, string[]> mockActualB
+        private readonly Dictionary<string, string[]> mockActualB
             = new Dictionary<string, string[]>{
                 { "123", new string[] {"A","B","C" } },
                 { "2018-01-01", new string[] {"D","E","F" } },
@@ -38,7 +38,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
                 { "123.00", new string[] {"P","Q","R" } }
             };
 
-        private JsonTestCase jcase = new JsonTestCase() {
+        private readonly JsonTestCase jcase = new JsonTestCase() {
             ProjectName = "MyProject",
             MethodName = "MyMethod",
             ClassName = "MyClass",

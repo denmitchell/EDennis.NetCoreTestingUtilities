@@ -22,8 +22,8 @@ namespace EDennis.NetCoreTestingUtilities {
         public static Dictionary<string, List<JsonTestCase>> TestCases { get; set; }
             = new Dictionary<string, List<JsonTestCase>>();
 
-        private TestJsonConfig _config;
-        private string _configKey;
+        private readonly TestJsonConfig _config;
+        private readonly string _configKey;
 
 
         public TestJsonAttribute(
