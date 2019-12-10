@@ -11,10 +11,10 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>3.6.0</Version>
-    <PackageReleaseNotes>Via JsonUtils 3.1.0, added support for ModuloTransform and "Equivalent Class Ids" during Object/Json comparisons.  Equivalent Class Ids are Ids that are seen as constant across multiple test/reset cycles, despite having the real Ids auto-incremented by sequences -- even in a shared database environment.</PackageReleaseNotes>
-    <AssemblyVersion>3.6.0</AssemblyVersion>
-    <FileVersion>3.6.0</FileVersion>
+    <Version>3.6.1</Version>
+    <PackageReleaseNotes>Added support for JsonUtils 3.1.1</PackageReleaseNotes>
+    <AssemblyVersion>3.6.1</AssemblyVersion>
+    <FileVersion>3.6.1</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup>
