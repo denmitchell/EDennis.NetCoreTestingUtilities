@@ -12,6 +12,8 @@ using Xunit;
 using EDennis.JsonUtils;
 using System.Collections;
 using System.Data.SqlClient;
+using System.IO;
+using System.Text;
 
 namespace EDennis.NetCoreTestingUtilities.Extensions {
 
@@ -23,15 +25,101 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
         public const int DEFAULT_MAXDEPTH = 99;
 
+
         /// <summary>
         /// Creates a deep copy of the current object
         /// </summary>
         /// <typeparam name="T">The type of the object to be copied</typeparam>
         /// <param name="obj">The object to be copied</param>
         /// <returns>A full copy of the object</returns>
-        public static T Copy<T>(this T obj) {
-            return NL.JToken.FromObject(obj).ToObject<T>();
+        public static T Copy<T>(this T obj)
+            where T : class, new() {
+            //public static T Copy<T>(this T obj) {
+            //    return NL.JToken.FromObject(obj).ToObject<T>();
+            var json = JsonSerializer.Serialize(obj);
+            return JsonSerializer.Deserialize<T>(json);
         }
+
+        /// <summary>
+        /// Creates a deep copy of a dynamic object
+        /// </summary>
+        /// <typeparam name="T">The type of the object to be copied</typeparam>
+        /// <param name="obj">The object to be copied</param>
+        /// <returns>A full copy of the object</returns>
+        public static T CopyFromDynamic<T>(dynamic obj)
+            where T : class, new() {
+            var oldObj = new T();
+            return Merge<T>(oldObj, obj);
+        }
+
+        /// <summary>
+        /// Creates a deep copy of the current object
+        /// </summary>
+        /// <typeparam name="T">The (base class) type of the object to be copied</typeparam>
+        /// <typeparam name="S">The subclass type</typeparam>
+        /// <param name="obj">The object to be copied</param>
+        /// <returns>A full copy of the object</returns>
+        public static S CopyFromBaseClass<T, S>(T obj)
+            where T : class, new()
+            where S : T {
+            var json = JsonSerializer.Serialize(obj);
+            return JsonSerializer.Deserialize<S>(json);
+        }
+
+        /// <summary>
+        /// Merges properties from two objects -- a regular 
+        /// object and a dynamic object, where property
+        /// values from the dynamic object overwrite
+        /// corresponding property values from the other object.
+        /// </summary>
+        /// <typeparam name="T">The type of the regular object</typeparam>
+        /// <param name="oldObj">a regular object</param>
+        /// <param name="newObj">a dynamic object, holding new object properties</param>
+        /// <returns></returns>
+        public static T Merge<T>(T oldObj, dynamic newObj)
+            where T : class {
+
+            using JsonDocument newDoc = JsonDocument.Parse(JsonSerializer.Serialize(newObj));
+            using JsonDocument oldDoc = JsonDocument.Parse(JsonSerializer.Serialize(oldObj));
+            var newRoot = newDoc.RootElement;
+            var oldRoot = oldDoc.RootElement;
+            var newProps = newRoot.EnumerateObject();
+            var oldProps = oldRoot.EnumerateObject();
+
+            var props = typeof(T).GetProperties();
+
+            using var stream = new MemoryStream();
+            using var writer = new Utf8JsonWriter(stream);
+
+            writer.WriteStartObject();
+            foreach (var prop in props) {
+                writer.WritePropertyName(prop.Name);
+
+                if (newRoot.TryGetProperty(prop.Name, out var newProp)) {
+                    if ((newProp.ValueKind == JsonValueKind.Number ||
+                        newProp.ValueKind == JsonValueKind.False ||
+                        newProp.ValueKind == JsonValueKind.True
+                        ) && prop.PropertyType == typeof(string))
+                        writer.WriteStringValue(newProp.GetRawText());
+                    else
+                        newProp.WriteTo(writer);
+                } else if (oldRoot.TryGetProperty(prop.Name, out var oldProp)) {
+                    if ((oldProp.ValueKind == JsonValueKind.Number ||
+                        oldProp.ValueKind == JsonValueKind.False ||
+                        oldProp.ValueKind == JsonValueKind.True
+                        ) && prop.PropertyType == typeof(string))
+                        writer.WriteStringValue(oldProp.GetRawText());
+                    else
+                        oldProp.WriteTo(writer);
+                }
+            }
+            writer.WriteEndObject();
+            writer.Flush();
+            string json = Encoding.UTF8.GetString(stream.ToArray());
+            return JsonSerializer.Deserialize<T>(json);
+        }
+
+
 
         /// <summary>
         /// Determines if the object variable references the same
