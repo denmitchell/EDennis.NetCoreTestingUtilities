@@ -1,11 +1,12 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using NL = Newtonsoft.Json.Linq;
+using System.Text.Json;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using EDennis.NetCoreTestingUtilities.Json;
-using Newtonsoft.Json;
+using N = Newtonsoft.Json;
 using Xunit.Abstractions;
 using Xunit;
 using EDennis.JsonUtils;
@@ -29,7 +30,7 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <param name="obj">The object to be copied</param>
         /// <returns>A full copy of the object</returns>
         public static T Copy<T>(this T obj) {
-            return JToken.FromObject(obj).ToObject<T>();
+            return NL.JToken.FromObject(obj).ToObject<T>();
         }
 
         /// <summary>
@@ -64,15 +65,17 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <seealso cref="IsEqual{T}(object, T, string[])"/>
         public static bool IsEqual<T>(this object obj1, T obj2, bool ignoreArrayElementOrder = false) {
 
-            string json1 = JsonConvert.SerializeObject(obj1,
-                Formatting.Indented, new SafeJsonSerializerSettings());
-            string json2 = JsonConvert.SerializeObject(obj2,
-                Formatting.Indented, new SafeJsonSerializerSettings());
+            //string json1 = JsonConvert.SerializeObject(obj1,
+            //    Formatting.Indented, new SafeJsonSerializerSettings());
+            //string json2 = JsonConvert.SerializeObject(obj2,
+            //    Formatting.Indented, new SafeJsonSerializerSettings());
+            string json1 = SafeJsonSerializer.Serialize(obj1, 99, true, null, ignoreArrayElementOrder);
+            string json2 = SafeJsonSerializer.Serialize(obj2, 99, true, null, ignoreArrayElementOrder);
 
-            if (ignoreArrayElementOrder) {
-                json1 = JsonSorter.Sort(json1);
-                json2 = JsonSorter.Sort(json2);
-            }
+            //if (ignoreArrayElementOrder) {
+            //    json1 = JsonSorter.Sort(json1);
+            //    json2 = JsonSorter.Sort(json2);
+            //}
 
             return json1 == json2;
         }
@@ -97,17 +100,21 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
             CheckDepth(obj1, maxDepth);
 
-            string json1 = JsonConvert.SerializeObject(obj1,
-                Formatting.Indented, new SafeJsonSerializerSettings(
-                    maxDepth,propertiesToIgnore));
-            string json2 = JsonConvert.SerializeObject(obj2,
-                Formatting.Indented, new SafeJsonSerializerSettings(
-                    maxDepth, propertiesToIgnore));
+            string json1 = SafeJsonSerializer.Serialize(obj1, maxDepth, true, propertiesToIgnore, ignoreArrayElementOrder);
+            string json2 = SafeJsonSerializer.Serialize(obj2, maxDepth, true, propertiesToIgnore, ignoreArrayElementOrder);
 
-            if (ignoreArrayElementOrder) {
-                json1 = JsonSorter.Sort(json1);
-                json2 = JsonSorter.Sort(json2);
-            }
+
+            //string json1 = JsonConvert.SerializeObject(obj1,
+            //    Formatting.Indented, new SafeJsonSerializerSettings(
+            //        maxDepth,propertiesToIgnore));
+            //string json2 = JsonConvert.SerializeObject(obj2,
+            //    Formatting.Indented, new SafeJsonSerializerSettings(
+            //        maxDepth, propertiesToIgnore));
+
+            //if (ignoreArrayElementOrder) {
+            //    json1 = JsonSorter.Sort(json1);
+            //    json2 = JsonSorter.Sort(json2);
+            //}
 
             return json1 == json2;
         }
@@ -136,11 +143,11 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
             CheckDepth(obj1, maxDepth);
 
-            string json1 = JsonConvert.SerializeObject(obj1,
-                Formatting.Indented, new SafeJsonSerializerSettings(
+            string json1 = N.JsonConvert.SerializeObject(obj1,
+                N.Formatting.Indented, new SafeJsonSerializerSettings(
                     maxDepth, propertiesToIgnore, moduloTransform));
-            string json2 = JsonConvert.SerializeObject(obj2,
-                Formatting.Indented, new SafeJsonSerializerSettings(
+            string json2 = N.JsonConvert.SerializeObject(obj2,
+                N.Formatting.Indented, new SafeJsonSerializerSettings(
                     maxDepth, propertiesToIgnore, moduloTransform));
 
             if (ignoreArrayElementOrder) {
@@ -172,17 +179,20 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
             CheckDepth(obj1, maxDepth);
 
-            string json1 = JsonConvert.SerializeObject(obj1,
-                Formatting.Indented, new SafeJsonSerializerSettings(
-                    maxDepth));
-            string json2 = JsonConvert.SerializeObject(obj2,
-                Formatting.Indented, new SafeJsonSerializerSettings(
-                    maxDepth));
+            string json1 = SafeJsonSerializer.Serialize(obj1, maxDepth, true, null, ignoreArrayElementOrder);
+            string json2 = SafeJsonSerializer.Serialize(obj2, maxDepth, true, null, ignoreArrayElementOrder);
 
-            if (ignoreArrayElementOrder) {
-                json1 = JsonSorter.Sort(json1);
-                json2 = JsonSorter.Sort(json2);
-            }
+            //string json1 = JsonConvert.SerializeObject(obj1,
+            //    Formatting.Indented, new SafeJsonSerializerSettings(
+            //        maxDepth));
+            //string json2 = JsonConvert.SerializeObject(obj2,
+            //    Formatting.Indented, new SafeJsonSerializerSettings(
+            //        maxDepth));
+
+            //if (ignoreArrayElementOrder) {
+            //    json1 = JsonSorter.Sort(json1);
+            //    json2 = JsonSorter.Sort(json2);
+            //}
 
             return json1 == json2;
         }
@@ -205,17 +215,20 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         public static bool IsEqual<T>(this object obj1, T obj2, 
             string[] propertiesToIgnore, bool ignoreArrayElementOrder = false) {
 
-            string json1 = JsonConvert.SerializeObject(obj1,
-                Formatting.Indented, new SafeJsonSerializerSettings(
-                    DEFAULT_MAXDEPTH, propertiesToIgnore));
-            string json2 = JsonConvert.SerializeObject(obj2,
-                Formatting.Indented, new SafeJsonSerializerSettings(
-                    DEFAULT_MAXDEPTH, propertiesToIgnore));
+            string json1 = SafeJsonSerializer.Serialize(obj1, DEFAULT_MAXDEPTH, true, propertiesToIgnore, ignoreArrayElementOrder);
+            string json2 = SafeJsonSerializer.Serialize(obj2, DEFAULT_MAXDEPTH, true, propertiesToIgnore, ignoreArrayElementOrder);
 
-            if (ignoreArrayElementOrder) {
-                json1 = JsonSorter.Sort(json1);
-                json2 = JsonSorter.Sort(json2);
-            }
+            //string json1 = JsonConvert.SerializeObject(obj1,
+            //    Formatting.Indented, new SafeJsonSerializerSettings(
+            //        DEFAULT_MAXDEPTH, propertiesToIgnore));
+            //string json2 = JsonConvert.SerializeObject(obj2,
+            //    Formatting.Indented, new SafeJsonSerializerSettings(
+            //        DEFAULT_MAXDEPTH, propertiesToIgnore));
+
+            //if (ignoreArrayElementOrder) {
+            //    json1 = JsonSorter.Sort(json1);
+            //    json2 = JsonSorter.Sort(json2);
+            //}
 
             return json1 == json2;
         }
@@ -241,11 +254,11 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
             string[] propertiesToIgnore, Dictionary<string,ulong> moduloTransform,
             bool ignoreArrayElementOrder = false) {
 
-            string json1 = JsonConvert.SerializeObject(obj1,
-                Formatting.Indented, new SafeJsonSerializerSettings(
+            string json1 = N.JsonConvert.SerializeObject(obj1,
+                N.Formatting.Indented, new SafeJsonSerializerSettings(
                     DEFAULT_MAXDEPTH, propertiesToIgnore, moduloTransform));
-            string json2 = JsonConvert.SerializeObject(obj2,
-                Formatting.Indented, new SafeJsonSerializerSettings(
+            string json2 = N.JsonConvert.SerializeObject(obj2,
+                N.Formatting.Indented, new SafeJsonSerializerSettings(
                     DEFAULT_MAXDEPTH, propertiesToIgnore, moduloTransform));
 
             if (ignoreArrayElementOrder) {
@@ -276,15 +289,18 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         public static bool IsEqualOrWrite<T>(this object obj1, T obj2, 
             ITestOutputHelper output, bool ignoreArrayElementOrder = false) {
 
-            string json1 = JsonConvert.SerializeObject(obj1,
-                Formatting.Indented, new SafeJsonSerializerSettings());
-            string json2 = JsonConvert.SerializeObject(obj2,
-                Formatting.Indented, new SafeJsonSerializerSettings());
+            string json1 = SafeJsonSerializer.Serialize(obj1, DEFAULT_MAXDEPTH, true, null, ignoreArrayElementOrder);
+            string json2 = SafeJsonSerializer.Serialize(obj2, DEFAULT_MAXDEPTH, true, null, ignoreArrayElementOrder);
 
-            if (ignoreArrayElementOrder) {
-                json1 = JsonSorter.Sort(json1);
-                json2 = JsonSorter.Sort(json2);
-            }
+            //string json1 = JsonConvert.SerializeObject(obj1,
+            //    Formatting.Indented, new SafeJsonSerializerSettings());
+            //string json2 = JsonConvert.SerializeObject(obj2,
+            //    Formatting.Indented, new SafeJsonSerializerSettings());
+
+            //if (ignoreArrayElementOrder) {
+            //    json1 = JsonSorter.Sort(json1);
+            //    json2 = JsonSorter.Sort(json2);
+            //}
 
             var isEqual = json1 == json2;
 
@@ -320,17 +336,20 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
             CheckDepth(obj1, maxDepth);
 
-            string json1 = JsonConvert.SerializeObject(obj1,
-                Formatting.Indented, new SafeJsonSerializerSettings(
-                    maxDepth, propertiesToIgnore));
-            string json2 = JsonConvert.SerializeObject(obj2,
-                Formatting.Indented, new SafeJsonSerializerSettings(
-                    maxDepth, propertiesToIgnore));
+            string json1 = SafeJsonSerializer.Serialize(obj1, maxDepth, true, propertiesToIgnore, ignoreArrayElementOrder);
+            string json2 = SafeJsonSerializer.Serialize(obj2, maxDepth, true, propertiesToIgnore, ignoreArrayElementOrder);
 
-            if (ignoreArrayElementOrder) {
-                json1 = JsonSorter.Sort(json1);
-                json2 = JsonSorter.Sort(json2);
-            }
+            //string json1 = JsonConvert.SerializeObject(obj1,
+            //    Formatting.Indented, new SafeJsonSerializerSettings(
+            //        maxDepth, propertiesToIgnore));
+            //string json2 = JsonConvert.SerializeObject(obj2,
+            //    Formatting.Indented, new SafeJsonSerializerSettings(
+            //        maxDepth, propertiesToIgnore));
+
+            //if (ignoreArrayElementOrder) {
+            //    json1 = JsonSorter.Sort(json1);
+            //    json2 = JsonSorter.Sort(json2);
+            //}
 
             var isEqual = (json1 == json2);
 
@@ -368,11 +387,11 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
             CheckDepth(obj1, maxDepth);
 
-            string json1 = JsonConvert.SerializeObject(obj1,
-                Formatting.Indented, new SafeJsonSerializerSettings(
+            string json1 = N.JsonConvert.SerializeObject(obj1,
+                N.Formatting.Indented, new SafeJsonSerializerSettings(
                     maxDepth, propertiesToIgnore,moduloTransform));
-            string json2 = JsonConvert.SerializeObject(obj2,
-                Formatting.Indented, new SafeJsonSerializerSettings(
+            string json2 = N.JsonConvert.SerializeObject(obj2,
+                N.Formatting.Indented, new SafeJsonSerializerSettings(
                     maxDepth, propertiesToIgnore, moduloTransform));
 
             if (ignoreArrayElementOrder) {
@@ -413,17 +432,20 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
             CheckDepth(obj1, maxDepth);
 
-            string json1 = JsonConvert.SerializeObject(obj1,
-                Formatting.Indented, new SafeJsonSerializerSettings(
-                    maxDepth));
-            string json2 = JsonConvert.SerializeObject(obj2,
-                Formatting.Indented, new SafeJsonSerializerSettings(
-                    maxDepth));
+            string json1 = SafeJsonSerializer.Serialize(obj1, maxDepth, true, null, ignoreArrayElementOrder);
+            string json2 = SafeJsonSerializer.Serialize(obj2, maxDepth, true, null, ignoreArrayElementOrder);
 
-            if (ignoreArrayElementOrder) {
-                json1 = JsonSorter.Sort(json1);
-                json2 = JsonSorter.Sort(json2);
-            }
+            //string json1 = JsonConvert.SerializeObject(obj1,
+            //    Formatting.Indented, new SafeJsonSerializerSettings(
+            //        maxDepth));
+            //string json2 = JsonConvert.SerializeObject(obj2,
+            //    Formatting.Indented, new SafeJsonSerializerSettings(
+            //        maxDepth));
+
+            //if (ignoreArrayElementOrder) {
+            //    json1 = JsonSorter.Sort(json1);
+            //    json2 = JsonSorter.Sort(json2);
+            //}
 
             var isEqual = (json1 == json2);
 
@@ -458,11 +480,11 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         public static bool IsEqualOrWrite<T>(this object obj1, T obj2, 
             string[] propertiesToIgnore, ITestOutputHelper output, bool ignoreArrayElementOrder = false) {
 
-            string json1 = JsonConvert.SerializeObject(obj1,
-                Formatting.Indented, new SafeJsonSerializerSettings(
+            string json1 = N.JsonConvert.SerializeObject(obj1,
+                N.Formatting.Indented, new SafeJsonSerializerSettings(
                     DEFAULT_MAXDEPTH, propertiesToIgnore));
-            string json2 = JsonConvert.SerializeObject(obj2,
-                Formatting.Indented, new SafeJsonSerializerSettings(
+            string json2 = N.JsonConvert.SerializeObject(obj2,
+                N.Formatting.Indented, new SafeJsonSerializerSettings(
                     DEFAULT_MAXDEPTH, propertiesToIgnore));
 
             if (ignoreArrayElementOrder) {
@@ -503,11 +525,11 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
             string[] propertiesToIgnore, Dictionary<string,ulong> moduloTransform, 
             ITestOutputHelper output, bool ignoreArrayElementOrder = false) {
 
-            string json1 = JsonConvert.SerializeObject(obj1,
-                Formatting.Indented, new SafeJsonSerializerSettings(
+            string json1 = N.JsonConvert.SerializeObject(obj1,
+                N.Formatting.Indented, new SafeJsonSerializerSettings(
                     DEFAULT_MAXDEPTH, propertiesToIgnore, moduloTransform));
-            string json2 = JsonConvert.SerializeObject(obj2,
-                Formatting.Indented, new SafeJsonSerializerSettings(
+            string json2 = N.JsonConvert.SerializeObject(obj2,
+                N.Formatting.Indented, new SafeJsonSerializerSettings(
                     DEFAULT_MAXDEPTH, propertiesToIgnore, moduloTransform));
 
             if (ignoreArrayElementOrder) {
@@ -539,10 +561,13 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <seealso cref="Juxtapose{T}(object, T, string[])"/>
         public static string Juxtapose<T>(this object obj1, T obj2, string label1, string label2) {
 
-            string json1 = JsonConvert.SerializeObject(obj1,
-                Formatting.Indented, new SafeJsonSerializerSettings());
-            string json2 = JsonConvert.SerializeObject(obj2,
-                Formatting.Indented, new SafeJsonSerializerSettings());
+            string json1 = SafeJsonSerializer.Serialize(obj1);
+            string json2 = SafeJsonSerializer.Serialize(obj2);
+
+            //string json1 = JsonConvert.SerializeObject(obj1,
+            //    Formatting.Indented, new SafeJsonSerializerSettings());
+            //string json2 = JsonConvert.SerializeObject(obj2,
+            //    Formatting.Indented, new SafeJsonSerializerSettings());
 
             return FileStringComparer.GetSideBySideFileStrings(json1, json2, label1, label2);
         }
@@ -568,12 +593,15 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
             CheckDepth(obj1, maxDepth);
 
-            string json1 = JsonConvert.SerializeObject(obj1,
-                Formatting.Indented, new SafeJsonSerializerSettings(
-                    maxDepth, propertiesToIgnore));
-            string json2 = JsonConvert.SerializeObject(obj2,
-                Formatting.Indented, new SafeJsonSerializerSettings(
-                    maxDepth, propertiesToIgnore));
+            string json1 = SafeJsonSerializer.Serialize(obj1, maxDepth, true, propertiesToIgnore, false);
+            string json2 = SafeJsonSerializer.Serialize(obj2, maxDepth, true, propertiesToIgnore, false);
+
+            //string json1 = JsonConvert.SerializeObject(obj1,
+            //    Formatting.Indented, new SafeJsonSerializerSettings(
+            //        maxDepth, propertiesToIgnore));
+            //string json2 = JsonConvert.SerializeObject(obj2,
+            //    Formatting.Indented, new SafeJsonSerializerSettings(
+            //        maxDepth, propertiesToIgnore));
 
             return FileStringComparer.GetSideBySideFileStrings(json1, json2, label1, label2);
 
@@ -602,11 +630,11 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
             CheckDepth(obj1, maxDepth);
 
-            string json1 = JsonConvert.SerializeObject(obj1,
-                Formatting.Indented, new SafeJsonSerializerSettings(
+            string json1 = N.JsonConvert.SerializeObject(obj1,
+                N.Formatting.Indented, new SafeJsonSerializerSettings(
                     maxDepth, propertiesToIgnore, moduloTransform));
-            string json2 = JsonConvert.SerializeObject(obj2,
-                Formatting.Indented, new SafeJsonSerializerSettings(
+            string json2 = N.JsonConvert.SerializeObject(obj2,
+                N.Formatting.Indented, new SafeJsonSerializerSettings(
                     maxDepth, propertiesToIgnore, moduloTransform));
 
             return FileStringComparer.GetSideBySideFileStrings(json1, json2, label1, label2);
@@ -632,12 +660,15 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
             CheckDepth(obj1, maxDepth);
 
-            string json1 = JsonConvert.SerializeObject(obj1,
-                Formatting.Indented, new SafeJsonSerializerSettings(
-                    maxDepth));
-            string json2 = JsonConvert.SerializeObject(obj2,
-                Formatting.Indented, new SafeJsonSerializerSettings(
-                    maxDepth));
+            string json1 = SafeJsonSerializer.Serialize(obj1, maxDepth, true, null, false);
+            string json2 = SafeJsonSerializer.Serialize(obj2, maxDepth, true, null, false);
+
+            //string json1 = JsonConvert.SerializeObject(obj1,
+            //    Formatting.Indented, new SafeJsonSerializerSettings(
+            //        maxDepth));
+            //string json2 = JsonConvert.SerializeObject(obj2,
+            //    Formatting.Indented, new SafeJsonSerializerSettings(
+            //        maxDepth));
 
             return FileStringComparer.GetSideBySideFileStrings(json1, json2, label1, label2);
 
@@ -661,12 +692,15 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <see href="https://github.com/json-path/JsonPath"/>
         public static string Juxtapose<T>(this object obj1, T obj2, string label1, string label2, string[] propertiesToIgnore) {
 
-            string json1 = JsonConvert.SerializeObject(obj1,
-                Formatting.Indented, new SafeJsonSerializerSettings(
-                    DEFAULT_MAXDEPTH, propertiesToIgnore));
-            string json2 = JsonConvert.SerializeObject(obj2,
-                Formatting.Indented, new SafeJsonSerializerSettings(
-                    DEFAULT_MAXDEPTH, propertiesToIgnore));
+            string json1 = SafeJsonSerializer.Serialize(obj1, DEFAULT_MAXDEPTH, true, propertiesToIgnore, false);
+            string json2 = SafeJsonSerializer.Serialize(obj2, DEFAULT_MAXDEPTH, true, propertiesToIgnore, false);
+
+            //string json1 = N.JsonConvert.SerializeObject(obj1,
+            //    N.Formatting.Indented, new SafeJsonSerializerSettings(
+            //        DEFAULT_MAXDEPTH, propertiesToIgnore));
+            //string json2 = N.JsonConvert.SerializeObject(obj2,
+            //    N.Formatting.Indented, new SafeJsonSerializerSettings(
+            //        DEFAULT_MAXDEPTH, propertiesToIgnore));
 
             return FileStringComparer.GetSideBySideFileStrings(json1, json2, label1, label2);
 
@@ -693,11 +727,11 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         public static string Juxtapose<T>(this object obj1, T obj2, string label1, string label2, 
             string[] propertiesToIgnore, Dictionary<string,ulong> moduloTransform) {
 
-            string json1 = JsonConvert.SerializeObject(obj1,
-                Formatting.Indented, new SafeJsonSerializerSettings(
+            string json1 = N.JsonConvert.SerializeObject(obj1,
+                N.Formatting.Indented, new SafeJsonSerializerSettings(
                     DEFAULT_MAXDEPTH, propertiesToIgnore, moduloTransform));
-            string json2 = JsonConvert.SerializeObject(obj2,
-                Formatting.Indented, new SafeJsonSerializerSettings(
+            string json2 = N.JsonConvert.SerializeObject(obj2,
+                N.Formatting.Indented, new SafeJsonSerializerSettings(
                     DEFAULT_MAXDEPTH, propertiesToIgnore, moduloTransform));
 
             return FileStringComparer.GetSideBySideFileStrings(json1, json2, label1, label2);
@@ -714,8 +748,9 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <returns>A JSON string representation of the object</returns>
         /// <seealso cref="ToJsonString(object)"/>
         public static string ToJsonString(this object obj) {
-            return JsonConvert.SerializeObject(obj,
-                Formatting.Indented, new SafeJsonSerializerSettings());
+            return SafeJsonSerializer.Serialize(obj);
+            //return N.JsonConvert.SerializeObject(obj,
+            //    N.Formatting.Indented, new SafeJsonSerializerSettings());
         }
 
 
@@ -732,9 +767,11 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         public static string ToJsonString(this object obj, int maxDepth, string[] propertiesToIgnore) {
 
 
-            return JsonConvert.SerializeObject(obj,
-                Formatting.Indented, new SafeJsonSerializerSettings(
-                    maxDepth, propertiesToIgnore));
+            return SafeJsonSerializer.Serialize(obj, maxDepth, true, propertiesToIgnore, false);
+
+            //return JsonConvert.SerializeObject(obj,
+            //    Formatting.Indented, new SafeJsonSerializerSettings(
+            //        maxDepth, propertiesToIgnore));
         }
 
 
@@ -753,8 +790,8 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
             string[] propertiesToIgnore, Dictionary<string,ulong> moduloTransform) {
 
 
-            return JsonConvert.SerializeObject(obj,
-                Formatting.Indented, new SafeJsonSerializerSettings(
+            return N.JsonConvert.SerializeObject(obj,
+                N.Formatting.Indented, new SafeJsonSerializerSettings(
                     maxDepth, propertiesToIgnore, moduloTransform));
         }
 
@@ -774,9 +811,11 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
             CheckDepth(obj, maxDepth);
 
-            return JsonConvert.SerializeObject(obj,
-                Formatting.Indented, new SafeJsonSerializerSettings(
-                    maxDepth));
+            return SafeJsonSerializer.Serialize(obj, maxDepth, true, null, false);
+
+            //return JsonConvert.SerializeObject(obj,
+            //    Formatting.Indented, new SafeJsonSerializerSettings(
+            //        maxDepth));
         }
 
 
@@ -791,9 +830,11 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <returns>A JSON string representation of the object</returns>
         public static string ToJsonString(this object obj, string[] propertiesToIgnore) {
 
-            return JsonConvert.SerializeObject(obj,
-                Formatting.Indented, new SafeJsonSerializerSettings(
-                    DEFAULT_MAXDEPTH, propertiesToIgnore));
+            return SafeJsonSerializer.Serialize(obj, DEFAULT_MAXDEPTH, true, null, false);
+
+            //return JsonConvert.SerializeObject(obj,
+            //    Formatting.Indented, new SafeJsonSerializerSettings(
+            //        DEFAULT_MAXDEPTH, propertiesToIgnore));
         }
 
 
@@ -810,8 +851,8 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         public static string ToJsonString(this object obj, 
             string[] propertiesToIgnore, Dictionary<string,ulong> moduloTransform) {
 
-            return JsonConvert.SerializeObject(obj,
-                Formatting.Indented, new SafeJsonSerializerSettings(
+            return N.JsonConvert.SerializeObject(obj,
+                N.Formatting.Indented, new SafeJsonSerializerSettings(
                     DEFAULT_MAXDEPTH, propertiesToIgnore, moduloTransform));
         }
 
@@ -826,7 +867,8 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <param name="json">The JSON representation of the object</param>
         /// <returns>A new object initialized with the JSON properties</returns>
         public static T FromJsonString<T>(this T obj, string json){
-            T objNew = JToken.Parse(json).ToObject<T>();
+            T objNew = JsonSerializer.Deserialize<T>(json);
+            //T objNew = JToken.Parse(json).ToObject<T>();
             obj = objNew;
             return obj;
         }
@@ -845,7 +887,7 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         public static T FromJsonPath<T>(this T obj, string filePath, string objectPath) {
 
             string json = System.IO.File.ReadAllText(filePath);
-            JToken jtoken = JToken.Parse(json);
+            NL.JToken jtoken = NL.JToken.Parse(json);
             jtoken = jtoken.SelectToken(objectPath.Replace(@"\", ".").Replace(@"/", "."));
 
             if (jtoken == null) {
@@ -882,7 +924,7 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
             string filePath = paths[0] + ".json";
 
             string json = System.IO.File.ReadAllText(filePath);
-            JToken jtoken = JToken.Parse(json);
+            NL.JToken jtoken = NL.JToken.Parse(json);
 
             if (paths.Length == 3) {
                 var objectPath = paths[2].Replace(@"\", ".").Replace(@"/", ".");
@@ -913,7 +955,7 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <returns>A new object initialized with the JSON properties</returns>
         /// <seealso cref="FromJsonPath{T}(T, string, string)"/>
         /// <seealso cref="FromJsonPath{T}(T, string)"/>
-        public static T FromJsonPath<T>(this T obj, JToken jtoken, string objectPath) {
+        public static T FromJsonPath<T>(this T obj, NL.JToken jtoken, string objectPath) {
             jtoken = jtoken.SelectToken(objectPath.Replace(@"\", ".").Replace(@"/", "."));
 
             T objNew = jtoken.ToObject<T>();
@@ -977,8 +1019,9 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
                 throw new MissingRecordException($"No Json found for \"{sql}\"");
             }
 
+            //T objNew = JsonSerializer.Deserialize<T>(json);
             //parse the returned JSON
-            JToken jtoken = JToken.Parse(json);
+            NL.JToken jtoken = NL.JToken.Parse(json);
 
             //convert the JSON to an object
             T objNew = jtoken.ToObject<T>();
@@ -1040,8 +1083,8 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// </summary>
         /// <param name="jtoken">The JToken object whose properties are desired</param>
         /// <returns>A list of properties</returns>
-        public static List<JProperty> Properties(this JToken jtoken) {
-            var jobject = (JObject)jtoken;
+        public static List<NL.JProperty> Properties(this NL.JToken jtoken) {
+            var jobject = (NL.JObject)jtoken;
             return jobject.Properties().ToList();
         }
 
@@ -1054,7 +1097,7 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <param name="pathsToRemove">An array of valid Json Paths
         /// or an array of property names</param>
         /// <returns></returns>
-        public static JToken Filter(this JToken jtoken, string[] pathsToRemove) {
+        public static NL.JToken Filter(this NL.JToken jtoken, string[] pathsToRemove) {
             return JsonFilterer.ApplyFilter(jtoken, pathsToRemove);
         }
 
