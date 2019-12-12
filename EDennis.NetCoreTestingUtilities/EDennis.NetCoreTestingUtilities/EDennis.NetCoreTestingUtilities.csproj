@@ -11,10 +11,10 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>3.6.2</Version>
-    <PackageReleaseNotes>Where practical, updated ObjectExtensions methods to use JsonUtils' SafeJsonSerializer.Serialize, which uses System.Text.Json, rather than Newtonsoft.</PackageReleaseNotes>
-    <AssemblyVersion>3.6.2</AssemblyVersion>
-    <FileVersion>3.6.2</FileVersion>
+    <Version>3.6.3</Version>
+    <PackageReleaseNotes>Added some ObjectExtensions for copying objects</PackageReleaseNotes>
+    <AssemblyVersion>3.6.3</AssemblyVersion>
+    <FileVersion>3.6.3</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup>
