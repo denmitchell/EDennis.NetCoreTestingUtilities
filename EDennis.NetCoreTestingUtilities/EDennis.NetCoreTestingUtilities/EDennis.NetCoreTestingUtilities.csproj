@@ -11,10 +11,10 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>3.6.4</Version>
-    <PackageReleaseNotes>Added some ObjectExtensions for copying objects</PackageReleaseNotes>
-    <AssemblyVersion>3.6.4</AssemblyVersion>
-    <FileVersion>3.6.4</FileVersion>
+    <Version>3.6.5</Version>
+    <PackageReleaseNotes>Experimental support for using various Entity Framework Core providers with TestJson.</PackageReleaseNotes>
+    <AssemblyVersion>3.6.5</AssemblyVersion>
+    <FileVersion>3.6.5</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -44,10 +44,6 @@
     <PackageReference Include="System.Data.SqlClient" Version="4.7.0" />
     <PackageReference Include="xunit.abstractions" Version="2.0.3" />
     <PackageReference Include="xunit.extensibility.core" Version="2.4.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\EDennis.JsonUtils\EDennis.JsonUtils\EDennis.JsonUtils\EDennis.JsonUtils.csproj" />
   </ItemGroup>
 
 </Project>
