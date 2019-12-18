@@ -25,6 +25,44 @@ namespace EDennis.NetCoreTestingUtilities {
         private readonly TestJsonConfig _config;
         private readonly string _configKey;
 
+        public TestJsonAttribute(
+                string projectName,
+                string className,
+                string methodName,
+                string testScenario,
+                string testCase,
+                DatabaseProvider databaseProvider,
+                string connectionString
+        ) {
+
+            _config = new TestJsonConfig {
+                DatabaseName = "(from connection string)",
+                ServerName = "(from connection string)",
+                ConnectionString = connectionString,
+                TestJsonSchema = "",
+                TestJsonTable = "TestJson",
+                ProjectName = projectName,
+                ClassName = className,
+                MethodName = methodName,
+                TestScenario = testScenario,
+                TestCase = testCase
+            };
+
+
+            _configKey = new TestJsonConfig {
+                ConnectionString = _config.ConnectionString,
+                TestJsonSchema = _config.TestJsonSchema,
+                TestJsonTable = _config.TestJsonTable,
+                ProjectName = _config.ProjectName
+            }.ToString();
+
+
+            if (!TestCases.ContainsKey(_configKey))
+                TestCases.Add(_configKey, JsonTestCase.GetTestCasesForProject(
+                    databaseProvider, connectionString, projectName));
+
+        }
+
 
         public TestJsonAttribute(
                 string databaseName,
