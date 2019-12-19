@@ -1,0 +1,7 @@
+﻿ProjectName,ClassName,MethodName,TestScenario,TestCase,TestFile,Json
+Some Project,Some Class,Some Method,,A,Input,1
+Some Project,Some Class,Some Method,,A,Expected,"{""FirstName"":""Moe"",""LastName"":""Stooge""
+}"
+Some Project,Some Class,Some Method,,B,Input,2
+Some Project,Some Class,Some Method,,B,Expected,"{""FirstName"":""Larry"",""LastName"":""Stooge""
+}"

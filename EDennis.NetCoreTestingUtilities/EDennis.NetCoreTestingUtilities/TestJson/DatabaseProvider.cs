@@ -7,6 +7,6 @@ namespace EDennis.NetCoreTestingUtilities {
         SqlServer,
         Sqlite,
         InMemory,
-        FileContextCore
+        Excel
     }
 }

@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace EDennis.NetCoreTestingUtilities.Tests.InMemory{
+namespace EDennis.NetCoreTestingUtilities.Tests.Excel{
     public class TestJsonFixture : IDisposable {
 
         public TestJsonFixture() {
-            using var context = new TestJsonContext { DatabaseProvider = DatabaseProvider.InMemory, ConnectionString = "Some Database" };
+            //CreateDatabase();
+        }
+
+        private void CreateDatabase() {
+            using var context = new TestJsonContext { DatabaseProvider = DatabaseProvider.Excel, ConnectionString = "Excel\\TestJson.xlsx" };
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
 
@@ -37,9 +41,10 @@ namespace EDennis.NetCoreTestingUtilities.Tests.InMemory{
             });
 
             context.SaveChanges();
+
         }
 
-            public void Dispose() {
+        public void Dispose() {
             // ... clean up test data from the database ...
         }
 
