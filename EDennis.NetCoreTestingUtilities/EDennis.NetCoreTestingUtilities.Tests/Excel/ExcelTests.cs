@@ -6,7 +6,7 @@ using Xunit.Abstractions;
 
 namespace EDennis.NetCoreTestingUtilities.Tests.Excel {
 
-    public class ExcelTests : IClassFixture<TestJsonFixture> {
+    public class ExcelTests {
 
         private readonly ITestOutputHelper _output;
         public ExcelTests(ITestOutputHelper output) {

@@ -4,19 +4,19 @@ using System.Text;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace EDennis.NetCoreTestingUtilities.Tests.InMemory {
+namespace EDennis.NetCoreTestingUtilities.Tests.Sqlite {
 
-    public class InMemoryTests : IClassFixture<TestJsonFixture> {
+    public class SqliteTests {
 
         private readonly ITestOutputHelper _output;
-        public InMemoryTests(ITestOutputHelper output) {
+        public SqliteTests(ITestOutputHelper output) {
             _output = output;
         }
 
         internal class TestJsonA : TestJsonAttribute {
             public TestJsonA(string methodName, string testScenario, string testCase)
                 : base("Some Project", "Some Class",
-                      methodName, testScenario, testCase, DatabaseProvider.InMemory,"Some Database") {
+                      methodName, testScenario, testCase, DatabaseProvider.Sqlite, "Data Source=Sqlite\\TestJson.db") {
             }
         }
 
@@ -36,7 +36,7 @@ namespace EDennis.NetCoreTestingUtilities.Tests.InMemory {
         [Theory]
         [TestJsonA("Some Method", "", "A")]
         [TestJsonA("Some Method", "", "B")]
-        public void InMemory(string t, JsonTestCase jsonTestCase) {
+        public void Sqlite(string t, JsonTestCase jsonTestCase) {
             _output.WriteLine($"Test case: {t}");
 
             var input = jsonTestCase.GetObject<int>("Input");

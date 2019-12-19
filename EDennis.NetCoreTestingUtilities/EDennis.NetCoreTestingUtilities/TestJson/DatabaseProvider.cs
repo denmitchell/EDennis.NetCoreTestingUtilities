@@ -6,7 +6,6 @@ namespace EDennis.NetCoreTestingUtilities {
     public enum DatabaseProvider {
         SqlServer,
         Sqlite,
-        InMemory,
         Excel
     }
 }

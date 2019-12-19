@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using OfficeOpenXml;
+using Microsoft.Data.Sqlite;
 
 namespace EDennis.NetCoreTestingUtilities {
     public class TestJsonContext : DbContext {
@@ -22,27 +23,26 @@ namespace EDennis.NetCoreTestingUtilities {
                     case DatabaseProvider.SqlServer:
                         optionsBuilder.UseSqlServer(ConnectionString);
                         break;
-                    case DatabaseProvider.InMemory:
-                        optionsBuilder.UseInMemoryDatabase(ConnectionString);
-                        break;
                     case DatabaseProvider.Sqlite:
+                        var builder = new SqliteConnectionStringBuilder(ConnectionString);
+                        builder.DataSource = Path.GetFullPath(
+                            Path.Combine(
+                                AppDomain.CurrentDomain.GetData("") as string
+                                    ?? AppDomain.CurrentDomain.BaseDirectory,
+                                builder.DataSource));
+                        ConnectionString = builder.ToString();
+
                         optionsBuilder.UseSqlite(ConnectionString);
                         break;
-                    case DatabaseProvider.Excel:
-                        optionsBuilder.UseInMemoryDatabase(ConnectionString);
-                        //optionsBuilder.UseFileContextDatabase(serializer: "excel", databaseName: "TestJson", location: ConnectionString );
-                        //optionsBuilder.UseFileContextDatabase(serializer: "csv", databaseName: "TestJson", location: ConnectionString);
-                        //optionsBuilder.UseFileContextDatabaseConnectionString(ConnectionString);
-                        break;
                     default:
-                        optionsBuilder.UseInMemoryDatabase(Guid.NewGuid().ToString());
-                        break;
+                        throw new NotSupportedException("At present, only SqlServer, Sqlite, and Excel are supported.");
                 }
         }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             modelBuilder.Entity<TestJson>()
+                .ToTable("TestJson")
                 .HasKey(e => new { e.ProjectName, e.ClassName, e.MethodName, e.TestScenario, e.TestCase, e.TestFile });
 
             if(DatabaseProvider == DatabaseProvider.Excel)
@@ -59,7 +59,7 @@ namespace EDennis.NetCoreTestingUtilities {
         public const int JSON_COL = 7;
 
 
-        public IEnumerable<object> LoadDataFromExcel(string filePath) {
+        public IEnumerable<TestJson> LoadDataFromExcel(string filePath) {
 
             var existingFile = new FileInfo(filePath);
             using ExcelPackage package = new ExcelPackage(existingFile);

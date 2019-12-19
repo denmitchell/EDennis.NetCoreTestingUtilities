@@ -25,6 +25,7 @@ namespace EDennis.NetCoreTestingUtilities {
         private readonly TestJsonConfig _config;
         private readonly string _configKey;
 
+
         public TestJsonAttribute(
                 string projectName,
                 string className,
@@ -57,9 +58,15 @@ namespace EDennis.NetCoreTestingUtilities {
             }.ToString();
 
 
-            if (!TestCases.ContainsKey(_configKey))
-                TestCases.Add(_configKey, JsonTestCase.GetTestCasesForProject(
-                    databaseProvider, connectionString, projectName));
+            if (!TestCases.ContainsKey(_configKey)) {
+                if(databaseProvider == DatabaseProvider.Excel)
+                    TestCases.Add(_configKey, JsonTestCase.GetTestCasesForProjectExcel(
+                        _config.ConnectionString, projectName));
+                else
+                    TestCases.Add(_configKey, JsonTestCase.GetTestCasesForProject(
+                        databaseProvider, connectionString, projectName));
+
+            }
 
         }
 

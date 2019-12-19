@@ -160,7 +160,6 @@ new { projectName });
                 testJson = ctx.TestJsonRecs
                     .Where(t => t.ProjectName == projectName)
                     .ToList();
-
             }
 
 
@@ -190,6 +189,43 @@ new { projectName });
             return testCases;
 
         }
+
+        public static List<JsonTestCase> GetTestCasesForProjectExcel(string filePath, string projectName) {
+            var testCases = new List<JsonTestCase>();
+
+            List<TestJson> testJson = new List<TestJson>();
+
+            using var ctx = new TestJsonContext();
+            testJson = ctx.LoadDataFromExcel(filePath).ToList();
+
+
+            if (testJson.Count() == 0) {
+                throw new ArgumentException(
+                    $"No TestJson record found for ProjectName: {projectName}.");
+            }
+
+            //construct a JsonTestCase as the return object
+            var qry = testJson.GroupBy(
+                    r => new { r.ProjectName, r.ClassName, r.MethodName, r.TestScenario, r.TestCase },
+                    r => new JsonTestFile { TestFile = r.TestFile, Json = r.Json },
+                    (key, g) =>
+                        new JsonTestCase {
+                            ProjectName = key.ProjectName,
+                            ClassName = key.ClassName,
+                            MethodName = key.MethodName,
+                            TestScenario = key.TestScenario,
+                            TestCase = key.TestCase,
+                            JsonTestFiles = g.ToList()
+                        });
+
+            //return all objects
+            foreach (var rec in qry)
+                testCases.Add(rec);
+
+            return testCases;
+
+        }
+
 
 
         public static IEnumerable<object[]> GetDataForXUnit(List<JsonTestCase> TestCases, TestJsonConfig config) {
