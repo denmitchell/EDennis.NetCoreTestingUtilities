@@ -6,46 +6,47 @@ using System.Text;
 namespace EDennis.NetCoreTestingUtilities.Tests.Excel{
     public class TestJsonFixture : IDisposable {
 
+        public TestJsonContext TestJsonContext { get; private set; }
+
         public TestJsonFixture() {
-            //CreateDatabase();
+            TestJsonContext = new TestJsonContext { DatabaseProvider = DatabaseProvider.Excel, ConnectionString = "Excel\\TestJson.xlsx" };
+            TestJsonContext.Database.EnsureCreated();
         }
 
         private void CreateDatabase() {
-            using var context = new TestJsonContext { DatabaseProvider = DatabaseProvider.Excel, ConnectionString = "Excel\\TestJson.xlsx" };
-            context.Database.EnsureDeleted();
-            context.Database.EnsureCreated();
+            TestJsonContext.Database.EnsureDeleted();
 
-            var range = context.TestJsonRecs.Where(r => r.ProjectName == "Some Project");
-            context.TestJsonRecs.RemoveRange(range);
-            context.SaveChanges();
+            var range = TestJsonContext.TestJsonRecs.Where(r => r.ProjectName == "Some Project");
+            TestJsonContext.TestJsonRecs.RemoveRange(range);
+            TestJsonContext.SaveChanges();
 
-            context.TestJsonRecs.Add(new TestJson {
+            TestJsonContext.TestJsonRecs.Add(new TestJson {
                 ProjectName = "Some Project",
                 ClassName = "Some Class", MethodName = "Some Method", TestScenario = "",
                 TestCase = "A", TestFile = "Input", Json = "1"
             });
-            context.TestJsonRecs.Add(new TestJson {
+            TestJsonContext.TestJsonRecs.Add(new TestJson {
                 ProjectName = "Some Project",
                 ClassName = "Some Class", MethodName = "Some Method", TestScenario = "",
                 TestCase = "A", TestFile = "Expected", Json = "{\"FirstName\":\"Moe\",\"LastName\":\"Stooge\"\n}"
             });
-            context.TestJsonRecs.Add(new TestJson {
+            TestJsonContext.TestJsonRecs.Add(new TestJson {
                 ProjectName = "Some Project",
                 ClassName = "Some Class", MethodName = "Some Method", TestScenario = "",
                 TestCase = "B", TestFile = "Input", Json = "2"
             });
-            context.TestJsonRecs.Add(new TestJson {
+            TestJsonContext.TestJsonRecs.Add(new TestJson {
                 ProjectName = "Some Project",
                 ClassName = "Some Class", MethodName = "Some Method", TestScenario = "",
                 TestCase = "B", TestFile = "Expected", Json = "{\"FirstName\":\"Larry\",\"LastName\":\"Stooge\"\n}"
             });
 
-            context.SaveChanges();
+            TestJsonContext.SaveChanges();
 
         }
 
         public void Dispose() {
-            // ... clean up test data from the database ...
+            TestJsonContext.Database.EnsureDeleted();
         }
 
     }

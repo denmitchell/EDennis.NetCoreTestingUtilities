@@ -50,13 +50,13 @@ namespace EDennis.NetCoreTestingUtilities {
                     .HasData(LoadDataFromExcel(ConnectionString));
         }
 
-        public const int PROJECT_NAME_COL = 0;
-        public const int CLASS_NAME_COL = 1;
-        public const int METHOD_NAME_COL = 2;
-        public const int TEST_SCENARIO_COL = 3;
-        public const int TEST_CASE_COL = 4;
-        public const int TEST_FILE_COL = 5;
-        public const int JSON_COL = 6;
+        public const int PROJECT_NAME_COL = 1;
+        public const int CLASS_NAME_COL = 2;
+        public const int METHOD_NAME_COL = 3;
+        public const int TEST_SCENARIO_COL = 4;
+        public const int TEST_CASE_COL = 5;
+        public const int TEST_FILE_COL = 6;
+        public const int JSON_COL = 7;
 
 
         public IEnumerable<object> LoadDataFromExcel(string filePath) {
@@ -67,6 +67,9 @@ namespace EDennis.NetCoreTestingUtilities {
             ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
 
             int row = 1;
+            if (worksheet.Cells[1, PROJECT_NAME_COL].Text == "ProjectName")
+                row++;
+
             var recs = new List<TestJson>();
             while (true) {
                 if (string.IsNullOrEmpty(worksheet.Cells[row, PROJECT_NAME_COL].Text))
@@ -77,9 +80,11 @@ namespace EDennis.NetCoreTestingUtilities {
                     MethodName = worksheet.Cells[row, METHOD_NAME_COL].Text,
                     TestScenario = worksheet.Cells[row, TEST_SCENARIO_COL].Text,
                     TestCase = worksheet.Cells[row, TEST_CASE_COL].Text,
-                    TestFile = worksheet.Cells[row, TEST_FILE_COL].Text
+                    TestFile = worksheet.Cells[row, TEST_FILE_COL].Text,
+                    Json = worksheet.Cells[row, JSON_COL].Text,
                 };
                 recs.Add(testJson);
+                row++;
             }
             return recs;
 
