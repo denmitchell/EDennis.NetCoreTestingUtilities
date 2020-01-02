@@ -235,8 +235,11 @@ new { projectName });
                     $"No TestJson records found for ConnectionString: {config.ConnectionString}, TestJsonSchema: {config.TestJsonSchema}, TestJsonTable: {config.TestJsonTable}, ProjectName: {config.ProjectName}.  Check your configuration file for possible errors.");
             }
 
-            var qry = TestCases.Where(t => t.ClassName == config.ClassName && t.MethodName == config.MethodName
-                            && t.TestScenario == config.TestScenario && t.TestCase == config.TestCase);
+            var qry = TestCases.Where(
+                    t => (t.ClassName == config.ClassName || t.ClassName == TestJsonConfig.ANY_VALUE)
+                      && (t.MethodName == config.MethodName || t.MethodName == TestJsonConfig.ANY_VALUE)
+                      && (t.TestScenario == config.TestScenario || t.TestScenario == TestJsonConfig.ANY_VALUE)
+                      && (t.TestCase == config.TestCase || t.TestCase == TestJsonConfig.ANY_VALUE));
 
             if (qry == null || qry.Count() == 0) {
                 throw new ArgumentException(

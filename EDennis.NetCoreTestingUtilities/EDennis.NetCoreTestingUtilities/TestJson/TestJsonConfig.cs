@@ -3,6 +3,9 @@
 namespace EDennis.NetCoreTestingUtilities {
 
     public class TestJsonConfig {
+
+        public const string ANY_VALUE = "{ANY}";
+
         public string DatabaseName { get; set; }
         public string ProjectName { get; set; }
         public string ClassName { get; set; }
