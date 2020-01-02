@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Dennis Mitchell</Authors>
     <Company>edennis.com</Company>
@@ -11,10 +11,10 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>3.6.7</Version>
-    <PackageReleaseNotes>Rework Sqlite (EF Core) and Excel support</PackageReleaseNotes>
-    <AssemblyVersion>3.6.7</AssemblyVersion>
-    <FileVersion>3.6.7</FileVersion>
+    <Version>3.7.0</Version>
+    <PackageReleaseNotes>Upgrade to .NET Core 3.1, and remove obsolete Modulo Transform support (use EDennis.AspNetCore.Base PkRewriter, instead.)</PackageReleaseNotes>
+    <AssemblyVersion>3.7.0</AssemblyVersion>
+    <FileVersion>3.7.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup>

@@ -1,5 +1,4 @@
 ﻿using EDennis.NetCoreTestingUtilities.Extensions;
-using EDennis.NetCoreTestingUtilities.Json;
 using EDennis.NetCoreTestingUtilities.Tests.TestJsonTable;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
@@ -7,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Xunit;
 using Xunit.Abstractions;
 
