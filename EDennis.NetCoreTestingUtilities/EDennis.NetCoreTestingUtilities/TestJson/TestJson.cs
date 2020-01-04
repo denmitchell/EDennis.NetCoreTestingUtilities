@@ -109,50 +109,37 @@ namespace EDennis.NetCoreTestingUtilities {
 
 
         public static List<JsonTestCase> GetTestCasesForProject(string connectionString, string testJsonSchema, string testJsonTable, string projectName) {
-            var testCases = new List<JsonTestCase>();
-
+            var sql = 
+@$"select ProjectName, ClassName, MethodName, TestScenario, 
+    TestCase, TestFile, Json 
+    from {testJsonSchema}.{testJsonTable} 
+    where ProjectName = @projectName";
 
             using var cxn = new SqlConnection(connectionString);
-            var testJson = cxn.Query<TestJson>(
-"select ProjectName, ClassName, MethodName, TestScenario, TestCase, TestFile, Json from "
-+ $"{testJsonSchema}.{testJsonTable} where "
-+ "ProjectName = @projectName",
-new { projectName });
 
+            //get data from SQL Server
+            var testJson = cxn.Query<TestJson>(sql, new { projectName });
 
-            if (testJson.Count() == 0) {
-                throw new ArgumentException(
-                    $"No TestJson record found for ProjectName: {projectName}.");
-            }
+            //add {ANY} files to test case
+            testJson = AddAny(testJson);
 
-            //construct a JsonTestCase as the return object
-            var qry = testJson.GroupBy(
-                    r => new { r.ProjectName, r.ClassName, r.MethodName, r.TestScenario, r.TestCase },
-                    r => new JsonTestFile { TestFile = r.TestFile, Json = r.Json },
-                    (key, g) =>
-                        new JsonTestCase {
-                            ProjectName = key.ProjectName,
-                            ClassName = key.ClassName,
-                            MethodName = key.MethodName,
-                            TestScenario = key.TestScenario,
-                            TestCase = key.TestCase,
-                            JsonTestFiles = g.ToList()
-                        });
+            //ensure that there is at least one valid test case
+            CheckCount(testJson, projectName);
 
-            //return all objects
-            foreach (var rec in qry)
-                testCases.Add(rec);
+            //group the test files
+            var testCases = GroupTestFiles(testJson);
 
+            //return the test cases
             return testCases;
 
         }
 
 
         public static List<JsonTestCase> GetTestCasesForProject(DatabaseProvider databaseProvider, string connectionString, string projectName) {
-            var testCases = new List<JsonTestCase>();
 
-            List<TestJson> testJson = new List<TestJson>();
+            IEnumerable<TestJson> testJson = new List<TestJson>();
 
+            //get data from a valid TestJsonContext (extends DbContext)
             using (var ctx = new TestJsonContext {
                 DatabaseProvider = databaseProvider,
                 ConnectionString = connectionString
@@ -163,48 +150,86 @@ new { projectName });
             }
 
 
-            if (testJson.Count() == 0) {
-                throw new ArgumentException(
-                    $"No TestJson record found for ProjectName: {projectName}.");
-            }
+            //add {ANY} files to test case
+            testJson = AddAny(testJson);
 
-            //construct a JsonTestCase as the return object
-            var qry = testJson.GroupBy(
-                    r => new { r.ProjectName, r.ClassName, r.MethodName, r.TestScenario, r.TestCase },
-                    r => new JsonTestFile { TestFile = r.TestFile, Json = r.Json },
-                    (key, g) =>
-                        new JsonTestCase {
-                            ProjectName = key.ProjectName,
-                            ClassName = key.ClassName,
-                            MethodName = key.MethodName,
-                            TestScenario = key.TestScenario,
-                            TestCase = key.TestCase,
-                            JsonTestFiles = g.ToList()
-                        });
+            //ensure that there is at least one valid test case
+            CheckCount(testJson, projectName);
 
-            //return all objects
-            foreach (var rec in qry)
-                testCases.Add(rec);
+            //group the test files
+            var testCases = GroupTestFiles(testJson);
 
+            //return the test cases
             return testCases;
 
         }
 
         public static List<JsonTestCase> GetTestCasesForProjectExcel(string filePath, string projectName) {
-            var testCases = new List<JsonTestCase>();
-
-            List<TestJson> testJson = new List<TestJson>();
 
             using var ctx = new TestJsonContext();
-            testJson = ctx.LoadDataFromExcel(filePath).ToList();
 
+            //load data from Excel
+            IEnumerable<TestJson> testJson = ctx.LoadDataFromExcel(filePath).ToList();
 
+            //add {ANY} files to test case
+            testJson = AddAny(testJson);
+
+            //ensure that there is at least one valid test case
+            CheckCount(testJson, projectName);
+
+            //group the test files
+            var testCases = GroupTestFiles(testJson);
+
+            //return the test cases
+            return testCases;
+
+        }
+
+        private static void CheckCount(IEnumerable<TestJson> testJson, string projectName) {
             if (testJson.Count() == 0) {
                 throw new ArgumentException(
                     $"No TestJson record found for ProjectName: {projectName}.");
             }
+        }
 
-            //construct a JsonTestCase as the return object
+        private static IEnumerable<TestJson> AddAny(IEnumerable<TestJson> testJson) {
+            var anyValue = TestJsonConfig.ANY_VALUE;
+
+            var any = testJson.Where(
+                    t => t.ClassName == anyValue 
+                    || t.MethodName == anyValue
+                    || t.TestScenario == anyValue
+                    || t.TestCase == anyValue)
+                .ToList();
+
+            var testJsonAugm = new List<TestJson>(testJson);
+            var distinct = testJson
+                .Except(any)
+                .Select(d => new { d.ProjectName, d.ClassName, d.MethodName, d.TestScenario, d.TestCase })
+                .Distinct();
+
+            foreach (var a in any)
+                foreach (var t in distinct) {
+                    if((a.ClassName == anyValue || a.ClassName == t.ClassName)
+                        && (a.MethodName == anyValue || a.MethodName == t.MethodName)
+                        && (a.TestScenario == anyValue || a.TestScenario == t.TestScenario)
+                        && (a.TestCase == anyValue || a.TestCase == t.TestCase))
+                        testJsonAugm.Add(new TestJson {
+                            ProjectName = t.ProjectName,
+                            ClassName = t.ClassName,
+                            MethodName = t.MethodName,
+                            TestScenario = t.TestScenario,
+                            TestCase = t.TestCase,
+                            TestFile = a.TestFile,
+                            Json = a.Json
+                    });
+                }
+            return testJsonAugm.Except(any);
+
+        }
+
+        private static List<JsonTestCase> GroupTestFiles(IEnumerable<TestJson> testJson) {
+            var testCases = new List<JsonTestCase>();
             var qry = testJson.GroupBy(
                     r => new { r.ProjectName, r.ClassName, r.MethodName, r.TestScenario, r.TestCase },
                     r => new JsonTestFile { TestFile = r.TestFile, Json = r.Json },
@@ -236,11 +261,9 @@ new { projectName });
             }
 
             var qry = TestCases.Where(
-                    t => (t.ClassName == config.ClassName || t.ClassName == TestJsonConfig.ANY_VALUE)
-                      && (t.MethodName == config.MethodName || t.MethodName == TestJsonConfig.ANY_VALUE)
-                      && (t.TestScenario == config.TestScenario || t.TestScenario == TestJsonConfig.ANY_VALUE)
-                      && (t.TestCase == config.TestCase || t.TestCase == TestJsonConfig.ANY_VALUE));
-
+                        t => t.ClassName == config.ClassName && t.MethodName == config.MethodName
+                          && t.TestScenario == config.TestScenario && t.TestCase == config.TestCase);
+                 
             if (qry == null || qry.Count() == 0) {
                 throw new ArgumentException(
                     $"No TestJson record found for ProjectName: {TestCases[0].ProjectName}, ClassName: {config.ClassName}, MethodName: {config.MethodName}, TestScenario: {config.TestScenario}, TestCase {config.TestCase}");
