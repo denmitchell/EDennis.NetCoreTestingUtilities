@@ -11,10 +11,10 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>3.7.4</Version>
-    <PackageReleaseNotes>Added DynamicConverter class for converting dynamic objects and Lists of dynamic objects</PackageReleaseNotes>
-    <AssemblyVersion>3.7.4</AssemblyVersion>
-    <FileVersion>3.7.4</FileVersion>
+    <Version>3.7.5</Version>
+    <PackageReleaseNotes>Fixed bug with DynamicConverter</PackageReleaseNotes>
+    <AssemblyVersion>3.7.5</AssemblyVersion>
+    <FileVersion>3.7.5</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -45,6 +45,10 @@
     <PackageReference Include="System.Data.SqlClient" Version="4.8.0" />
     <PackageReference Include="xunit.abstractions" Version="2.0.3" />
     <PackageReference Include="xunit.extensibility.core" Version="2.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\EDennis.JsonUtils\EDennis.JsonUtils\EDennis.JsonUtils\EDennis.JsonUtils.csproj" />
   </ItemGroup>
 
 </Project>

@@ -14,14 +14,23 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
     public static class DynamicConverter {
 
         public static Dictionary<string, object> ToPropertyDictionary(dynamic obj) {
-            var expando = new ExpandoObject();
-            var dictionary = (IDictionary<string, object>)expando;
+            if (obj == null)
+                return null;
 
-            foreach (var property in obj.GetType().GetProperties())
-                try {
-                    dictionary.Add(property.Name, property.GetValue(obj));
-                } catch { }
-            return new Dictionary<string, object>(expando);
+            Dictionary<string, object> dictionary;
+
+            var itemType = obj.GetType();
+            if (itemType == typeof(ExpandoObject)) {
+                dictionary = new Dictionary<string, object>((IDictionary<string, object>)obj);
+            } else {
+                dictionary = new Dictionary<string, object>();
+                var properties = itemType.GetProperties();
+                foreach (var property in properties)
+                    try {
+                        dictionary.Add(property.Name, property.GetValue(obj));
+                    } catch { }
+            }
+            return dictionary;
         }
 
         public static List<Dictionary<string, object>> ToPropertyDictionaryList(IEnumerable<dynamic> list) {
