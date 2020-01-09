@@ -20,7 +20,7 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
             Dictionary<string, object> dictionary;
 
             var itemType = obj.GetType();
-            if (itemType == typeof(ExpandoObject)) {
+            if (itemType == null || itemType == typeof(ExpandoObject)) {
                 dictionary = new Dictionary<string, object>((IDictionary<string, object>)obj);
             } else {
                 dictionary = new Dictionary<string, object>();

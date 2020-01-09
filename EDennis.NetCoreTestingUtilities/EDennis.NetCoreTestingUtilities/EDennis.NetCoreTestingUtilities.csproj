@@ -11,10 +11,10 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>3.7.6</Version>
-    <PackageReleaseNotes>Removed local project dependencies</PackageReleaseNotes>
-    <AssemblyVersion>3.7.6</AssemblyVersion>
-    <FileVersion>3.7.6</FileVersion>
+    <Version>3.7.7</Version>
+    <PackageReleaseNotes>Fix for Converting Dapper dynamic results to properties Dictionary</PackageReleaseNotes>
+    <AssemblyVersion>3.7.7</AssemblyVersion>
+    <FileVersion>3.7.7</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup>
