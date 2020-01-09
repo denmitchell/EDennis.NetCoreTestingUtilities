@@ -1,7 +1,9 @@
-﻿using EDennis.NetCoreTestingUtilities.Tests.TestJsonTable;
+﻿using EDennis.NetCoreTestingUtilities.Extensions;
+using EDennis.NetCoreTestingUtilities.Tests.TestJsonTable;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Text;
 using Xunit;
 using Xunit.Abstractions;
@@ -88,6 +90,14 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
                     new JsonTestFile() {
                         TestFile = "Decimal2",
                         Json = "123.00"
+                    },
+                    new JsonTestFile() {
+                        TestFile = "Dynamic",
+                        Json = "{\"Name\":\"Bob\",\"Age\":25}"
+                    },
+                    new JsonTestFile() {
+                        TestFile = "ListDynamic",
+                        Json = "[{\"Name\":\"Bob\",\"Age\":25}]"
                     }
             }
         };
@@ -207,6 +217,36 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
             Assert.Equal(123.00M, value);
         }
 
+        [Fact]
+        public void ToObjectDynamic() {
+            ExpandoObject value = jcase.GetObject<dynamic>("Dynamic");
+            Dictionary<string, object> expected = ObjectExtensions.ToPropertyDictionary(value);
+
+            dynamic obj = new {
+                Name = "Bob",
+                Age = 25
+            };
+            Dictionary<string,object> actual = ObjectExtensions.ToPropertyDictionary(obj);
+
+            Assert.True(actual.IsEqualAndWrite(expected,_output));
+        }
+
+
+        [Fact]
+        public void ToObjectListDynamic() {
+            List<ExpandoObject> value = jcase.GetObject<List<ExpandoObject>>("ListDynamic");
+            List<Dictionary<string, object>> expected = ObjectExtensions.ToPropertyDictionaryList(value);
+
+            dynamic obj = new {
+                Name = "Bob",
+                Age = 25
+            };
+            var listDynamic = new List<dynamic> { obj };
+
+            List<Dictionary<string,object>> actual = ObjectExtensions.ToPropertyDictionaryList(listDynamic);
+
+            Assert.True(actual.IsEqualAndWrite(expected, _output));
+        }
 
         [Fact]
         public void ToObjectBadCast() {

@@ -11,10 +11,10 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>3.7.2</Version>
-    <PackageReleaseNotes>Fixed support for {ANY} param value for ClassName,MethodName,TestScenario, and TestClass parameters for TestJsonAttribute</PackageReleaseNotes>
-    <AssemblyVersion>3.7.2</AssemblyVersion>
-    <FileVersion>3.7.2</FileVersion>
+    <Version>3.7.3</Version>
+    <PackageReleaseNotes>Provided support for testing dynamic objects via ExpandoObject-related extension methods</PackageReleaseNotes>
+    <AssemblyVersion>3.7.3</AssemblyVersion>
+    <FileVersion>3.7.3</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup>

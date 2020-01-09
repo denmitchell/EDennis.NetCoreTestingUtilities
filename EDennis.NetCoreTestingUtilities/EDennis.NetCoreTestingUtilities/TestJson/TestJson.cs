@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -88,14 +89,38 @@ namespace EDennis.NetCoreTestingUtilities {
 
                 T objNew = default;
                 try {
-                    var reader = new JsonTextReader(new StringReader(json)) {
-                        FloatParseHandling = FloatParseHandling.Decimal
-                    };
-                    JObject jtoken = JObject.Load(reader);
-                    objNew = jtoken.ToObject<T>();
+                    if (typeof(T) == typeof(object) || typeof(T) == typeof(ExpandoObject)
+                        || typeof(T) == typeof(List<object>) || typeof(T) == typeof(List<ExpandoObject>)
+                        || typeof(T) == typeof(object[]) || typeof(T) == typeof(ExpandoObject[])
+                        || typeof(T) == typeof(IEnumerable<object>) || typeof(T) == typeof(IEnumerable<ExpandoObject>)
+                        || typeof(T).Name.Contains("ExpandoObject")
+                        ) {
+                        // try DynamicJsonConverter ...
+                        var options = new System.Text.Json.JsonSerializerOptions();
+                        options.PropertyNameCaseInsensitive = true;
+                        options.Converters.Add(new DynamicJsonConverter());
+                        objNew = System.Text.Json.JsonSerializer.Deserialize<T>(json, options);
+
+                    } else {
+                        objNew = System.Text.Json.JsonSerializer.Deserialize<T>(json,
+                                new System.Text.Json.JsonSerializerOptions {
+                                    PropertyNameCaseInsensitive = true
+                                }
+                            );
+                    }
                 } catch {
-                    JToken jtoken = JToken.Parse(json);
-                    objNew = jtoken.ToObject<T>();
+                    //fall back to Newtonsoft...
+                    try {
+                        var reader = new JsonTextReader(new StringReader(json)) {
+                            FloatParseHandling = FloatParseHandling.Decimal
+                        };
+                        JObject jtoken = JObject.Load(reader);
+                        objNew = jtoken.ToObject<T>();
+                    } catch {
+                        JToken jtoken = JToken.Parse(json);
+                        objNew = jtoken.ToObject<T>();
+                    }
+
                 }
                 return objNew;
             } catch (Exception ex) when (ex is ArgumentException || ex is FormatException) {
@@ -109,7 +134,7 @@ namespace EDennis.NetCoreTestingUtilities {
 
 
         public static List<JsonTestCase> GetTestCasesForProject(string connectionString, string testJsonSchema, string testJsonTable, string projectName) {
-            var sql = 
+            var sql =
 @$"select ProjectName, ClassName, MethodName, TestScenario, 
     TestCase, TestFile, Json 
     from {testJsonSchema}.{testJsonTable} 
@@ -196,7 +221,7 @@ namespace EDennis.NetCoreTestingUtilities {
             var anyValue = TestJsonConfig.ANY_VALUE;
 
             var any = testJson.Where(
-                    t => t.ClassName == anyValue 
+                    t => t.ClassName == anyValue
                     || t.MethodName == anyValue
                     || t.TestScenario == anyValue
                     || t.TestCase == anyValue)
@@ -210,7 +235,7 @@ namespace EDennis.NetCoreTestingUtilities {
 
             foreach (var a in any)
                 foreach (var t in distinct) {
-                    if((a.ClassName == anyValue || a.ClassName == t.ClassName)
+                    if ((a.ClassName == anyValue || a.ClassName == t.ClassName)
                         && (a.MethodName == anyValue || a.MethodName == t.MethodName)
                         && (a.TestScenario == anyValue || a.TestScenario == t.TestScenario)
                         && (a.TestCase == anyValue || a.TestCase == t.TestCase))
@@ -222,7 +247,7 @@ namespace EDennis.NetCoreTestingUtilities {
                             TestCase = t.TestCase,
                             TestFile = a.TestFile,
                             Json = a.Json
-                    });
+                        });
                 }
             return testJsonAugm.Except(any);
 
@@ -263,7 +288,7 @@ namespace EDennis.NetCoreTestingUtilities {
             var qry = TestCases.Where(
                         t => t.ClassName == config.ClassName && t.MethodName == config.MethodName
                           && t.TestScenario == config.TestScenario && t.TestCase == config.TestCase);
-                 
+
             if (qry == null || qry.Count() == 0) {
                 throw new ArgumentException(
                     $"No TestJson record found for ProjectName: {TestCases[0].ProjectName}, ClassName: {config.ClassName}, MethodName: {config.MethodName}, TestScenario: {config.TestScenario}, TestCase {config.TestCase}");
