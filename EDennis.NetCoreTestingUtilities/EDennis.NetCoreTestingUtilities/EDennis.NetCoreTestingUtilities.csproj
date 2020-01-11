@@ -11,10 +11,10 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>3.7.8</Version>
-    <PackageReleaseNotes>Add GetObjectOrDefault method and provide optional ITestOutputHelper parameter to GetObject and GetObjectOrDefault</PackageReleaseNotes>
-    <AssemblyVersion>3.7.8</AssemblyVersion>
-    <FileVersion>3.7.8</FileVersion>
+    <Version>3.7.9</Version>
+    <PackageReleaseNotes>Added exception handling for ToPropertyDictionary and ToPropertyDictionaryList </PackageReleaseNotes>
+    <AssemblyVersion>3.7.9</AssemblyVersion>
+    <FileVersion>3.7.9</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup>
