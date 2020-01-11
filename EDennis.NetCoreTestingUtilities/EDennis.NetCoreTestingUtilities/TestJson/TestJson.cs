@@ -71,14 +71,48 @@ namespace EDennis.NetCoreTestingUtilities {
 
 
         /// <summary>
+        /// Tries to get the object stored in the Json column of the
+        /// TestJson table.  If the value isn't available, it outputs
+        /// the default value for T and returns false.
+        /// </summary>
+        /// <typeparam name="T">Type of object stored</typeparam>
+        /// <param name="testFile">Name of test file</param>
+        /// <returns>object of type T (can be a boxed primitive)</returns>
+        public T GetObjectOrDefault<T>(string testFile, ITestOutputHelper output = null) {
+            var rec = JsonTestFiles.FirstOrDefault(f => f.TestFile == testFile);
+            T result = default;
+            if (rec != null)
+                result = GetObject<T>(testFile, rec.Json);
+            if (output != null)
+                output.WriteLine($"{testFile}: {rec?.Json ?? "<<default>>"}");
+            return result;
+        }
+
+
+        /// <summary>
         /// Gets the object stored in the Json column of the
         /// TestJson table
         /// </summary>
         /// <typeparam name="T">Type of object stored</typeparam>
         /// <param name="testFile">Name of test file</param>
         /// <returns>object of type T (can be a boxed primitive)</returns>
-        public T GetObject<T>(string testFile) {
+        public T GetObject<T>(string testFile, ITestOutputHelper output = null) {
             var json = GetJson(testFile);
+            T result = GetObject<T>(testFile, json);
+            if(output != null)
+                output.WriteLine($"{testFile}: {json}");
+            return result;
+
+        }
+
+
+        /// <summary>
+        /// Gets the object stored in json
+        /// </summary>
+        /// <typeparam name="T">Type of object stored</typeparam>
+        /// <param name="testFile">Name of test file</param>
+        /// <returns>object of type T (can be a boxed primitive)</returns>
+        private T GetObject<T>(string testFile, string json) {
             if (json == null && default(T) == null)
                 return default;
             else if (typeof(T) == typeof(string))
