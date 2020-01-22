@@ -2,6 +2,7 @@
 
 using Dapper;
 using EDennis.NetCoreTestingUtilities.Extensions;
+using EDennis.NetCoreTestingUtilities.Serialization;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -107,6 +108,24 @@ namespace EDennis.NetCoreTestingUtilities {
 
 
         /// <summary>
+        /// Gets the object stored in the Json column of the
+        /// TestJson table
+        /// </summary>
+        /// <typeparam name="T">Type of object stored</typeparam>
+        /// <param name="testFile">Name of test file</param>
+        /// <returns>object of type T (can be a boxed primitive)</returns>
+        public TDynamicResult GetObject<TDynamicResult,TEntity>(string testFile, ITestOutputHelper output = null) {
+            var json = GetJson(testFile);
+            TDynamicResult result = GetObject<TDynamicResult,TEntity>(testFile, json);
+            if (output != null)
+                output.WriteLine($"{testFile}: {json}");
+            return result;
+
+        }
+
+
+
+        /// <summary>
         /// Gets the object stored in json
         /// </summary>
         /// <typeparam name="T">Type of object stored</typeparam>
@@ -123,8 +142,7 @@ namespace EDennis.NetCoreTestingUtilities {
 
                 T objNew = default;
                 try {
-                    if (typeof(T) == typeof(object) || typeof(T) == typeof(ExpandoObject)
-                        || typeof(T) == typeof(List<object>) || typeof(T) == typeof(List<ExpandoObject>)
+                    if (typeof(T) == typeof(object) || typeof(T) == typeof(List<object>) || typeof(T) == typeof(List<ExpandoObject>)
                         || typeof(T) == typeof(object[]) || typeof(T) == typeof(ExpandoObject[])
                         || typeof(T) == typeof(IEnumerable<object>) || typeof(T) == typeof(IEnumerable<ExpandoObject>)
                         || typeof(T).Name.Contains("ExpandoObject")
@@ -132,15 +150,12 @@ namespace EDennis.NetCoreTestingUtilities {
                         // try DynamicJsonConverter ...
                         var options = new System.Text.Json.JsonSerializerOptions();
                         options.PropertyNameCaseInsensitive = true;
-                        options.Converters.Add(new DynamicJsonConverter());
+                        options.Converters.Add(new ExpandoDynamicJsonConverter());
                         objNew = System.Text.Json.JsonSerializer.Deserialize<T>(json, options);
-
                     } else {
-                        objNew = System.Text.Json.JsonSerializer.Deserialize<T>(json,
-                                new System.Text.Json.JsonSerializerOptions {
-                                    PropertyNameCaseInsensitive = true
-                                }
-                            );
+                        var options = new System.Text.Json.JsonSerializerOptions();
+                        options.PropertyNameCaseInsensitive = true;
+                        objNew = System.Text.Json.JsonSerializer.Deserialize<T>(json,options);
                     }
                 } catch {
                     //fall back to Newtonsoft...
@@ -165,6 +180,34 @@ namespace EDennis.NetCoreTestingUtilities {
                     $"TestCase: '{TestCase}', TestFile: '{testFile}' ");
             }
         }
+
+
+
+        /// <summary>
+        /// Gets the object stored in json
+        /// </summary>
+        /// <typeparam name="T">Type of object stored</typeparam>
+        /// <param name="testFile">Name of test file</param>
+        /// <returns>object of type T (can be a boxed primitive)</returns>
+        private TDynamicResult GetObject<TDynamicResult,TEntity>(string testFile, string json) {
+            if (json == null)
+                return default;
+            try { 
+                var options = new System.Text.Json.JsonSerializerOptions();
+                options.PropertyNameCaseInsensitive = true;
+                options.Converters.Add(new DynamicJsonConverter<TEntity>());
+                var objNew = System.Text.Json.JsonSerializer.Deserialize<TDynamicResult>(json, options);
+
+                return objNew;
+            } catch (Exception ex) when (ex is ArgumentException || ex is FormatException) {
+                throw new ArgumentException(
+                    $"Cannot cast '{json}' to {default(TDynamicResult).GetType().Name} " +
+                    $"for Project: '{ProjectName}', Class: '{ClassName}', " +
+                    $"Method: '{MethodName}', TestScenario: '{TestScenario}', " +
+                    $"TestCase: '{TestCase}', TestFile: '{testFile}' ");
+            }
+        }
+
 
 
         public static List<JsonTestCase> GetTestCasesForProject(string connectionString, string testJsonSchema, string testJsonTable, string projectName) {

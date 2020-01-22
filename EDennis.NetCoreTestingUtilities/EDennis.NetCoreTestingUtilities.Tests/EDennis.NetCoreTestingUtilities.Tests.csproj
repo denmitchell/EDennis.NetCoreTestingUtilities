@@ -64,6 +64,9 @@
     <None Update="JsonTests\FromString.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="pagedResult1.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="PersonRepo\MaxDepthException\03.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

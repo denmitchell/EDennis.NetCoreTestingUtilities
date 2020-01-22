@@ -10,7 +10,7 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
     /// Temp Dynamic Converter
     /// by:tchivs@live.cn
     /// </summary>
-    public class DynamicJsonConverter : JsonConverter<dynamic> {
+    public class ExpandoDynamicJsonConverter : JsonConverter<dynamic> {
         public override dynamic Read(ref Utf8JsonReader reader,
             Type typeToConvert,
             JsonSerializerOptions options) {

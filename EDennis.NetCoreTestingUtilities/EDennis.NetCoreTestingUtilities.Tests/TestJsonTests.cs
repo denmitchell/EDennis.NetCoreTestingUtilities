@@ -1,9 +1,12 @@
-﻿using EDennis.NetCoreTestingUtilities.Extensions;
+﻿using Colors2.Models;
+using EDennis.AspNetCore.Base.EntityFramework;
+using EDennis.NetCoreTestingUtilities.Extensions;
 using EDennis.NetCoreTestingUtilities.Tests.TestJsonTable;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.IO;
 using System.Text;
 using Xunit;
 using Xunit.Abstractions;
@@ -98,6 +101,10 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
                     new JsonTestFile() {
                         TestFile = "ListDynamic",
                         Json = "[{\"Name\":\"Bob\",\"Age\":25}]"
+                    },
+                    new JsonTestFile() {
+                        TestFile = "PagedResult",
+                        Json = File.ReadAllText("pagedResult1.json")
                     }
             }
         };
@@ -251,6 +258,18 @@ namespace EDennis.NetCoreTestingUtilities.Tests {
         [Fact]
         public void ToObjectBadCast() {
             Assert.Throws<System.ArgumentException>(() => jcase.GetObject<DateTime>("Integer"));
+        }
+
+        [Fact]
+        public void GetPagedResult() {
+            var value = jcase.GetObject<PagedResult<dynamic>,Rgb>("PagedResult");
+            Assert.Equal(20, value.PagingData.RecordCount);
+            Assert.Equal(10, value.PagingData.PageSize);
+            Assert.Equal(1, value.PagingData.PageNumber);
+            Assert.Equal(2, value.PagingData.PageCount);
+            Assert.Equal(10, value.Data.Count);
+            Assert.Equal("SteelBlue", (value.Data[0]).Name);
+            Assert.Equal("jack@hill.org", (value.Data[0]).SysUser);
         }
 
 
