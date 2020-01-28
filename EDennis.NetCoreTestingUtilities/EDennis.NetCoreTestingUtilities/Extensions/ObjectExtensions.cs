@@ -503,23 +503,34 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         public static bool IsEqualAndWrite<T>(this object obj1, T obj2,
             string[] propertiesToIgnore, ITestOutputHelper output, bool ignoreArrayElementOrder = false) {
 
-            string json1 = N.JsonConvert.SerializeObject(obj1,
-                N.Formatting.Indented, new SafeJsonSerializerSettings(
-                    DEFAULT_MAXDEPTH, propertiesToIgnore));
-            string json2 = N.JsonConvert.SerializeObject(obj2,
-                N.Formatting.Indented, new SafeJsonSerializerSettings(
-                    DEFAULT_MAXDEPTH, propertiesToIgnore));
 
-            if (ignoreArrayElementOrder) {
-                json1 = JsonSorter.Sort(json1);
-                json2 = JsonSorter.Sort(json2);
-            }
+            string json1 = SafeJsonSerializer.Serialize(obj1, DEFAULT_MAXDEPTH, true, propertiesToIgnore, ignoreArrayElementOrder);
+            string json2 = SafeJsonSerializer.Serialize(obj2, DEFAULT_MAXDEPTH, true, propertiesToIgnore, ignoreArrayElementOrder);
 
             var isEqual = (json1 == json2);
 
             output.WriteLine(FileStringComparer.GetSideBySideFileStrings(json2, json1, "EXPECTED", "ACTUAL"));
 
             return isEqual;
+
+
+            //string json1 = N.JsonConvert.SerializeObject(obj1,
+            //    N.Formatting.Indented, new SafeJsonSerializerSettings(
+            //        DEFAULT_MAXDEPTH, propertiesToIgnore));
+            //string json2 = N.JsonConvert.SerializeObject(obj2,
+            //    N.Formatting.Indented, new SafeJsonSerializerSettings(
+            //        DEFAULT_MAXDEPTH, propertiesToIgnore));
+
+            //if (ignoreArrayElementOrder) {
+            //    json1 = JsonSorter.Sort(json1);
+            //    json2 = JsonSorter.Sort(json2);
+            //}
+
+            //var isEqual = (json1 == json2);
+
+            //output.WriteLine(FileStringComparer.GetSideBySideFileStrings(json2, json1, "EXPECTED", "ACTUAL"));
+
+            //return isEqual;
 
         }
 
@@ -544,24 +555,34 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         public static bool IsEqualOrWrite<T>(this object obj1, T obj2,
             string[] propertiesToIgnore, ITestOutputHelper output, bool ignoreArrayElementOrder = false) {
 
-            string json1 = N.JsonConvert.SerializeObject(obj1,
-                N.Formatting.Indented, new SafeJsonSerializerSettings(
-                    DEFAULT_MAXDEPTH, propertiesToIgnore));
-            string json2 = N.JsonConvert.SerializeObject(obj2,
-                N.Formatting.Indented, new SafeJsonSerializerSettings(
-                    DEFAULT_MAXDEPTH, propertiesToIgnore));
-
-            if (ignoreArrayElementOrder) {
-                json1 = JsonSorter.Sort(json1);
-                json2 = JsonSorter.Sort(json2);
-            }
+            string json1 = SafeJsonSerializer.Serialize(obj1, DEFAULT_MAXDEPTH, true, propertiesToIgnore, ignoreArrayElementOrder);
+            string json2 = SafeJsonSerializer.Serialize(obj2, DEFAULT_MAXDEPTH, true, propertiesToIgnore, ignoreArrayElementOrder);
 
             var isEqual = (json1 == json2);
 
-            if (!isEqual)
-                output.WriteLine(FileStringComparer.GetSideBySideFileStrings(json2, json1, "EXPECTED", "ACTUAL"));
+            if(!isEqual)
+            output.WriteLine(FileStringComparer.GetSideBySideFileStrings(json2, json1, "EXPECTED", "ACTUAL"));
 
             return isEqual;
+
+            //string json1 = N.JsonConvert.SerializeObject(obj1,
+            //    N.Formatting.Indented, new SafeJsonSerializerSettings(
+            //        DEFAULT_MAXDEPTH, propertiesToIgnore));
+            //string json2 = N.JsonConvert.SerializeObject(obj2,
+            //    N.Formatting.Indented, new SafeJsonSerializerSettings(
+            //        DEFAULT_MAXDEPTH, propertiesToIgnore));
+
+            //if (ignoreArrayElementOrder) {
+            //    json1 = JsonSorter.Sort(json1);
+            //    json2 = JsonSorter.Sort(json2);
+            //}
+
+            //var isEqual = (json1 == json2);
+
+            //if (!isEqual)
+            //    output.WriteLine(FileStringComparer.GetSideBySideFileStrings(json2, json1, "EXPECTED", "ACTUAL"));
+
+            //return isEqual;
 
         }
 
