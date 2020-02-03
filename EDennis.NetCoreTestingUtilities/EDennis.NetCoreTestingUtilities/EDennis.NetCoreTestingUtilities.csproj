@@ -11,10 +11,10 @@
     <PackageProjectUrl>https://github.com/denmitchell/NetCoreTestingUtilities</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/denmitchell/NetCoreTestingUtilities</RepositoryUrl>
-    <Version>3.8.2</Version>
-    <PackageReleaseNotes>Additional Support for Project Types and Dynamic Deserialization</PackageReleaseNotes>
-    <AssemblyVersion>3.8.2</AssemblyVersion>
-    <FileVersion>3.8.2</FileVersion>
+    <Version>3.8.3</Version>
+    <PackageReleaseNotes>Added support for comparing JSON strings via a JsonPathalizer</PackageReleaseNotes>
+    <AssemblyVersion>3.8.3</AssemblyVersion>
+    <FileVersion>3.8.3</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup>

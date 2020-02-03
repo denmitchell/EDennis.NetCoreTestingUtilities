@@ -1,20 +1,18 @@
-﻿using NL = Newtonsoft.Json.Linq;
-using System.Text.Json;
-using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
+﻿using EDennis.JsonUtils;
 using EDennis.NetCoreTestingUtilities.Json;
-using N = Newtonsoft.Json;
-using Xunit.Abstractions;
-using Xunit;
-using EDennis.JsonUtils;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.IO;
-using System.Text;
 using System.Dynamic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+using Xunit.Abstractions;
+using NL = Newtonsoft.Json.Linq;
 
 namespace EDennis.NetCoreTestingUtilities.Extensions {
 
@@ -588,6 +586,64 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
 
         /// <summary>
+        /// Determines if two JSON structures are equivalent, while optionally ignoring
+        /// certain properties, optionally ordering property keys, and optionally
+        /// ignoring the order of elements in arrays.  The method also produces a
+        /// side-by-side comparison of the two JSON structures in "pathalized" form
+        /// (a flat, key-value pairing where the key is the JSON path to the value.)
+        /// This method is designed to be used with Xunit tests.
+        /// </summary>
+        /// <param name="json1">The first JSON structure</param>
+        /// <param name="json2">The second JSON structure</param>
+        /// <param name="output">An Xunit ITestOutputHelper, for writing output during tests</param>
+        /// <param name="propertiesToIgnore">properties that will be omitted during the comparison</param>
+        /// <param name="orderProperties">whether to order properties (default is true)</param>
+        /// <param name="ignoreArrayOrder">whether to ignore the order of array elements (default is false)</param>
+        /// <returns>true if the two JSON structures are equivalent, after taking into consideration
+        /// the various parameters.  NOTE: whitespace, formatting, and comments are always ignored</returns>
+        public static bool IsEqualAndWrite(string json1, string json2, ITestOutputHelper output,
+            string[] propertiesToIgnore = null, bool orderProperties = true, bool ignoreArrayOrder = false) {
+            var result = true;
+            
+            //pathalize the two JSON strings
+            var pathalizer = new JsonPathalizer();
+            var pathalizedJson1 = pathalizer.Pathalize(json1, propertiesToIgnore, orderProperties, ignoreArrayOrder);
+            var pathalizedJson2 = pathalizer.Pathalize(json2, propertiesToIgnore, orderProperties, ignoreArrayOrder);
+
+            //compare the two pathalized JSON structures
+            if (pathalizedJson1.Count == pathalizedJson2.Count) {
+                foreach (var path in pathalizedJson1) {
+                    if (pathalizedJson2.TryGetValue(path.Key, out object val2)) {
+                        //fail if the path value is different for one of the pathalized JSON structures
+                        if ((val2 == null && path.Value != null) ||
+                            (val2 != null && path.Value == null) ||
+                            (val2.ToString() != path.Value.ToString())) {
+                            result = false;
+                            break;
+                        } else {
+                            result = false;
+                            break;
+                        }
+                    //fail if the second pathalized JSON structure is missing a path
+                    } else {
+                        result = false;
+                        break;
+                    }
+                }
+            //fail if the two pathalized JSON structures have a different number of paths
+            } else {
+                result = false;
+            }
+
+            //produce a side-by-side comparison of the JSON
+            JsonPathalizer.Juxtapose(pathalizedJson1, pathalizedJson2, output);
+
+            return result;
+        }
+
+
+
+        /// <summary>
         /// Generates a side-by-side comparison of two objects
         /// as JSON strings.  This version uses a default value
         /// for maximum depth (99) and no property filters
@@ -747,7 +803,7 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <returns>A JSON string representation of the object</returns>
         public static string ToJsonString(this object obj, string[] propertiesToIgnore) {
 
-            return SafeJsonSerializer.Serialize(obj, DEFAULT_MAXDEPTH, true, null, false);
+            return SafeJsonSerializer.Serialize(obj, DEFAULT_MAXDEPTH, true, propertiesToIgnore, false);
         }
 
 
@@ -756,13 +812,13 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// Deserializes a JSON string into an object
         /// </summary>
         /// <typeparam name="T">The type of the object to deserialize</typeparam>
-        /// <param name="obj">The object to deserialize</param>
+        /// <param name="_">The object to deserialize</param>
         /// <param name="json">The JSON representation of the object</param>
         /// <returns>A new object initialized with the JSON properties</returns>
-        public static T FromJsonString<T>(this T obj, string json) {
+        public static T FromJsonString<T>(this T _, string json) {
             T objNew = JsonSerializer.Deserialize<T>(json);
-            obj = objNew;
-            return obj;
+            _ = objNew;
+            return _;
         }
 
         /// <summary>
@@ -770,13 +826,13 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// in a JSON file.
         /// </summary>
         /// <typeparam name="T">The type of the object to deserialize</typeparam>
-        /// <param name="obj">The current object</param>
+        /// <param name="_">The current object</param>
         /// <param name="filePath">The path for the JSON file</param>
         /// <param name="objectPath">The JSON path to the embedded object</param>
         /// <returns>A new object initialized with the JSON properties</returns>
         /// <seealso cref="FromJsonPath{T}(T, string)"/>
         /// <seealso cref="FromJsonPath{T}(T, JToken, string)"/>
-        public static T FromJsonPath<T>(this T obj, string filePath, string objectPath) {
+        public static T FromJsonPath<T>(this T _, string filePath, string objectPath) {
 
             string json = System.IO.File.ReadAllText(filePath);
             NL.JToken jtoken = NL.JToken.Parse(json);
@@ -787,9 +843,9 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
             }
 
             T objNew = jtoken.ToObject<T>();
-            obj = objNew;
+            _ = objNew;
 
-            return obj;
+            return _;
 
         }
 
@@ -798,12 +854,12 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// in a JSON file.
         /// </summary>
         /// <typeparam name="T">The type of the object to deserialize</typeparam>
-        /// <param name="obj">The current object</param>
+        /// <param name="_">The current object</param>
         /// <param name="jsonFileObjectPath">The file path and JSON path to the embedded object</param>
         /// <returns>A new object initialized with the JSON properties</returns>
         /// <seealso cref="FromJsonPath{T}(T, string, string)"/>
         /// <seealso cref="FromJsonPath{T}(T, JToken, string)"/>
-        public static T FromJsonPath<T>(this T obj, string jsonFileObjectPath) {
+        public static T FromJsonPath<T>(this T _, string jsonFileObjectPath) {
 
             //use regular expression to split jsonFileObjectPath into a 
             //separate file path and object path
@@ -829,9 +885,9 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
             }
 
             T objNew = jtoken.ToObject<T>();
-            obj = objNew;
+            _ = objNew;
 
-            return obj;
+            return _;
 
         }
 
@@ -841,19 +897,19 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// in a JSON.NET JToken object.
         /// </summary>
         /// <typeparam name="T">The type of the object to deserialize</typeparam>
-        /// <param name="obj">The current object</param>
+        /// <param name="_">The current object</param>
         /// <param name="jtoken">The JToken object holding the JSON data</param>
         /// <param name="jsonPath">The path to an embedded object</param>
         /// <returns>A new object initialized with the JSON properties</returns>
         /// <seealso cref="FromJsonPath{T}(T, string, string)"/>
         /// <seealso cref="FromJsonPath{T}(T, string)"/>
-        public static T FromJsonPath<T>(this T obj, NL.JToken jtoken, string objectPath) {
+        public static T FromJsonPath<T>(this T _, NL.JToken jtoken, string objectPath) {
             jtoken = jtoken.SelectToken(objectPath.Replace(@"\", ".").Replace(@"/", "."));
 
             T objNew = jtoken.ToObject<T>();
-            obj = objNew;
+            _ = objNew;
 
-            return obj;
+            return _;
         }
 
 
@@ -872,7 +928,7 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         ///);
         /// </summary>
         /// <typeparam name="T">The type of the current object</typeparam>
-        /// <param name="obj">The current object</param>
+        /// <param name="_">The current object</param>
         /// <param name="context">The Entity Framework DB Context.</param>
         /// <param name="testJsonSchema">The schema for the TestJson table</param>
         /// <param name="testJsonTable">The name of the TestJson table</param>
@@ -883,12 +939,11 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <param name="testCase">The specific test case to be tested</param>
         /// <param name="testFile">The JSON to be used in the test (e.g., Input, Expected)</param>
         /// <returns>A new object based deserialized from the retrieved json</returns>
-        public static T FromTestJsonTable<T>(this T obj, DbContext context,
+        public static T FromTestJsonTable<T>(this T _, DbContext context,
                 string testJsonSchema, string testJsonTable,
                 string projectName, string className, string methodName, string testScenario,
                 string testCase, string testFile) {
 
-            var dbConnection = context.Database.GetDbConnection().ConnectionString;
             var schema = (testJsonSchema == null) ? "" : (testJsonSchema + ".");
             var sql = $"select json from {schema}{testJsonTable} " +
                 $"where ProjectName = '{projectName}' " +
@@ -915,16 +970,16 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
 
             //convert the JSON to an object
             T objNew = jtoken.ToObject<T>();
-            obj = objNew;
+            _ = objNew;
 
-            return obj;
+            return _;
 
         }
 
         /// <summary>
         /// Retrieves a JSON string from a JSON Test table
         /// </summary>
-        /// <param name="obj">Any string (used merely to execute the method)</param>
+        /// <param name="_">Any string (used merely to execute the method)</param>
         /// <param name="context">The Entity Framework DB Context.</param>
         /// <param name="testJsonSchema">The schema for the TestJson table</param>
         /// <param name="testJsonTable">The name of the TestJson table</param>
@@ -935,12 +990,11 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
         /// <param name="testCase">The specific test case to be tested</param>
         /// <param name="testFile">The JSON to be used in the test (e.g., Input, Expected)</param>
         /// <returns>JSON retrieved from a table</returns>
-        public static string FromTestJsonTable(this String obj, DbContext context,
+        public static string FromTestJsonTable(this string _, DbContext context,
                 string testJsonSchema, string testJsonTable,
                 string projectName, string className, string methodName, string testScenario,
                 string testCase, string testFile) {
 
-            var dbConnection = context.Database.GetDbConnection().ConnectionString;
             var schema = (testJsonSchema == null) ? "" : (testJsonSchema + ".");
             var sql = $"select json from {schema}{testJsonTable} " +
                 $"where ProjectName = '{projectName}' " +
