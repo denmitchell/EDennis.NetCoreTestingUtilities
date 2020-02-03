@@ -1,0 +1,47 @@
+﻿[
+  {
+    "Id": 123,
+    "FirstName": "Moe",
+    "LastName": "Stooge",
+    "Addresses": [
+      {
+        "Id": 987,
+        "City":  "Los Angeles"
+      },
+      {
+        "Id": 456,
+        "City": "New Orleans"
+      }
+    ]
+  },
+  {
+    "Id": 321,
+    "FirstName": "Larry",
+    "LastName": "Stooge",
+    "Addresses": [
+      {
+        "Id": 987,
+        "City": "New York"
+      },
+      {
+        "Id": 473,
+        "City": "Detroit"
+      }
+    ]
+  },
+  {
+    "Id": 768,
+    "FirstName": "Curly",
+    "LastName": "Stooge",
+    "Addresses": [
+      {
+        "Id": 346,
+        "City": "Chicago"
+      },
+      {
+        "Id": 697,
+        "City": "Boston"
+      }
+    ]
+  }
+]

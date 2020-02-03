@@ -11,19 +11,24 @@ namespace EDennis.NetCoreTestingUtilities {
 
 
     /// <summary>
-    /// 
+    /// The JsonPathalizer class transforms regular JSON structures into "pathalized" form
+    /// -- a Dictionary of key-value pairs, where the key is a sortable version of JSON path 
+    /// in bracket notation and the value is the value of the node at the path.
     /// </summary>
-    public class JsonPathalizer {
+    public static class JsonPathalizer {
 
 
         private static readonly Regex CONTENT_KEY_PATTERN = new Regex(@"<<[^>]+>>");
 
-        private readonly SortedDictionary<string, object> _dict = new SortedDictionary<string, object>();
-        private readonly Dictionary<string, string> _children = new Dictionary<string, string>();
-        private readonly Dictionary<string, int> _parents = new Dictionary<string, int>();
 
-        private List<string> _propertiesToIgnore;
-        private bool _orderProperties;
+        class PathalizerObj {
+            public SortedDictionary<string, object> Paths { get; set; } = new SortedDictionary<string, object>();
+            public Dictionary<string, string> Children { get; set; } = new Dictionary<string, string>();
+            public Dictionary<string, int> Parents { get; set; } = new Dictionary<string, int>();
+
+            public List<string> PropertiesToIgnore { get; set; }
+            public bool OrderProperties { get; set; }
+        }
 
 
         /// <summary>
@@ -36,7 +41,7 @@ namespace EDennis.NetCoreTestingUtilities {
         /// <param name="orderProperties">whether to order property keys (default is true)</param>
         /// <param name="ignoreArrayOrder">whether to ignore the order of array elements (default is false)</param>
         /// <returns>SortedDictionary of values, keyed by their JSON paths</returns>
-        public SortedDictionary<string,object> Pathalize(string json, string[] propertiesToIgnore, bool orderProperties = true, bool ignoreArrayOrder = false) {
+        public static SortedDictionary<string,object> Pathalize(string json, string[] propertiesToIgnore, bool orderProperties = true, bool ignoreArrayOrder = false) {
             var jdoc = JsonDocument.Parse(json);
             return Pathalize(jdoc, propertiesToIgnore, orderProperties, ignoreArrayOrder);
         }
@@ -52,13 +57,17 @@ namespace EDennis.NetCoreTestingUtilities {
         /// <param name="orderProperties">whether to order property keys (default is true)</param>
         /// <param name="ignoreArrayOrder">whether to ignore the order of array elements (default is false)</param>
         /// <returns>SortedDictionary of values, keyed by their JSON paths</returns>
-        public SortedDictionary<string, object> Pathalize(JsonDocument doc, string[] propertiesToIgnore = null, bool orderProperties = true, bool ignoreArrayOrder = false) {
-            _propertiesToIgnore = (propertiesToIgnore ?? new string[] { }).ToList();
-            _orderProperties = orderProperties;
-            PathalizeInternal(doc);
+        private static SortedDictionary<string, object> Pathalize(JsonDocument doc, string[] propertiesToIgnore = null, bool orderProperties = true, bool ignoreArrayOrder = false) {
+            var po = new PathalizerObj {
+                PropertiesToIgnore = (propertiesToIgnore ?? new string[] { }).ToList(),
+                OrderProperties = orderProperties
+            };
+
+            PathalizeInternal(po, doc);
+
             if (ignoreArrayOrder)
-                Sort();
-            return _dict;
+                Sort(po);
+            return po.Paths;
         }
 
 
@@ -66,9 +75,9 @@ namespace EDennis.NetCoreTestingUtilities {
         /// Pathalizes a JsonDocument
         /// </summary>
         /// <param name="doc">A valid JsonDocument</param>
-        private void PathalizeInternal(JsonDocument doc) {
+        private static void PathalizeInternal(PathalizerObj po, JsonDocument doc) {
             var rootElement = doc.RootElement;
-            PathalizeInternal(rootElement);
+            PathalizeInternal(po, rootElement);
         }
 
 
@@ -78,56 +87,57 @@ namespace EDennis.NetCoreTestingUtilities {
         /// <param name="element">Current JsonElement</param>
         /// <param name="path">Current path</param>
         /// <param name="depth">Curren depth</param>
-        private void PathalizeInternal(JsonElement element, string path = null, int depth = 0) {
+        private static void PathalizeInternal(PathalizerObj po, JsonElement element, string path = null, int depth = 0) {
             var parentPath = path ?? "$";
             //handle JSON objects
             if (element.ValueKind == JsonValueKind.Object) {
-                if (_orderProperties)
+                if (po.OrderProperties)
                     foreach (var prop in element.EnumerateObject().ToList().OrderBy(p => p.Name)) {
-                        if (!_propertiesToIgnore.Contains(prop.Name))
-                            PathalizeInternal(prop.Value, $"{parentPath}['{prop.Name}']", depth + 1);
+                        if (!po.PropertiesToIgnore.Contains(prop.Name))
+                            PathalizeInternal(po, prop.Value, $"{parentPath}['{prop.Name}']", depth + 1);
                     }
                 else
                     foreach (var prop in element.EnumerateObject()) {
-                        if (!_propertiesToIgnore.Contains(prop.Name))
-                            PathalizeInternal(prop.Value, $"{parentPath}['{prop.Name}']", depth + 1);
+                        if (!po.PropertiesToIgnore.Contains(prop.Name))
+                            PathalizeInternal(po, prop.Value, $"{parentPath}['{prop.Name}']", depth + 1);
                     }
             //handle JSON arrays
             } else if (element.ValueKind == JsonValueKind.Array) {
-                _parents.Add(parentPath, depth);
+                if(!po.Parents.ContainsKey(parentPath))
+                    po.Parents.Add(parentPath, depth);
                 var children = element.EnumerateArray().ToList();
                 for (int i = 0; i < children.Count; i++) {
                     var childPath = $"{parentPath}[{i.ToString("D7")}]";
-                    _children[childPath] = parentPath;
-                    PathalizeInternal(children[i], childPath);
+                    po.Children[childPath] = parentPath;
+                    PathalizeInternal(po, children[i], childPath, depth + 1);
                 }
             //handle booleans
             } else if (element.ValueKind == JsonValueKind.False || element.ValueKind == JsonValueKind.True) {
-                _dict.Add(path, element.GetBoolean());
+                po.Paths.Add(path, element.GetBoolean());
             //handle numbers
             } else if (element.ValueKind == JsonValueKind.Number) {
                 if (element.TryGetByte(out byte byteValue))
-                    _dict.Add(path, byteValue);
+                    po.Paths.Add(path, byteValue);
                 else if (element.TryGetInt16(out short shortValue))
-                    _dict.Add(path, shortValue);
+                    po.Paths.Add(path, shortValue);
                 else if (element.TryGetInt32(out int intValue))
-                    _dict.Add(path, intValue);
+                    po.Paths.Add(path, intValue);
                 else if (element.TryGetInt64(out long longValue))
-                    _dict.Add(path, longValue);
+                    po.Paths.Add(path, longValue);
                 else if (element.TryGetDecimal(out decimal decimalValue))
-                    _dict.Add(path, longValue);
+                    po.Paths.Add(path, longValue);
             //handle strings (including dates and times)
             } else if (element.ValueKind == JsonValueKind.String) {
                 if (TimeSpan.TryParse(element.GetString(), out TimeSpan timeSpanValue))
-                    _dict.Add(path, timeSpanValue);
+                    po.Paths.Add(path, timeSpanValue);
                 else if (element.TryGetDateTime(out DateTime dateTimeValue))
-                    _dict.Add(path, dateTimeValue);
+                    po.Paths.Add(path, dateTimeValue);
                 else if (element.TryGetDateTimeOffset(out DateTimeOffset dateTimeOffsetValue))
-                    _dict.Add(path, dateTimeOffsetValue);
+                    po.Paths.Add(path, dateTimeOffsetValue);
                 else
-                    _dict.Add(path, element.GetString());
+                    po.Paths.Add(path, element.GetString());
             } else if (element.ValueKind == JsonValueKind.Null)
-                _dict.Add(path, null);
+                po.Paths.Add(path, null);
 
         }
 
@@ -139,35 +149,35 @@ namespace EDennis.NetCoreTestingUtilities {
         /// two arrays have approximately matchable children, it is likely that the sorting
         /// will tend to align the two arrays.
         /// </summary>
-        private void Sort() {
+        private static void Sort(PathalizerObj po) {
             using MD5 md5Hash = MD5.Create();
-            var depths = _parents.Values.Distinct().OrderByDescending(d => d);
+            var depths = po.Parents.Values.Distinct().OrderByDescending(d => d);
             foreach (var depth in depths) {
-                foreach (var parent in _parents.Where(e => e.Value == depth).ToList()) {
+                foreach (var parent in po.Parents.Where(e => e.Value == depth).ToList()) {
                     //map between original child key and temporary content key
                     SortedDictionary<string, string> map = new SortedDictionary<string, string>();
 
                     //build a temporary content key for each child to replace the original index key
                     //so that when the content keys are ordered, then any two arrays that have matchable
                     //children (possibly in a different order) will be ordered the same way.
-                    foreach (var child in _children.Where(e => e.Value == parent.Key)) {
+                    foreach (var child in po.Children.Where(e => e.Value == parent.Key)) {
                         var sb = new List<string>();
-                        var paths = _dict.Where(p => p.Key.StartsWith(child.Key)).OrderBy(p => p.Key).ToList();
+                        var paths = po.Paths.Where(p => p.Key.StartsWith(child.Key)).OrderBy(p => p.Key).ToList();
                         foreach (var path in paths) {
                             var relativePath = path.Key.Substring(child.Key.Length);
                             sb.Add($"{relativePath}\u001F{path.Value}");
                         }
                         var childContentKey = string.Join("\u001E", sb);
-                        var cnt = _dict.Count(a => a.Key.Contains(childContentKey));
+                        var cnt = po.Paths.Count(a => a.Key.Contains(childContentKey));
                         var newKey = $"<<{childContentKey}-{cnt.ToString("D7")}>>";
                         map.Add(newKey, child.Key);
-                        ReplaceLastIndexWithContentKey(_dict, child.Key, newKey);
+                        ReplaceLastIndexWithContentKey(po.Paths, child.Key, newKey);
                     }
                     //now that array elements are ordered by content, replace content
                     //keys with ascending index values
                     int i = -1;
                     foreach(var entry in map) {
-                        ReplaceContentKeyWithIndex(_dict, entry.Key, ++i);
+                        ReplaceContentKeyWithIndex(po.Paths, entry.Key, ++i);
                     }
 
                 }
@@ -236,6 +246,7 @@ namespace EDennis.NetCoreTestingUtilities {
                     sb.Append(new string(' ', max1 - s.Length));
                 sb.Append(" ");
 
+                s = "";
                 if (pathalizedJson2.TryGetValue(path, out object val2))
                     s = val2 == null ? "" : val2.ToString();
                 else if (max2 > s.Length)

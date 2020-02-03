@@ -606,9 +606,8 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
             var result = true;
             
             //pathalize the two JSON strings
-            var pathalizer = new JsonPathalizer();
-            var pathalizedJson1 = pathalizer.Pathalize(json1, propertiesToIgnore, orderProperties, ignoreArrayOrder);
-            var pathalizedJson2 = pathalizer.Pathalize(json2, propertiesToIgnore, orderProperties, ignoreArrayOrder);
+            var pathalizedJson1 = JsonPathalizer.Pathalize(json1, propertiesToIgnore, orderProperties, ignoreArrayOrder);
+            var pathalizedJson2 = JsonPathalizer.Pathalize(json2, propertiesToIgnore, orderProperties, ignoreArrayOrder);
 
             //compare the two pathalized JSON structures
             if (pathalizedJson1.Count == pathalizedJson2.Count) {
@@ -621,8 +620,7 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
                             result = false;
                             break;
                         } else {
-                            result = false;
-                            break;
+                            continue;
                         }
                     //fail if the second pathalized JSON structure is missing a path
                     } else {
