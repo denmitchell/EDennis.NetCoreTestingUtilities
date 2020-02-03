@@ -616,7 +616,7 @@ namespace EDennis.NetCoreTestingUtilities.Extensions {
                         //fail if the path value is different for one of the pathalized JSON structures
                         if ((val2 == null && path.Value != null) ||
                             (val2 != null && path.Value == null) ||
-                            (val2.ToString() != path.Value.ToString())) {
+                            (val2?.ToString() != path.Value?.ToString())) {
                             result = false;
                             break;
                         } else {
